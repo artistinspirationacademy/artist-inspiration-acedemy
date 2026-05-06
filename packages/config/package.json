@@ -1,0 +1,58 @@
+{
+    "name": "@workspace/config",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "exports": {
+        ".": {
+            "import": "./src/index.ts",
+            "require": "./src/index.ts",
+            "types": "./src/index.ts"
+        },
+        "./const": {
+            "import": "./src/const.ts",
+            "require": "./src/const.ts",
+            "types": "./src/const.ts"
+        },
+        "./site": {
+            "import": "./src/site.ts",
+            "require": "./src/site.ts",
+            "types": "./src/site.ts"
+        },
+        "./icons": {
+            "import": "./src/icons.ts",
+            "require": "./src/icons.ts",
+            "types": "./src/icons.ts"
+        },
+        "./utils": {
+            "import": "./src/utils.ts",
+            "require": "./src/utils.ts",
+            "types": "./src/utils.ts"
+        },
+        "./validations": {
+            "import": "./src/validations/index.ts",
+            "require": "./src/validations/index.ts",
+            "types": "./src/validations/index.ts"
+        }
+    },
+    "dependencies": {
+        "next": "^16.2.4",
+        "react": "^19.2.5",
+        "sonner": "^2.0.7",
+        "zod": "4.3.6"
+    },
+    "devDependencies": {
+        "@phosphor-icons/react": "^2.1.10",
+        "@types/node": "^25.6.0",
+        "@types/react": "^19.2.14",
+        "@workspace/eslint-config": "workspace:*",
+        "@workspace/typescript-config": "workspace:*",
+        "clsx": "^2.1.1",
+        "eslint": "^9.39.2",
+        "tailwind-merge": "^3.5.0",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.51.0"
+    }
+}
