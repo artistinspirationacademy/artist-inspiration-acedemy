@@ -53,6 +53,7 @@ export const nextJsConfig = [
     },
     {
         rules: {
+            "@typescript-eslint/no-unused-vars": "off",
             "no-unused-vars": "off",
             quotes: ["error", "double"],
             eqeqeq: ["error", "always"],

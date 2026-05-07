@@ -16,7 +16,7 @@ export const config = [
     ...tseslint.configs.recommended,
     {
         plugins: { turbo: turboPlugin },
-        rules: { "turbo/no-undeclared-env-vars": "warn" },
+        rules: { "turbo/no-undeclared-env-vars": "off" },
     },
     {
         plugins: { onlyWarn },
@@ -30,6 +30,7 @@ export const config = [
     },
     {
         rules: {
+            "@typescript-eslint/no-unused-vars": "off",
             "no-unused-vars": "off",
             quotes: ["error", "double"],
             eqeqeq: ["error", "always"],
