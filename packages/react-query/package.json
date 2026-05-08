@@ -1,5 +1,5 @@
 {
-    "name": "@workspace/config",
+    "name": "@workspace/rq",
     "version": "0.0.0",
     "private": true,
     "type": "module",
@@ -10,34 +10,12 @@
             "import": "./src/index.ts",
             "require": "./src/index.ts",
             "types": "./src/index.ts"
-        },
-        "./const": {
-            "import": "./src/const.ts",
-            "require": "./src/const.ts",
-            "types": "./src/const.ts"
-        },
-        "./site": {
-            "import": "./src/site.ts",
-            "require": "./src/site.ts",
-            "types": "./src/site.ts"
-        },
-        "./icons": {
-            "import": "./src/icons.ts",
-            "require": "./src/icons.ts",
-            "types": "./src/icons.ts"
-        },
-        "./utils": {
-            "import": "./src/utils.ts",
-            "require": "./src/utils.ts",
-            "types": "./src/utils.ts"
-        },
-        "./validations": {
-            "import": "./src/validations/index.ts",
-            "require": "./src/validations/index.ts",
-            "types": "./src/validations/index.ts"
         }
     },
     "dependencies": {
+        "@tanstack/react-query": "^5.100.9",
+        "@workspace/config": "workspace:*",
+        "next": "16.2.4",
         "react": "^19.2.5",
         "sonner": "^2.0.7",
         "zod": "4.3.6"
@@ -47,6 +25,7 @@
     },
     "devDependencies": {
         "@phosphor-icons/react": "^2.1.10",
+        "@tanstack/react-query-devtools": "^5.100.9",
         "@types/node": "^25.6.0",
         "@types/react": "^19.2.14",
         "@workspace/eslint-config": "workspace:*",

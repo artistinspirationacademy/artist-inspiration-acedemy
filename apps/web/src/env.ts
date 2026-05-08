@@ -5,12 +5,6 @@ export const env = createEnv({
     server: {
         DATABASE_URL: z.url("'DATABASE_URL' must be a valid URL"),
         REDIS_URL: z.string().min(1, "'REDIS_URL' is required"),
-
-        UPLOADTHING_TOKEN: z.string().min(1, "'UPLOADTHING_TOKEN' is required"),
-
-        JWT_SECRET: z
-            .string()
-            .min(32, "JWT_SECRET must be at least 32 characters"),
     },
     client: {
         NEXT_PUBLIC_DEPLOYMENT_URL: z
@@ -20,10 +14,6 @@ export const env = createEnv({
     runtimeEnv: {
         DATABASE_URL: process.env.DATABASE_URL,
         REDIS_URL: process.env.REDIS_URL,
-
-        UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
-
-        JWT_SECRET: process.env.JWT_SECRET,
 
         NEXT_PUBLIC_DEPLOYMENT_URL: process.env.NEXT_PUBLIC_DEPLOYMENT_URL,
     },

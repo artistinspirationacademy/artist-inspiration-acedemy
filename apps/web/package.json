@@ -19,7 +19,7 @@
         "dotenv": "^17.4.2",
         "drizzle-orm": "^1.0.0-rc.2-e38a2ba",
         "ioredis": "^5.10.1",
-        "next": "16.1.6",
+        "next": "16.2.4",
         "nuqs": "^2.8.9",
         "postgres": "^3.4.9",
         "radix-ui": "^1.4.3",
