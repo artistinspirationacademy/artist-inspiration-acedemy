@@ -1,3 +1,4 @@
+import { SignInForm } from "@/components/globals/forms";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -24,7 +25,7 @@ export default function Page() {
                 </p>
             </div>
 
-            {/* <SignInForm /> */}
+            <SignInForm />
         </div>
     );
 }
