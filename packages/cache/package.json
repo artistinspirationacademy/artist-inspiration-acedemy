@@ -1,0 +1,33 @@
+{
+    "name": "@workspace/cache",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "exports": {
+        ".": {
+            "import": "./src/index.ts",
+            "types": "./src/index.ts"
+        },
+        "./client": {
+            "import": "./src/client.ts",
+            "types": "./src/client.ts"
+        }
+    },
+    "dependencies": {
+        "@workspace/config": "workspace:*",
+        "dotenv": "^17.4.2",
+        "ioredis": "^5.10.1",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@types/node": "^25.6.0",
+        "@types/react": "^19.2.14",
+        "@workspace/eslint-config": "workspace:*",
+        "@workspace/typescript-config": "workspace:*",
+        "eslint": "^9.39.4",
+        "typescript-eslint": "8.51.0",
+        "typescript": "^6.0.3"
+    }
+}
