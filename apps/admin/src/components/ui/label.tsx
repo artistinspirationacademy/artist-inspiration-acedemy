@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@workspace/config";
-import { Label as LabelPrimitive } from "radix-ui";
 import * as React from "react";
+import { Label as LabelPrimitive } from "radix-ui";
+
+import { cn } from "@workspace/config";
 
 function Label({
     className,

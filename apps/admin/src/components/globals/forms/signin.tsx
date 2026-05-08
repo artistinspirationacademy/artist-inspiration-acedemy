@@ -37,7 +37,7 @@ export function SignInForm() {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="w-full space-y-6 px-1"
+                className="w-full space-y-6"
             >
                 <div className="space-y-4">
                     <FormField

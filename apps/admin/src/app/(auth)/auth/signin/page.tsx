@@ -1,6 +1,12 @@
 import { SignInForm } from "@/components/globals/forms";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Metadata } from "next";
-import Link from "next/link";
 
 export const metadata: Metadata = {
     title: "Sign In",
@@ -9,23 +15,30 @@ export const metadata: Metadata = {
 
 export default function Page() {
     return (
-        <div className="w-full max-w-xl space-y-6">
-            <div className="space-y-1">
-                <h1 className="text-2xl font-bold md:text-3xl">Login</h1>
+        // <div className="w-full max-w-xl space-y-6">
+        //     <div className="space-y-1">
+        //         <h1 className="text-2xl font-bold md:text-3xl">Login</h1>
 
-                <p className="text-sm text-muted-foreground">
-                    Don&apos;t have an account?{" "}
-                    <Link
-                        href="/auth/signup"
-                        className="text-primary hover:underline"
-                    >
-                        Create one here
-                    </Link>
-                    .
-                </p>
-            </div>
+        //         <p className="text-sm text-muted-foreground">
+        //             Sign in to your existing account to access your dashboard.
+        //         </p>
+        //     </div>
 
-            <SignInForm />
-        </div>
+        //     <SignInForm />
+        // </div>
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-xl font-bold md:text-2xl">
+                    Login
+                </CardTitle>
+                <CardDescription>
+                    Sign in to your existing account to access your dashboard.
+                </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+                <SignInForm />
+            </CardContent>
+        </Card>
     );
 }

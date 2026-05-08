@@ -1,12 +1,26 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { cFetch, handleClientError, SafeUser, SignIn } from "@workspace/config";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export function useAuth() {
     const router = useRouter();
+
+    const useCurrentUser = ({
+        initialData,
+    }: { initialData?: SafeUser } = {}) => {
+        return useQuery({
+            queryKey: ["user", "me"],
+            queryFn: async () => {
+                const res = await cFetch<SafeUser>("/users/me");
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            initialData,
+        });
+    };
 
     const useSignIn = () => {
         return useMutation({
@@ -45,6 +59,7 @@ export function useAuth() {
                 });
 
                 if (!res.ok) throw res.error;
+                return res.data;
             },
             onSuccess: async (_, __, { toastId }) => {
                 toast.success("See you next time!", { id: toastId });
@@ -55,6 +70,7 @@ export function useAuth() {
     };
 
     return {
+        useCurrentUser,
         useSignIn,
         useSignOut,
     };

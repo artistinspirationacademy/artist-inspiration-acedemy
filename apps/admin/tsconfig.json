@@ -3,7 +3,8 @@
     "compilerOptions": {
         "paths": {
             "@/*": ["./src/*"],
-            "@/components/*": ["./src/components/*"]
+            "@/components/*": ["./src/components/*"],
+            "@workspace/config/*": ["../../packages/config/src/*"]
         },
         "plugins": [{ "name": "next" }]
     },
