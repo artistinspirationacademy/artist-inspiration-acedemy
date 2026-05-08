@@ -14,7 +14,7 @@ export function useAuth() {
         return useQuery({
             queryKey: ["user", "me"],
             queryFn: async () => {
-                const res = await cFetch<SafeUser>("/users/me");
+                const res = await cFetch<SafeUser>("/api/auth/me");
                 if (!res.ok) throw res.error;
                 return res.data;
             },

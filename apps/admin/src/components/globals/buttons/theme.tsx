@@ -13,7 +13,7 @@ export function ThemeButton({
     return (
         <button
             className={cn(
-                "rounded-full p-2 transition-all ease-in-out hover:bg-muted",
+                "hover:bg-muted rounded-full p-2 transition-all ease-in-out",
                 className
             )}
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

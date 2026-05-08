@@ -1,25 +1,23 @@
-"use client";
-
 import {
+    BellIcon,
+    BookIcon,
+    CaretLeftIcon,
+    CaretRightIcon,
+    EyeClosedIcon,
+    EyeIcon,
     FacebookLogoIcon,
     HouseSimpleIcon,
-    InstagramLogoIcon,
-    EyeIcon,
-    EyeClosedIcon,
     InfoIcon,
-    BookIcon,
-    UsersIcon,
+    InstagramLogoIcon,
+    LinkedinLogoIcon,
+    MoonIcon,
     PhoneIcon,
+    SignOutIcon,
+    SunIcon,
+    UsersIcon,
     XLogoIcon,
     YoutubeLogoIcon,
-    LinkedinLogoIcon,
-    BellIcon,
-    SunIcon,
-    MoonIcon,
-    CaretRightIcon,
-    CaretLeftIcon,
-    SignOutIcon,
-} from "@phosphor-icons/react";
+} from "@phosphor-icons/react/ssr";
 
 export const Icons = {
     SignOut: SignOutIcon,

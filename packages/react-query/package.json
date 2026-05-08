@@ -13,6 +13,7 @@
         }
     },
     "dependencies": {
+        "@phosphor-icons/react": "^2.1.10",
         "@tanstack/react-query": "^5.100.9",
         "@workspace/config": "workspace:*",
         "next": "16.2.4",
@@ -24,7 +25,6 @@
         "next": ">=15"
     },
     "devDependencies": {
-        "@phosphor-icons/react": "^2.1.10",
         "@tanstack/react-query-devtools": "^5.100.9",
         "@types/node": "^25.6.0",
         "@types/react": "^19.2.14",
