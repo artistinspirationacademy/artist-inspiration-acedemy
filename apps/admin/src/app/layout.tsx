@@ -1,9 +1,8 @@
 import "@workspace/config";
 import "./globals.css";
-import { cn } from "@workspace/ui/lib/utils";
-import { Metadata, Viewport } from "next";
-import { getAbsoluteURL, siteConfig } from "@workspace/config";
 import { ClientProvider } from "@/components/providers";
+import { cn, getAbsoluteURL, siteConfig } from "@workspace/config";
+import { Metadata, Viewport } from "next";
 import { fontMono, nunitoSans } from "./font";
 
 export const viewport: Viewport = {
