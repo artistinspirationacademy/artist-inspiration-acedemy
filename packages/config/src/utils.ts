@@ -319,3 +319,10 @@ export function formatFileSize(bytes: number): string {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
+
+export function generateUploadThingURL(fileKey: string) {
+    const bucketId = process.env.UPLOADTHING_BUCKET_ID;
+    if (!bucketId) throw new Error("'UPLOADTHING_BUCKET_ID' is not defined");
+
+    return `https://${bucketId}.ufs.sh/f/${fileKey}`;
+}

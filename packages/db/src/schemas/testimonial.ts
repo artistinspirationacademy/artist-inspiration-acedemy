@@ -1,17 +1,24 @@
-import { pgTable } from "drizzle-orm/pg-core";
+import { index, pgTable } from "drizzle-orm/pg-core";
 import { timestamps } from "../helper";
 import { courses } from "./course";
 
-export const testimonials = pgTable("testimonials", (t) => ({
-    id: t.uuid("id").notNull().primaryKey().defaultRandom(),
-    name: t.text("name").notNull(),
-    feedback: t.text("feedback").notNull(),
-    courseId: t
-        .uuid("course_id")
-        .notNull()
-        .references(() => courses.id),
-    rating: t.integer("rating").notNull(),
-    country: t.text("country"),
-    isActive: t.boolean("is_active").notNull().default(true),
-    ...timestamps(t),
-}));
+export const testimonials = pgTable(
+    "testimonials",
+    (t) => ({
+        id: t.uuid("id").notNull().primaryKey().defaultRandom(),
+        name: t.text("name").notNull(),
+        feedback: t.text("feedback").notNull(),
+        courseId: t
+            .uuid("course_id")
+            .notNull()
+            .references(() => courses.id),
+        rating: t.integer("rating").notNull(),
+        country: t.text("country"),
+        isActive: t.boolean("is_active").notNull().default(true),
+        ...timestamps(t),
+    }),
+    (t) => [
+        index("testimonials_course_id_idx").on(t.courseId),
+        index("testimonials_is_active_idx").on(t.isActive),
+    ]
+);

@@ -1,4 +1,51 @@
 import { defineRelations } from "drizzle-orm";
 import * as schema from "./schemas";
 
-export const relations = defineRelations(schema, () => ({}));
+export const relations = defineRelations(schema, (r) => ({
+    courseCategories: {
+        courses: r.many.courses({
+            from: r.courseCategories.id,
+            to: r.courses.courseCategoryId,
+        }),
+    },
+    courses: {
+        category: r.one.courseCategories({
+            from: r.courses.courseCategoryId,
+            to: r.courseCategories.id,
+            optional: false,
+        }),
+        teachers: r.many.teachers({
+            from: r.courses.id,
+            to: r.teachers.courseId,
+        }),
+        testimonials: r.many.testimonials({
+            from: r.courses.id,
+            to: r.testimonials.courseId,
+        }),
+        bookings: r.many.bookings({
+            from: r.courses.id,
+            to: r.bookings.courseId,
+        }),
+    },
+    teachers: {
+        course: r.one.courses({
+            from: r.teachers.courseId,
+            to: r.courses.id,
+            optional: false,
+        }),
+    },
+    testimonials: {
+        course: r.one.courses({
+            from: r.testimonials.courseId,
+            to: r.courses.id,
+            optional: false,
+        }),
+    },
+    bookings: {
+        course: r.one.courses({
+            from: r.bookings.courseId,
+            to: r.courses.id,
+            optional: false,
+        }),
+    },
+}));
