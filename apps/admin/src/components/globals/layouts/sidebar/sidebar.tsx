@@ -57,7 +57,7 @@ function Header() {
             <SidebarMenuItem>
                 <SidebarMenuButton
                     size="lg"
-                    className="hover:bg-transparent hover:text-sidebar-foreground active:bg-transparent active:text-sidebar-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    className="hover:text-sidebar-foreground active:text-sidebar-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-transparent active:bg-transparent"
                     asChild
                 >
                     <Link href="/">
@@ -113,7 +113,7 @@ function SideNav({ className, ...props }: GenericProps) {
                                             >
                                                 <SidebarMenuSubButton asChild>
                                                     <Link
-                                                        href={`/dashboard${subItem.url}`}
+                                                        href={subItem.url}
                                                         prefetch
                                                     >
                                                         {subItem.title}

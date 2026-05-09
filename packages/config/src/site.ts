@@ -58,32 +58,63 @@ export const siteConfig: SiteConfig = {
     ],
     sidebar: [
         {
-            title: "Getting Started",
+            title: "General",
             url: "#",
             icon: "House",
             items: [
                 {
-                    title: "Installation",
-                    url: "/getting-started/installation",
+                    title: "Dashboard",
+                    url: "/",
                 },
                 {
-                    title: "Quick Start Guide",
-                    url: "/getting-started/quick-start",
+                    title: "Analytics",
+                    url: "/analytics",
+                },
+                {
+                    title: "Logs",
+                    url: "/logs",
                 },
             ],
         },
         {
-            title: "Features",
+            title: "Management",
             url: "#",
-            icon: "House",
+            icon: "Layout",
             items: [
                 {
-                    title: "Post Scheduler",
-                    url: "/features/post-scheduler",
+                    title: "Banners",
+                    url: "/banners",
                 },
                 {
-                    title: "Comment Manager",
-                    url: "/features/comment-manager",
+                    title: "Courses",
+                    url: "/courses",
+                },
+                {
+                    title: "Team",
+                    url: "/team",
+                },
+                {
+                    title: "Testimonials",
+                    url: "/testimonials",
+                },
+                {
+                    title: "Contact",
+                    url: "/contact",
+                },
+            ],
+        },
+        {
+            title: "Settings",
+            url: "#",
+            icon: "Gear",
+            items: [
+                {
+                    title: "Preferences",
+                    url: "/preferences",
+                },
+                {
+                    title: "Profile",
+                    url: "/profile",
                 },
             ],
         },

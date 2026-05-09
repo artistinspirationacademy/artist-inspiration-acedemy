@@ -17,9 +17,13 @@ import {
     UsersIcon,
     XLogoIcon,
     YoutubeLogoIcon,
+    LayoutIcon,
+    GearIcon,
 } from "@phosphor-icons/react/ssr";
 
 export const Icons = {
+    Gear: GearIcon,
+    Layout: LayoutIcon,
     SignOut: SignOutIcon,
     CaretLeft: CaretLeftIcon,
     CaretRight: CaretRightIcon,
