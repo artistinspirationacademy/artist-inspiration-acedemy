@@ -1,5 +1,23 @@
 export const MEDIA_TYPES = ["image", "video", "audio", "document"] as const;
 
+export const MEDIA_FILE_ACCEPT = [
+    // Images
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    // Videos
+    "video/mp4",
+    // Audio
+    "audio/wav",
+    "audio/mp3",
+    "audio/mpeg", // Alternative MIME type for mp3
+    // Documents
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation", // pptx
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
+] as const;
+
 export const MEDIA_TYPE_PATTERNS: Record<
     (typeof MEDIA_TYPES)[number],
     string[]
@@ -13,6 +31,8 @@ export const MEDIA_TYPE_PATTERNS: Record<
 export const COOKIES = {
     ADMIN: "admin_aia__651456",
 } as const;
+
+export const BANNER_MEDIA_TYPES = ["image", "video"] as const;
 
 export const DEFAULT_PFP_URL =
     "https://utfs.io/f/tgjx8p7aDhPeNbVvZa4UDsSHEIjC7GZY9ABuaeVPkrbivNMF" as const;

@@ -19,9 +19,11 @@ import {
     YoutubeLogoIcon,
     LayoutIcon,
     GearIcon,
+    ChalkboardTeacherIcon,
 } from "@phosphor-icons/react/ssr";
 
 export const Icons = {
+    Teacher: ChalkboardTeacherIcon,
     Gear: GearIcon,
     Layout: LayoutIcon,
     SignOut: SignOutIcon,

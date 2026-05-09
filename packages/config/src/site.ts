@@ -34,11 +34,9 @@ export const siteConfig: SiteConfig = {
     links: {
         Facebook: "#",
         Instagram: "#",
-        X: "#",
-        LinkedIn: "#",
         YouTube: "#",
     },
-    contact: "contact@artist-inspiration-academy.com",
+    contact: "contact@artistinspiration.academy",
     menu: [
         {
             name: "About",
@@ -49,6 +47,11 @@ export const siteConfig: SiteConfig = {
             name: "Courses",
             href: "/courses",
             icon: "Eye",
+        },
+        {
+            name: "Teachers",
+            href: "/teachers",
+            icon: "Teacher",
         },
         {
             name: "Contact",
@@ -86,20 +89,24 @@ export const siteConfig: SiteConfig = {
                     url: "/banners",
                 },
                 {
+                    title: "Bookings",
+                    url: "/bookings",
+                },
+                {
                     title: "Courses",
                     url: "/courses",
                 },
                 {
-                    title: "Team",
-                    url: "/team",
+                    title: "Teachers",
+                    url: "/teachers",
+                },
+                {
+                    title: "Media",
+                    url: "/media",
                 },
                 {
                     title: "Testimonials",
                     url: "/testimonials",
-                },
-                {
-                    title: "Contact",
-                    url: "/contact",
                 },
             ],
         },
@@ -109,8 +116,8 @@ export const siteConfig: SiteConfig = {
             icon: "Gear",
             items: [
                 {
-                    title: "Preferences",
-                    url: "/preferences",
+                    title: "Configuration",
+                    url: "/configuration",
                 },
                 {
                     title: "Profile",
