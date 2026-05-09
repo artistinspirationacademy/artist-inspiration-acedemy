@@ -20,9 +20,15 @@ import {
     LayoutIcon,
     GearIcon,
     ChalkboardTeacherIcon,
+    DotsSixVerticalIcon,
+    PlusCircleIcon,
+    CheckIcon,
 } from "@phosphor-icons/react/ssr";
 
 export const Icons = {
+    Check: CheckIcon,
+    PlusCircle: PlusCircleIcon,
+    DotsSixVertical: DotsSixVerticalIcon,
     Teacher: ChalkboardTeacherIcon,
     Gear: GearIcon,
     Layout: LayoutIcon,
