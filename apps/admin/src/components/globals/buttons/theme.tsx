@@ -1,8 +1,8 @@
 "use client";
 
 import { cn, Icons } from "@workspace/config";
-import { useTheme } from "next-themes";
 import { ButtonHTMLAttributes } from "react";
+import { useTheme } from "@wrksz/themes/client";
 
 export function ThemeButton({
     className,
