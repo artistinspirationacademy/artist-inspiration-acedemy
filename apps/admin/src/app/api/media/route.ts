@@ -14,27 +14,29 @@ import { NextRequest } from "next/server";
 import { UploadThingError } from "uploadthing/server";
 
 const mediaPaginationQuerySchema = paginationQuerySchema.extend({
-    type: createMediaSchema.shape.type.optional(),
+    types: createMediaSchema.shape.type
+        .transform((val) => val.split(",").filter(Boolean))
+        .optional(),
 });
 
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
 
-        const { page, limit, search, isPaginated, ids, type } =
+        const { page, limit, search, isPaginated, ids, types } =
             mediaPaginationQuerySchema.parse(
                 Object.fromEntries(searchParams.entries())
             );
 
         if (!isPaginated) {
-            const data = await queries.media.scan({ ids, type });
+            const data = await queries.media.scan({ ids, types });
             return CResponse({ data });
         } else {
             const data = await queries.media.paginate({
                 limit,
                 page,
                 search,
-                type,
+                types,
             });
             return CResponse({ data });
         }

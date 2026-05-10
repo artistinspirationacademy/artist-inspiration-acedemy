@@ -1,5 +1,8 @@
 import { DashShell } from "@/components/globals/layouts";
-import { BannerTable } from "@/components/dashboard/banners";
+import {
+    BannerReorderDialog,
+    BannerTable,
+} from "@/components/dashboard/banners";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@workspace/config";
 import { Metadata } from "next";
@@ -22,12 +25,16 @@ export default function Page() {
                     </p>
                 </div>
 
-                <Button size="sm" asChild>
-                    <Link href={"/banners/create"}>
-                        <Icons.Plus />
-                        New Banner
-                    </Link>
-                </Button>
+                <div className="flex items-center justify-center gap-2 md:justify-end">
+                    <BannerReorderDialog />
+
+                    <Button size="sm" asChild>
+                        <Link href={"/banners/create"}>
+                            <Icons.Plus />
+                            New Banner
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
             <Suspense>

@@ -18,19 +18,20 @@ export function useMedia() {
 
     const useScan = <T extends Media[]>({
         ids,
-        type,
+        types,
         initialData,
     }: {
         ids?: string[];
-        type?: string;
+        types?: string[];
         initialData?: T;
     }) => {
         return useQuery({
-            queryKey: ["media", "scan", ids, type],
+            queryKey: ["media", "scan", ids, types],
             queryFn: async () => {
                 const searchParams = new URLSearchParams();
                 if (ids) searchParams.append("ids", ids.join(","));
-                if (type) searchParams.append("type", type);
+                if (types?.length)
+                    searchParams.append("types", types.join(","));
                 searchParams.append("isPaginated", "false");
 
                 const res = await cFetch<T>(
@@ -47,25 +48,26 @@ export function useMedia() {
         limit,
         page,
         search,
-        type,
+        types,
         initialData,
         enabled,
     }: {
         limit?: number;
         page?: number;
         search?: string;
-        type?: string;
+        types?: string[];
         initialData?: T;
         enabled?: boolean;
     }) => {
         return useQuery({
-            queryKey: ["media", "paginate", limit, page, search, type],
+            queryKey: ["media", "paginate", limit, page, search, types],
             queryFn: async () => {
                 const searchParams = new URLSearchParams();
                 if (limit) searchParams.append("limit", limit.toString());
                 if (page) searchParams.append("page", page.toString());
                 if (search) searchParams.append("search", search);
-                if (type) searchParams.append("type", type);
+                if (types?.length)
+                    searchParams.append("types", types.join(","));
                 searchParams.append("isPaginated", "true");
 
                 const res = await cFetch<T>(
@@ -74,7 +76,9 @@ export function useMedia() {
                 if (!res.ok) throw res.error;
                 return res.data;
             },
-            ...(initialData && !type && !search ? { initialData } : {}),
+            ...(initialData && !types?.length && !search
+                ? { initialData }
+                : {}),
             staleTime: 1000 * 60 * 5,
             refetchOnWindowFocus: false,
             retry: 1,

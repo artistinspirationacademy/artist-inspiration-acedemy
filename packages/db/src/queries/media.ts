@@ -10,31 +10,38 @@ import { db } from "../client";
 import { media } from "../schemas";
 import { and, eq, ilike, inArray, or } from "drizzle-orm";
 
-function getTypeFilter(type: string | undefined) {
-    if (!type?.length) return undefined;
+function getTypeFilter(types: string[] | undefined) {
+    if (!types?.length) return undefined;
 
-    const patterns =
-        MEDIA_TYPE_PATTERNS[type as keyof typeof MEDIA_TYPE_PATTERNS];
-    if (!patterns) return undefined;
+    const patterns = types.flatMap(
+        (type) =>
+            MEDIA_TYPE_PATTERNS[type as keyof typeof MEDIA_TYPE_PATTERNS] ?? []
+    );
+    if (!patterns.length) return undefined;
 
     if (patterns.length === 1) return { ilike: patterns[0]! };
     return { OR: patterns.map((pattern) => ({ ilike: pattern })) };
 }
 
-function getTypeFilterSql(type: string | undefined, field: typeof media.type) {
-    if (!type?.length) return undefined;
+function getTypeFilterSql(
+    types: string[] | undefined,
+    field: typeof media.type
+) {
+    if (!types?.length) return undefined;
 
-    const patterns =
-        MEDIA_TYPE_PATTERNS[type as keyof typeof MEDIA_TYPE_PATTERNS];
-    if (!patterns) return undefined;
+    const patterns = types.flatMap(
+        (type) =>
+            MEDIA_TYPE_PATTERNS[type as keyof typeof MEDIA_TYPE_PATTERNS] ?? []
+    );
+    if (!patterns.length) return undefined;
 
     if (patterns.length === 1) return ilike(field, patterns[0]!);
     return or(...patterns.map((pattern) => ilike(field, pattern)));
 }
 
 class MediaQuery {
-    async scan({ ids, type }: { ids?: string[]; type?: string } = {}) {
-        const typeFilter = getTypeFilter(type);
+    async scan({ ids, types }: { ids?: string[]; types?: string[] } = {}) {
+        const typeFilter = getTypeFilter(types);
         const data = await db.query.media.findMany({
             where: {
                 AND: [
@@ -53,21 +60,22 @@ class MediaQuery {
         limit = DEFAULT_PAGINATION.GENERAL.LIMIT,
         page = DEFAULT_PAGINATION.GENERAL.PAGE,
         search,
-        type,
+        types,
     }: {
         limit?: number;
         page?: number;
         search?: string;
-        type?: string;
+        types?: string[];
     }): Promise<PaginationResult<Media>> {
         limit = limit < 0 ? DEFAULT_PAGINATION.GENERAL.LIMIT : limit;
         page = page < 0 ? DEFAULT_PAGINATION.GENERAL.PAGE : page;
 
+        const typeFilter = getTypeFilter(types);
         const data = await db.query.media.findMany({
             where: {
                 AND: [
                     ...(search ? [{ name: { ilike: `%${search}%` } }] : []),
-                    ...(type ? [{ type: getTypeFilter(type) }] : []),
+                    ...(typeFilter ? [{ type: typeFilter }] : []),
                 ],
             },
             limit,
@@ -81,7 +89,7 @@ class MediaQuery {
                             search?.length
                                 ? ilike(media.name, `%${search}%`)
                                 : undefined,
-                            getTypeFilterSql(type, media.type)
+                            getTypeFilterSql(types, media.type)
                         )
                     )
                     .as("media_count"),

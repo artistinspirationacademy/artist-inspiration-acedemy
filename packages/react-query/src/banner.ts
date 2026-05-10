@@ -5,6 +5,7 @@ import {
     cFetch,
     CreateBanner,
     handleClientError,
+    ReorderBanner,
     UpdateBanner,
 } from "@workspace/config";
 import { useRouter } from "next/navigation";
@@ -19,11 +20,13 @@ export function useBanner() {
         mediaType,
         isActive,
         initialData,
+        enabled,
     }: {
         ids?: string[];
         mediaType?: (typeof BANNER_MEDIA_TYPES)[number];
         isActive?: boolean;
         initialData?: T;
+        enabled?: boolean;
     }) => {
         return useQuery({
             queryKey: ["banner", "scan", ids, mediaType, isActive],
@@ -42,6 +45,7 @@ export function useBanner() {
                 return res.data;
             },
             initialData,
+            enabled,
         });
     };
 
@@ -101,9 +105,11 @@ export function useBanner() {
     const useGet = <T extends Banner>({
         id,
         initialData,
+        enabled,
     }: {
         id: string;
         initialData?: T;
+        enabled?: boolean;
     }) => {
         return useQuery({
             queryKey: ["banner", "get", id],
@@ -113,6 +119,7 @@ export function useBanner() {
                 return res.data;
             },
             initialData,
+            enabled,
         });
     };
 
@@ -174,6 +181,29 @@ export function useBanner() {
         });
     };
 
+    const useReorder = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Saving banner order...");
+                return { toastId };
+            },
+            mutationFn: async ({ values }: { values: ReorderBanner }) => {
+                const res = await cFetch<Banner[]>(`/api/banners/reorder`, {
+                    method: "PATCH",
+                    body: JSON.stringify(values),
+                });
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (_, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["banner"] });
+                toast.success("Banner order saved!", { id: toastId });
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -203,5 +233,13 @@ export function useBanner() {
         });
     };
 
-    return { useScan, usePaginate, useGet, useCreate, useUpdate, useDelete };
+    return {
+        useScan,
+        usePaginate,
+        useGet,
+        useCreate,
+        useUpdate,
+        useReorder,
+        useDelete,
+    };
 }

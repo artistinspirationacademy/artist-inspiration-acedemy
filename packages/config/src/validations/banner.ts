@@ -23,12 +23,25 @@ export const bannerSchema = z.object({
 
 export const createBannerSchema = bannerSchema.omit({
     id: true,
+    position: true,
     createdAt: true,
     updatedAt: true,
 });
 
 export const updateBannerSchema = createBannerSchema.partial();
 
+export const reorderBannerSchema = z
+    .array(
+        z.object({
+            id: generateIdSchema({ isUUID: true }),
+            position: z
+                .int("Position is required")
+                .nonnegative("Position must be a non-negative integer"),
+        })
+    )
+    .min(1, "At least one banner is required");
+
 export type Banner = z.infer<typeof bannerSchema>;
 export type CreateBanner = z.infer<typeof createBannerSchema>;
 export type UpdateBanner = z.infer<typeof updateBannerSchema>;
+export type ReorderBanner = z.infer<typeof reorderBannerSchema>;

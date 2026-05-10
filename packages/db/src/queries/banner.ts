@@ -3,11 +3,12 @@ import {
     CreateBanner,
     DEFAULT_PAGINATION,
     mediaSchema,
+    ReorderBanner,
     UpdateBanner,
 } from "@workspace/config";
 import { db } from "../client";
 import { banners } from "../schemas";
-import { and, ilike, eq, inArray } from "drizzle-orm";
+import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 
 class BannerQuery {
     async scan({
@@ -99,8 +100,21 @@ class BannerQuery {
     }
 
     async create(values: CreateBanner[]) {
-        const data = await db.insert(banners).values(values).returning();
-        return data;
+        return db.transaction(async (tx) => {
+            const rows = await tx
+                .select({
+                    max: sql<number>`coalesce(max(${banners.position}), -1)`,
+                })
+                .from(banners);
+
+            const startAt = (rows[0]?.max ?? -1) + 1;
+            const withPositions = values.map((value, index) => ({
+                ...value,
+                position: startAt + index,
+            }));
+
+            return tx.insert(banners).values(withPositions).returning();
+        });
     }
 
     async update({ id, values }: { id: string; values: UpdateBanner }) {
@@ -112,6 +126,23 @@ class BannerQuery {
             .then((res) => res[0]);
 
         return data;
+    }
+
+    async reorder({ values }: { values: ReorderBanner }) {
+        if (values.length === 0) return [];
+
+        return db.transaction(async (tx) => {
+            return Promise.all(
+                values.map(({ id, position }) =>
+                    tx
+                        .update(banners)
+                        .set({ position })
+                        .where(eq(banners.id, id))
+                        .returning()
+                        .then((res) => res[0])
+                )
+            );
+        });
     }
 
     async delete({ ids }: { ids: string[] }) {
