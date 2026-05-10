@@ -6,6 +6,7 @@ export const banners = pgTable(
     "banners",
     (t) => ({
         id: t.uuid("id").notNull().primaryKey().defaultRandom(),
+        name: t.text("name").notNull(),
         mediaKey: t.text("media_key").notNull(),
         mediaType: t.text("media_type", { enum: BANNER_MEDIA_TYPES }).notNull(),
         position: t.integer("position").notNull(),

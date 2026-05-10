@@ -1,4 +1,5 @@
 export * from "./auth";
+export * from "./banner";
 export * from "./general";
 export * from "./media";
 export * from "./response";

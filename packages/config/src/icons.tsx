@@ -32,9 +32,11 @@ import {
     FileIcon,
     PencilSimpleIcon,
     DotsThreeVerticalIcon,
+    PlusIcon,
 } from "@phosphor-icons/react/ssr";
 
 export const Icons = {
+    Plus: PlusIcon,
     DotsThreeVertical: DotsThreeVerticalIcon,
     PencilSimple: PencilSimpleIcon,
     File: FileIcon,

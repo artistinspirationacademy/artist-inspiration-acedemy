@@ -84,7 +84,7 @@ class MediaQuery {
                             getTypeFilterSql(type, media.type)
                         )
                     )
-                    .as("count"),
+                    .as("media_count"),
             },
         });
 
