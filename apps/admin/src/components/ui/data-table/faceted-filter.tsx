@@ -1,7 +1,7 @@
 "use client";
+"use no memo";
 
 import { Badge } from "@/components/ui/badge";
-
 import { Button } from "@/components/ui/button";
 import {
     Command,

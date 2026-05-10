@@ -1,3 +1,7 @@
+import { config } from "dotenv";
+
+config({ path: ".env", quiet: true });
+
 export * from "./const";
 export * from "./icons";
 export * from "./site";

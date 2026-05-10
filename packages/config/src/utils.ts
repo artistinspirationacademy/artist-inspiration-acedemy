@@ -321,8 +321,9 @@ export function formatFileSize(bytes: number): string {
 }
 
 export function generateUploadThingURL(fileKey: string) {
-    const bucketId = process.env.UPLOADTHING_BUCKET_ID;
-    if (!bucketId) throw new Error("'UPLOADTHING_BUCKET_ID' is not defined");
+    const bucketId = process.env.NEXT_PUBLIC_UPLOADTHING_BUCKET_ID;
+    if (!bucketId)
+        throw new Error("'NEXT_PUBLIC_UPLOADTHING_BUCKET_ID' is not defined");
 
     return `https://${bucketId}.ufs.sh/f/${fileKey}`;
 }

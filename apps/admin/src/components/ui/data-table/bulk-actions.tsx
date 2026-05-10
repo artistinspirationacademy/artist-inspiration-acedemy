@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import {
     AlertDialog,
@@ -113,7 +114,7 @@ export function DataTableBulkActions<TData>({
                         </Button>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align="start">
+                    <DropdownMenuContent align="end" className="w-full">
                         {actions.map((action) => (
                             <DropdownMenuItem
                                 key={action.label}

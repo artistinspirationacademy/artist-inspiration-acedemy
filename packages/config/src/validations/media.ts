@@ -60,4 +60,4 @@ export const uploadMediaSchema = z
 export type Media = z.infer<typeof mediaSchema>;
 export type CreateMedia = z.infer<typeof createMediaSchema>;
 export type UpdateMedia = z.infer<typeof updateMediaSchema>;
-export type UploadMedia = z.infer<typeof uploadMediaSchema>;
+export type UploadMedia = { files: z.infer<typeof uploadMediaSchema> };
