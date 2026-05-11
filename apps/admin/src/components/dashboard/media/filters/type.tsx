@@ -35,7 +35,7 @@ export function TypeFilter({ value, onChange, title = "Type" }: PageProps) {
                 );
             }}
         >
-            <SelectTrigger size="sm" className="w-37.5">
+            <SelectTrigger className="w-37.5">
                 <div className="flex items-center gap-2">
                     <Icons.File />
                     <SelectValue placeholder={title}>

@@ -2,8 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     Banner,
     BANNER_MEDIA_TYPES,
+    BannerContent,
     cFetch,
     CreateBanner,
+    CreateBannerContent,
     handleClientError,
     ReorderBanner,
     UpdateBanner,
@@ -138,7 +140,7 @@ export function useBanner() {
                 return res.data;
             },
             onSuccess: (data, _, { toastId }) => {
-                queryClient.invalidateQueries({ queryKey: ["banners"] });
+                queryClient.invalidateQueries({ queryKey: ["banner"] });
                 toast.success("Banner(s) created successfully!", {
                     id: toastId,
                 });
@@ -170,7 +172,7 @@ export function useBanner() {
                 return res.data;
             },
             onSuccess: (_, __, { toastId }) => {
-                queryClient.invalidateQueries({ queryKey: ["banners"] });
+                queryClient.invalidateQueries({ queryKey: ["banner"] });
                 toast.success("Banner updated successfully!", {
                     id: toastId,
                 });
@@ -223,7 +225,7 @@ export function useBanner() {
                 if (!res.ok) throw res.error;
             },
             onSuccess: (_, __, { toastId }) => {
-                queryClient.invalidateQueries({ queryKey: ["banners"] });
+                queryClient.invalidateQueries({ queryKey: ["banner"] });
                 toast.success("Banner(s) deleted successfully!", {
                     id: toastId,
                 });
@@ -242,4 +244,60 @@ export function useBanner() {
         useReorder,
         useDelete,
     };
+}
+
+export function useBannerContent() {
+    const router = useRouter();
+    const queryClient = useQueryClient();
+
+    const useGet = <T extends BannerContent>({
+        initialData,
+        enabled,
+    }: {
+        initialData?: T;
+        enabled?: boolean;
+    }) => {
+        return useQuery({
+            queryKey: ["banner", "content"],
+            queryFn: async () => {
+                const res = await cFetch<T>(`/api/banners/content`);
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            initialData,
+            enabled,
+        });
+    };
+
+    const useUpdate = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Updating banner content...");
+                return { toastId };
+            },
+            mutationFn: async (values: CreateBannerContent) => {
+                const res = await cFetch<BannerContent>(
+                    `/api/banners/content`,
+                    {
+                        method: "POST",
+                        body: JSON.stringify(values),
+                    }
+                );
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (_, __, { toastId }) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["banner", "content"],
+                });
+                toast.success("Banner content updated successfully!", {
+                    id: toastId,
+                });
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
+    return { useGet, useUpdate };
 }

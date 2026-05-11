@@ -1,9 +1,11 @@
-import { bannerQueries } from "./banner";
+import { bannerContentQueries, bannerQueries } from "./banner";
 import { mediaQueries } from "./media";
 import { userQueries } from "./user";
 
 export const queries = {
-    banner: bannerQueries,
+    banner: Object.assign(bannerQueries, {
+        content: bannerContentQueries,
+    }),
     media: mediaQueries,
     user: userQueries,
 };

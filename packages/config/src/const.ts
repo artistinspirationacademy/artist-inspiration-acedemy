@@ -7,6 +7,7 @@ export const MEDIA_FILE_ACCEPT = [
     "image/webp",
     // Videos
     "video/mp4",
+    "video/webm",
     // Audio
     "audio/wav",
     "audio/mp3",

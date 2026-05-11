@@ -21,6 +21,17 @@ export const bannerSchema = z.object({
     updatedAt: generateDateSchema({ error: "Updated at must be a valid date" }),
 });
 
+export const bannerContentSchema = z.object({
+    id: generateIdSchema({ isUUID: true }),
+    title: z.string("Title is required").min(1, "Title cannot be empty"),
+    description: z
+        .string("Description is required")
+        .min(1, "Description cannot be empty"),
+    content: z.string("Content is required").min(1, "Content cannot be empty"),
+    createdAt: generateDateSchema({ error: "Created at must be a valid date" }),
+    updatedAt: generateDateSchema({ error: "Updated at must be a valid date" }),
+});
+
 export const createBannerSchema = bannerSchema.omit({
     id: true,
     position: true,
@@ -28,7 +39,15 @@ export const createBannerSchema = bannerSchema.omit({
     updatedAt: true,
 });
 
+export const createBannerContentSchema = bannerContentSchema.omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+});
+
 export const updateBannerSchema = createBannerSchema.partial();
+
+export const updateBannerContentSchema = createBannerContentSchema.partial();
 
 export const reorderBannerSchema = z
     .array(
@@ -45,3 +64,7 @@ export type Banner = z.infer<typeof bannerSchema>;
 export type CreateBanner = z.infer<typeof createBannerSchema>;
 export type UpdateBanner = z.infer<typeof updateBannerSchema>;
 export type ReorderBanner = z.infer<typeof reorderBannerSchema>;
+
+export type BannerContent = z.infer<typeof bannerContentSchema>;
+export type CreateBannerContent = z.infer<typeof createBannerContentSchema>;
+export type UpdateBannerContent = z.infer<typeof updateBannerContentSchema>;

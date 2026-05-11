@@ -43,7 +43,7 @@ export function MediaTypeFilter({
                 );
             }}
         >
-            <SelectTrigger size="sm" className="w-37.5">
+            <SelectTrigger className="w-37.5">
                 <div className="flex items-center gap-2">
                     <Icons.FileVideo />
                     <SelectValue placeholder={title}>

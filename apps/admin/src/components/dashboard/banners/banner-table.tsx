@@ -10,9 +10,12 @@ import {
     ExportDialog,
     FieldMapping,
 } from "@/components/ui/data-table";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
@@ -40,7 +43,8 @@ import {
     parseAsStringLiteral,
     useQueryState,
 } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { ActiveFilter, MediaTypeFilter } from "./filters";
 import { BannerAction } from "./banner-action";
 import { useBanner } from "@workspace/rq";
@@ -365,20 +369,58 @@ export function BannerTable() {
 
 function BannerPreview({ banner }: { banner: TableBanner }) {
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const thumbVideoRef = useRef<HTMLVideoElement>(null);
+
+    const isImage = banner.mediaType === "image";
+    const isVideo = banner.mediaType === "video";
+
+    const handleHoverStart = () => {
+        if (!isVideo || !thumbVideoRef.current) return;
+        thumbVideoRef.current.play().catch(() => {
+            // ignore autoplay rejections
+        });
+    };
+
+    const handleHoverEnd = () => {
+        if (!isVideo || !thumbVideoRef.current) return;
+        thumbVideoRef.current.pause();
+        thumbVideoRef.current.currentTime = 0.5;
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(banner.url);
+            toast.success("Link copied to clipboard");
+        } catch {
+            toast.error("Couldn't copy link");
+        }
+    };
 
     return (
         <>
             <div
                 className="flex items-center gap-2 hover:cursor-pointer hover:underline"
                 onClick={() => setIsPreviewOpen(true)}
+                onMouseEnter={handleHoverStart}
+                onMouseLeave={handleHoverEnd}
             >
-                <div className="aspect-video w-16 overflow-hidden rounded-md">
-                    {banner.mediaType === "image" ? (
+                <div className="bg-muted aspect-video w-16 shrink-0 overflow-hidden rounded-md">
+                    {isImage ? (
                         <Image
                             src={banner.url}
                             alt={banner.name}
                             width={64}
                             height={36}
+                            className="size-full object-cover"
+                        />
+                    ) : isVideo ? (
+                        <video
+                            ref={thumbVideoRef}
+                            src={`${banner.url}#t=0.5`}
+                            preload="metadata"
+                            muted
+                            playsInline
+                            loop
                             className="size-full object-cover"
                         />
                     ) : (
@@ -392,30 +434,63 @@ function BannerPreview({ banner }: { banner: TableBanner }) {
             </div>
 
             <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-                <DialogContent className="overflow-hidden p-0">
-                    <DialogHeader className="hidden">
-                        <DialogTitle>
-                            {truncateText(banner.name, 30)}
+                <DialogContent className="w-[95vw] sm:max-w-3xl xl:max-w-5xl">
+                    <DialogHeader>
+                        <DialogTitle className="truncate">
+                            {banner.name}
                         </DialogTitle>
+                        <DialogDescription className="capitalize">
+                            {banner.mediaType} banner
+                        </DialogDescription>
                     </DialogHeader>
 
-                    <div className="size-full">
-                        {banner.mediaType === "image" ? (
+                    <div className="bg-muted flex min-w-0 items-center justify-center overflow-hidden rounded-md">
+                        {isImage ? (
                             <Image
                                 src={banner.url}
                                 alt={banner.name}
-                                width={500}
-                                height={500}
-                                className="size-full object-cover"
+                                width={1280}
+                                height={720}
+                                className="block max-h-[70vh] w-auto max-w-full object-contain"
+                                unoptimized
                             />
                         ) : (
                             <video
                                 src={banner.url}
                                 controls
-                                className="size-full"
+                                autoPlay
+                                className="block max-h-[70vh] w-full max-w-full object-contain"
                             />
                         )}
                     </div>
+
+                    <DialogFooter className="items-center sm:justify-between">
+                        <p
+                            className="text-muted-foreground truncate font-mono text-xs"
+                            title={banner.url}
+                        >
+                            {banner.url}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleCopyLink}
+                            >
+                                Copy link
+                            </Button>
+                            <Button type="button" size="sm" asChild>
+                                <a
+                                    href={banner.url}
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                >
+                                    Open in new tab
+                                </a>
+                            </Button>
+                        </div>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </>

@@ -1,5 +1,6 @@
 import { DashShell } from "@/components/globals/layouts";
 import {
+    BannerContentSheet,
     BannerReorderDialog,
     BannerTable,
 } from "@/components/dashboard/banners";
@@ -26,6 +27,7 @@ export default function Page() {
                 </div>
 
                 <div className="flex items-center justify-center gap-2 md:justify-end">
+                    <BannerContentSheet />
                     <BannerReorderDialog />
 
                     <Button size="sm" asChild>

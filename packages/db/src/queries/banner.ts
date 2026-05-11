@@ -1,13 +1,15 @@
 import {
     BANNER_MEDIA_TYPES,
+    bannerContentSchema,
+    bannerSchema,
     CreateBanner,
+    CreateBannerContent,
     DEFAULT_PAGINATION,
-    mediaSchema,
     ReorderBanner,
     UpdateBanner,
 } from "@workspace/config";
 import { db } from "../client";
-import { banners } from "../schemas";
+import { bannerContent, banners } from "../schemas";
 import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 
 class BannerQuery {
@@ -31,7 +33,7 @@ class BannerQuery {
             orderBy: { position: "asc" },
         });
 
-        const parsed = mediaSchema.array().parse(data);
+        const parsed = bannerSchema.array().parse(data);
         return parsed;
     }
 
@@ -85,7 +87,7 @@ class BannerQuery {
         const count = +(data?.[0]?.count || 0);
         const pages = Math.ceil(count / limit);
 
-        const parsed = mediaSchema.array().parse(data);
+        const parsed = bannerSchema.array().parse(data);
         return { data: parsed, count, pages };
     }
 
@@ -95,7 +97,7 @@ class BannerQuery {
         });
         if (!data) return null;
 
-        const parsed = mediaSchema.parse(data);
+        const parsed = bannerSchema.parse(data);
         return parsed;
     }
 
@@ -120,7 +122,10 @@ class BannerQuery {
     async update({ id, values }: { id: string; values: UpdateBanner }) {
         const data = await db
             .update(banners)
-            .set(values)
+            .set({
+                ...values,
+                updatedAt: new Date(),
+            })
             .where(eq(banners.id, id))
             .returning()
             .then((res) => res[0]);
@@ -136,7 +141,7 @@ class BannerQuery {
                 values.map(({ id, position }) =>
                     tx
                         .update(banners)
-                        .set({ position })
+                        .set({ position, updatedAt: new Date() })
                         .where(eq(banners.id, id))
                         .returning()
                         .then((res) => res[0])
@@ -155,4 +160,41 @@ class BannerQuery {
     }
 }
 
+class BannerContentQuery {
+    async get() {
+        const data = await db.query.bannerContent.findFirst();
+        if (!data) return null;
+
+        const parsed = bannerContentSchema.parse(data);
+        return parsed;
+    }
+
+    async update(values: CreateBannerContent) {
+        const existing = await this.get();
+
+        if (existing) {
+            const data = await db
+                .update(bannerContent)
+                .set({
+                    ...values,
+                    updatedAt: new Date(),
+                })
+                .where(eq(bannerContent.id, existing.id))
+                .returning()
+                .then((res) => res[0]);
+
+            return data;
+        } else {
+            const data = await db
+                .insert(bannerContent)
+                .values(values)
+                .returning()
+                .then((res) => res[0]);
+
+            return data;
+        }
+    }
+}
+
 export const bannerQueries = new BannerQuery();
+export const bannerContentQueries = new BannerContentQuery();

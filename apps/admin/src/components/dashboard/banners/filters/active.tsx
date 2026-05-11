@@ -27,7 +27,7 @@ export function ActiveFilter({ value, onChange, title = "Status" }: PageProps) {
                 else onChange(newValue === "true");
             }}
         >
-            <SelectTrigger size="sm" className="w-37.5">
+            <SelectTrigger className="w-37.5">
                 <div className="flex items-center gap-2">
                     <Icons.Eye />
                     <SelectValue placeholder={title}>

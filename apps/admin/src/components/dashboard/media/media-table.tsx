@@ -13,9 +13,12 @@ import {
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
     DEFAULT_PAGINATION,
     formatFileSize,
@@ -35,8 +38,14 @@ import {
 } from "@tanstack/react-table";
 import { format } from "date-fns";
 import Image from "next/image";
-import { parseAsInteger, parseAsStringLiteral, useQueryState } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
+import {
+    parseAsArrayOf,
+    parseAsInteger,
+    parseAsStringLiteral,
+    useQueryState,
+} from "nuqs";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { TypeFilter } from "./filters";
 import { MediaAction } from "./media-action";
 import { useMedia } from "@workspace/rq";
@@ -77,7 +86,7 @@ const columns = (
         header: "Name",
         cell: ({ row }) => {
             const data = row.original;
-            return <MediaImage media={data} />;
+            return <MediaPreview media={data} />;
         },
     },
     {
@@ -188,9 +197,9 @@ export function MediaTable() {
         parseAsInteger.withDefault(DEFAULT_PAGINATION.GENERAL.LIMIT)
     );
     const [search, setSearch] = useQueryState("search", { defaultValue: "" });
-    const [type, setType] = useQueryState(
-        "type",
-        parseAsStringLiteral(MEDIA_TYPES)
+    const [types, setTypes] = useQueryState(
+        "types",
+        parseAsArrayOf(parseAsStringLiteral(MEDIA_TYPES))
     );
 
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -211,7 +220,7 @@ export function MediaTable() {
         limit,
         page,
         search,
-        type: type ?? undefined,
+        types: types ?? undefined,
     });
 
     const { mutateAsync: deleteAsync, isPending: isDeleting } = useDelete();
@@ -243,7 +252,7 @@ export function MediaTable() {
     const handleTypeChange = (
         newType: (typeof MEDIA_TYPES)[number] | undefined
     ) => {
-        setType(newType ?? null);
+        setTypes(newType ? [newType] : null);
         setPage(1);
     };
 
@@ -343,7 +352,7 @@ export function MediaTable() {
                     filters={[
                         <TypeFilter
                             key="type-filter"
-                            value={type}
+                            value={types?.[0] ?? null}
                             onChange={handleTypeChange}
                             title="Type"
                         />,
@@ -398,37 +407,69 @@ function getFileIcon(mimeType: string) {
     return <Icons.File className="size-5" />;
 }
 
-function MediaImage({ media }: { media: Media }) {
-    const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+function MediaPreview({ media }: { media: Media }) {
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const thumbVideoRef = useRef<HTMLVideoElement>(null);
 
     const fileName = media.name.split(".").slice(0, -1).join(".");
     if (!fileName) return "unnamed";
 
     const mediaUrl = generateUploadThingURL(media.key);
+    const isImage = media.type.startsWith("image");
+    const isVideo = media.type.startsWith("video");
+    const isAudio = media.type.startsWith("audio");
+
+    const handleHoverStart = () => {
+        if (!isVideo || !thumbVideoRef.current) return;
+        thumbVideoRef.current.play().catch(() => {
+            // ignore autoplay rejections
+        });
+    };
+
+    const handleHoverEnd = () => {
+        if (!isVideo || !thumbVideoRef.current) return;
+        thumbVideoRef.current.pause();
+        thumbVideoRef.current.currentTime = 0.5;
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(mediaUrl);
+            toast.success("Link copied to clipboard");
+        } catch {
+            toast.error("Couldn't copy link");
+        }
+    };
 
     return (
         <>
             <div
                 className="flex items-center gap-2 hover:cursor-pointer hover:underline"
-                onClick={() => {
-                    if (!media.type.includes("image"))
-                        return window.open(mediaUrl);
-                    setIsImageDialogOpen(true);
-                }}
+                onClick={() => setIsPreviewOpen(true)}
+                onMouseEnter={handleHoverStart}
+                onMouseLeave={handleHoverEnd}
             >
-                <div>
-                    {media.type.includes("image") ? (
-                        <div className="aspect-square size-10 overflow-hidden rounded-md">
-                            <Image
-                                src={mediaUrl}
-                                alt={media.alt || media.name}
-                                width={100}
-                                height={100}
-                                className="size-full object-cover"
-                            />
-                        </div>
+                <div className="bg-muted aspect-square size-10 shrink-0 overflow-hidden rounded-md">
+                    {isImage ? (
+                        <Image
+                            src={mediaUrl}
+                            alt={media.alt || media.name}
+                            width={80}
+                            height={80}
+                            className="size-full object-cover"
+                        />
+                    ) : isVideo ? (
+                        <video
+                            ref={thumbVideoRef}
+                            src={`${mediaUrl}#t=0.5`}
+                            preload="metadata"
+                            muted
+                            playsInline
+                            loop
+                            className="size-full object-cover"
+                        />
                     ) : (
-                        <div className="flex aspect-square size-10 items-center justify-center overflow-hidden rounded-md bg-gray-200 text-gray-500">
+                        <div className="flex size-full items-center justify-center bg-gray-200 text-gray-500">
                             {getFileIcon(media.type)}
                         </div>
                     )}
@@ -437,24 +478,82 @@ function MediaImage({ media }: { media: Media }) {
                 <p>{truncateText(fileName, 20)}</p>
             </div>
 
-            <Dialog
-                open={isImageDialogOpen}
-                onOpenChange={setIsImageDialogOpen}
-            >
-                <DialogContent className="overflow-hidden p-0">
-                    <DialogHeader className="hidden">
-                        <DialogTitle>{truncateText(fileName, 20)}</DialogTitle>
+            <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+                <DialogContent className="w-[95vw] sm:max-w-3xl xl:max-w-5xl">
+                    <DialogHeader>
+                        <DialogTitle className="truncate">
+                            {fileName}
+                        </DialogTitle>
+                        <DialogDescription className="truncate">
+                            {media.name}
+                        </DialogDescription>
                     </DialogHeader>
 
-                    <div className="size-full">
-                        <Image
-                            src={mediaUrl}
-                            alt={media.name}
-                            width={500}
-                            height={500}
-                            className="size-full object-cover"
-                        />
+                    <div className="bg-muted flex min-w-0 items-center justify-center overflow-hidden rounded-md">
+                        {isImage && (
+                            <Image
+                                src={mediaUrl}
+                                alt={media.alt || media.name}
+                                width={1280}
+                                height={720}
+                                className="block max-h-[70vh] w-auto max-w-full object-contain"
+                                unoptimized
+                            />
+                        )}
+                        {isVideo && (
+                            <video
+                                src={mediaUrl}
+                                controls
+                                autoPlay
+                                className="block max-h-[70vh] w-full max-w-full object-contain"
+                            />
+                        )}
+                        {isAudio && (
+                            <div className="w-full p-6">
+                                <audio
+                                    src={mediaUrl}
+                                    controls
+                                    className="w-full"
+                                />
+                            </div>
+                        )}
+                        {!isImage && !isVideo && !isAudio && (
+                            <div className="text-muted-foreground flex flex-col items-center gap-2 py-12">
+                                {getFileIcon(media.type)}
+                                <p className="text-sm">
+                                    No inline preview available
+                                </p>
+                            </div>
+                        )}
                     </div>
+
+                    <DialogFooter className="items-center sm:justify-between">
+                        <p
+                            className="text-muted-foreground truncate font-mono text-xs"
+                            title={mediaUrl}
+                        >
+                            {mediaUrl}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleCopyLink}
+                            >
+                                Copy link
+                            </Button>
+                            <Button type="button" size="sm" asChild>
+                                <a
+                                    href={mediaUrl}
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                >
+                                    Open in new tab
+                                </a>
+                            </Button>
+                        </div>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </>

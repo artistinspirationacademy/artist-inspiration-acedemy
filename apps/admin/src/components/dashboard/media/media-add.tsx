@@ -6,9 +6,15 @@ import {
     DEFAULT_PAGINATION,
     Icons,
     MEDIA_FILE_ACCEPT,
+    MEDIA_TYPES,
 } from "@workspace/config";
 import { useMedia } from "@workspace/rq";
-import { parseAsInteger, useQueryState } from "nuqs";
+import {
+    parseAsArrayOf,
+    parseAsInteger,
+    parseAsStringLiteral,
+    useQueryState,
+} from "nuqs";
 import { ChangeEvent, useRef } from "react";
 
 export function MediaAddButton() {
@@ -21,6 +27,10 @@ export function MediaAddButton() {
         parseAsInteger.withDefault(DEFAULT_PAGINATION.GENERAL.LIMIT)
     );
     const [search] = useQueryState("search", { defaultValue: "" });
+    const [types] = useQueryState(
+        "types",
+        parseAsArrayOf(parseAsStringLiteral(MEDIA_TYPES))
+    );
 
     const fileInputRef = useRef<HTMLInputElement>(null!);
 
@@ -31,6 +41,7 @@ export function MediaAddButton() {
         limit,
         page,
         search,
+        types: types ?? undefined,
     });
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {

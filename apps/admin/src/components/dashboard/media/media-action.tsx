@@ -26,9 +26,19 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DEFAULT_PAGINATION, Icons, Media } from "@workspace/config";
+import {
+    DEFAULT_PAGINATION,
+    Icons,
+    Media,
+    MEDIA_TYPES,
+} from "@workspace/config";
 import { useMedia } from "@workspace/rq";
-import { parseAsInteger, useQueryState } from "nuqs";
+import {
+    parseAsArrayOf,
+    parseAsInteger,
+    parseAsStringLiteral,
+    useQueryState,
+} from "nuqs";
 import { useState } from "react";
 
 interface PageProps {
@@ -46,6 +56,10 @@ export function MediaAction({ data, onDelete }: PageProps) {
         parseAsInteger.withDefault(DEFAULT_PAGINATION.GENERAL.LIMIT)
     );
     const [search] = useQueryState("search", { defaultValue: "" });
+    const [types] = useQueryState(
+        "types",
+        parseAsArrayOf(parseAsStringLiteral(MEDIA_TYPES))
+    );
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,6 +69,7 @@ export function MediaAction({ data, onDelete }: PageProps) {
         limit,
         page,
         search,
+        types: types ?? undefined,
     });
 
     const { mutateAsync, isPending } = useDelete();

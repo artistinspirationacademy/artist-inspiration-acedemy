@@ -126,7 +126,10 @@ class MediaQuery {
     async update({ id, values }: { id: string; values: UpdateMedia }) {
         const data = await db
             .update(media)
-            .set(values)
+            .set({
+                ...values,
+                updatedAt: new Date(),
+            })
             .where(eq(media.id, id))
             .returning()
             .then((res) => res[0]);

@@ -37,6 +37,11 @@ interface PageProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     selected?: Media[];
+    /**
+     * Pre-select the row whose `key` matches once it loads. Useful when the
+     * caller only has the key (e.g. editing a banner), not a full Media object.
+     */
+    selectedKey?: string;
     types?: (typeof MEDIA_TYPES)[number][];
     multiple?: boolean;
     accept?: string;
@@ -49,6 +54,7 @@ export function MediaSelectModal({
     isOpen,
     setIsOpen,
     selected = [],
+    selectedKey,
     types,
     multiple = false,
     accept = MEDIA_FILE_ACCEPT.join(","),
@@ -59,10 +65,17 @@ export function MediaSelectModal({
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [selectedItems, setSelectedItems] = useState<Media[]>(selected);
 
+    const [autoSelectedKey, setAutoSelectedKey] = useState<string | undefined>(
+        undefined
+    );
+
     const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
     if (isOpen !== prevIsOpen) {
         setPrevIsOpen(isOpen);
-        if (isOpen) setSelectedItems(selected);
+        if (isOpen) {
+            setSelectedItems(selected);
+            setAutoSelectedKey(undefined);
+        }
     }
 
     const [prevSearch, setPrevSearch] = useState(debouncedSearch);
@@ -95,6 +108,19 @@ export function MediaSelectModal({
     const items = paginated?.data ?? [];
     const pageCount = paginated?.pages ?? 0;
     const totalCount = paginated?.count ?? 0;
+
+    const keyMatch =
+        isOpen && selectedKey && selectedKey !== autoSelectedKey
+            ? items.find((m) => m.key === selectedKey)
+            : undefined;
+    if (keyMatch && selectedKey) {
+        setAutoSelectedKey(selectedKey);
+        if (!selectedItems.some((s) => s.id === keyMatch.id)) {
+            setSelectedItems((prev) =>
+                multiple ? [...prev, keyMatch] : [keyMatch]
+            );
+        }
+    }
 
     const handleSelectionChange = (media: Media, isSelected: boolean) => {
         setSelectedItems((prev) => {
@@ -192,7 +218,7 @@ export function MediaSelectModal({
                     />
 
                     <div className="bg-foreground/20 relative h-px w-full">
-                        <p className="bg-background absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 text-sm font-medium">
+                        <p className="bg-card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 text-sm font-medium">
                             OR
                         </p>
                     </div>
@@ -314,14 +340,29 @@ function MediaSelectItem({
 }: CompProps) {
     const fileType = media.name.split(".").pop();
     const fileName = media.name.split(".").slice(0, -1).join(".");
+    const videoRef = useRef<HTMLVideoElement>(null);
 
     const mediaUrl = generateUploadThingURL(media.key);
 
-    const isMediaImage = media.type.includes("image");
+    const isMediaImage = media.type.startsWith("image");
+    const isMediaVideo = media.type.startsWith("video");
     const isSelected = selectedItems.some((item) => item.id === media.id);
 
     const handleSelection = (value: boolean) => {
         onSelectionChange(value);
+    };
+
+    const handleHoverStart = () => {
+        if (!isMediaVideo || !videoRef.current) return;
+        videoRef.current.play().catch(() => {
+            // ignore autoplay rejections
+        });
+    };
+
+    const handleHoverEnd = () => {
+        if (!isMediaVideo || !videoRef.current) return;
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0.5;
     };
 
     return (
@@ -332,6 +373,8 @@ function MediaSelectItem({
                     isSelected && "border-primary bg-primary/5"
                 )}
                 onClick={() => handleSelection(!isSelected)}
+                onMouseEnter={handleHoverStart}
+                onMouseLeave={handleHoverEnd}
             >
                 {isMediaImage ? (
                     <Image
@@ -341,6 +384,16 @@ function MediaSelectItem({
                         width={200}
                         className="size-full rounded-sm object-cover"
                         unoptimized
+                    />
+                ) : isMediaVideo ? (
+                    <video
+                        ref={videoRef}
+                        src={`${mediaUrl}#t=0.5`}
+                        preload="metadata"
+                        muted
+                        playsInline
+                        loop
+                        className="size-full rounded-sm object-cover"
                     />
                 ) : (
                     <div className="flex size-full items-center justify-center">

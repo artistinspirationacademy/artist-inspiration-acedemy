@@ -17,7 +17,7 @@ import { Banner, generateUploadThingURL, Icons } from "@workspace/config";
 import { useBanner } from "@workspace/rq";
 import { Reorder } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export function BannerReorderDialog() {
     const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +26,7 @@ export function BannerReorderDialog() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button size="sm" variant="outline">
-                    <Icons.DotsSixVertical className="mr-1 size-4" />
+                    <Icons.DotsSixVertical />
                     Reorder
                 </Button>
             </DialogTrigger>
@@ -38,12 +38,13 @@ export function BannerReorderDialog() {
                 <DialogHeader>
                     <DialogTitle>Reorder Banners</DialogTitle>
                     <DialogDescription>
-                        Drag to set the display order. Lower items appear
-                        later.
+                        Drag to set the display order. Lower items appear later.
                     </DialogDescription>
                 </DialogHeader>
 
-                {isOpen && <BannerReorderBody onClose={() => setIsOpen(false)} />}
+                {isOpen && (
+                    <BannerReorderBody onClose={() => setIsOpen(false)} />
+                )}
             </DialogContent>
         </Dialog>
     );
@@ -139,9 +140,29 @@ function BannerReorderBody({ onClose }: { onClose: () => void }) {
 
 function BannerReorderRow({ banner }: { banner: Banner }) {
     const url = generateUploadThingURL(banner.mediaKey);
+    const thumbVideoRef = useRef<HTMLVideoElement>(null);
+
+    const isVideo = banner.mediaType === "video";
+
+    const handleHoverStart = () => {
+        if (!isVideo || !thumbVideoRef.current) return;
+        thumbVideoRef.current.play().catch(() => {
+            // ignore autoplay rejections
+        });
+    };
+
+    const handleHoverEnd = () => {
+        if (!isVideo || !thumbVideoRef.current) return;
+        thumbVideoRef.current.pause();
+        thumbVideoRef.current.currentTime = 0.5;
+    };
 
     return (
-        <div className="bg-background flex items-center gap-3 rounded-md border p-2 shadow-sm">
+        <div
+            className="bg-background flex items-center gap-3 rounded-md border p-2 shadow-sm"
+            onMouseEnter={handleHoverStart}
+            onMouseLeave={handleHoverEnd}
+        >
             <Icons.DotsSixVertical className="text-muted-foreground size-5 shrink-0" />
 
             <div className="bg-muted aspect-video w-16 shrink-0 overflow-hidden rounded-sm">
@@ -155,9 +176,15 @@ function BannerReorderRow({ banner }: { banner: Banner }) {
                         unoptimized
                     />
                 ) : (
-                    <div className="flex size-full items-center justify-center text-gray-500">
-                        <Icons.FileVideo className="size-5" />
-                    </div>
+                    <video
+                        ref={thumbVideoRef}
+                        src={`${url}#t=0.5`}
+                        preload="metadata"
+                        muted
+                        playsInline
+                        loop
+                        className="size-full object-cover"
+                    />
                 )}
             </div>
 

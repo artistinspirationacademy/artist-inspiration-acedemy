@@ -29,7 +29,7 @@ import {
 import { useBanner } from "@workspace/rq";
 import Image from "next/image";
 import { redirect, useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 interface PageProps {
@@ -77,6 +77,7 @@ export function BannerManageForm({ data }: PageProps) {
 
     const [isMediaSelectorOpen, setIsMediaSelectorOpen] = useState(false);
     const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
+    const previewVideoRef = useRef<HTMLVideoElement>(null);
 
     const form = useForm<CreateBanner>({
         resolver: zodResolver(createBannerSchema),
@@ -158,7 +159,30 @@ export function BannerManageForm({ data }: PageProps) {
 
                                 {previewUrl ? (
                                     <div className="flex items-center gap-4 rounded-md border p-3">
-                                        <div className="bg-muted aspect-video w-32 overflow-hidden rounded-md">
+                                        <div
+                                            className="bg-muted aspect-video w-32 shrink-0 cursor-pointer overflow-hidden rounded-md"
+                                            onMouseEnter={() => {
+                                                if (
+                                                    mediaType !== "video" ||
+                                                    !previewVideoRef.current
+                                                )
+                                                    return;
+                                                previewVideoRef.current
+                                                    .play()
+                                                    .catch(() => {
+                                                        // ignore autoplay rejections
+                                                    });
+                                            }}
+                                            onMouseLeave={() => {
+                                                if (
+                                                    mediaType !== "video" ||
+                                                    !previewVideoRef.current
+                                                )
+                                                    return;
+                                                previewVideoRef.current.pause();
+                                                previewVideoRef.current.currentTime = 0.5;
+                                            }}
+                                        >
                                             {mediaType === "image" ? (
                                                 <Image
                                                     src={previewUrl}
@@ -170,9 +194,13 @@ export function BannerManageForm({ data }: PageProps) {
                                                 />
                                             ) : (
                                                 <video
-                                                    src={previewUrl}
-                                                    className="size-full object-cover"
+                                                    ref={previewVideoRef}
+                                                    src={`${previewUrl}#t=0.5`}
+                                                    preload="metadata"
                                                     muted
+                                                    playsInline
+                                                    loop
+                                                    className="size-full object-cover"
                                                 />
                                             )}
                                         </div>
@@ -268,6 +296,7 @@ export function BannerManageForm({ data }: PageProps) {
                 isOpen={isMediaSelectorOpen}
                 setIsOpen={setIsMediaSelectorOpen}
                 selected={selectedMedia ? [selectedMedia] : []}
+                selectedKey={mediaKey || undefined}
                 types={["image", "video"]}
                 accept="image/*,video/*"
                 onSelectionComplete={handleMediaSelection}
