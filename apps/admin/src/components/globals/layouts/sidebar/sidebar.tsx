@@ -1,6 +1,5 @@
 "use client";
 
-import { Freveo } from "@/components/svgs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     Collapsible,
@@ -31,6 +30,7 @@ import {
     siteConfig,
 } from "@workspace/config";
 import { useAuth } from "@workspace/rq";
+import Image from "next/image";
 import Link from "next/link";
 
 export function Sidebar() {
@@ -62,7 +62,12 @@ function Header() {
                 >
                     <Link href="/">
                         <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                            <Freveo className="size-7" alwaysLight />
+                            <Image
+                                src="/icon1.png"
+                                alt="AIA Logo"
+                                width={35}
+                                height={35}
+                            />
                         </div>
 
                         <div className="grid flex-1 text-left text-sm leading-tight">

@@ -29,10 +29,10 @@ export const env = createEnv({
 
         JWT_SECRET: process.env.JWT_SECRET,
 
+        NEXT_PUBLIC_DEPLOYMENT_URL: process.env.NEXT_PUBLIC_DEPLOYMENT_URL,
+
         NEXT_PUBLIC_UPLOADTHING_BUCKET_ID:
             process.env.NEXT_PUBLIC_UPLOADTHING_BUCKET_ID,
-
-        NEXT_PUBLIC_DEPLOYMENT_URL: process.env.NEXT_PUBLIC_DEPLOYMENT_URL,
     },
     skipValidation: !!process.env.SKIP_ENV_VALIDATION,
     emptyStringAsUndefined: true,

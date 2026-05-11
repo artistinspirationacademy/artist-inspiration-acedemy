@@ -4,7 +4,10 @@
       "Bash(bunx eslint *)",
       "Bash(bunx tsc *)",
       "Bash(bun install *)",
-      "Bash(mkdir -p 'f:/Programming/Private/artist-inspiration-acedemy/apps/admin/src/app/\\(dashboard\\)/banners/create' 'f:/Programming/Private/artist-inspiration-acedemy/apps/admin/src/app/\\(dashboard\\)/banners/[id]/edit' 2>&1)"
+      "Bash(mkdir -p 'f:/Programming/Private/artist-inspiration-acedemy/apps/admin/src/app/\\(dashboard\\)/banners/create' 'f:/Programming/Private/artist-inspiration-acedemy/apps/admin/src/app/\\(dashboard\\)/banners/[id]/edit' 2>&1)",
+      "Bash(grep -i -E '^\\(MapPin|Sparkle|Star|MusicNote|PaintBrush|Microphone|Headphone|Play|Pause\\).+\\\\.d\\\\.ts$')",
+      "Bash(grep -E '^\\(MapPin|Sparkle|Star|MusicNote|PaintBrush|Microphone|Headphones|Play|Pause|ArrowRight|Envelope|Lightning\\)\\\\.d\\\\.ts$')",
+      "Bash(grep -E '^X[A-Z]?\\\\.d\\\\.ts$|^XLogo\\\\.d\\\\.ts$')"
     ],
     "additionalDirectories": [
       "f:\\Programming\\Private\\artist-inspiration-acedemy\\apps\\admin\\src\\app\\(dashboard)\\banners\\[id]"

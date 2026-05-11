@@ -82,10 +82,12 @@
         "@phosphor-icons/react": "^2.1.10",
         "@t3-oss/env-nextjs": "^0.13.11",
         "@tanstack/react-query": "^5.100.9",
+        "@workspace/cache": "workspace:*",
         "@workspace/config": "workspace:*",
         "dotenv": "^17.4.2",
         "drizzle-orm": "^1.0.0-rc.2-e38a2ba",
         "ioredis": "^5.10.1",
+        "motion": "^12.38.0",
         "next": "16.2.4",
         "nuqs": "^2.8.9",
         "postgres": "^3.4.9",
@@ -96,6 +98,7 @@
         "sonner": "^2.0.7",
         "tw-animate-css": "^1.4.0",
         "zod": "^4.4.3",
+        "zustand": "^5.0.13",
       },
       "devDependencies": {
         "@tailwindcss/postcss": "^4.1.18",
@@ -118,6 +121,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@workspace/config": "workspace:*",
+        "@workspace/db": "workspace:*",
         "dotenv": "^17.4.2",
         "ioredis": "^5.10.1",
         "zod": "^4.4.3",
@@ -162,6 +166,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
+        "@workspace/cache": "workspace:*",
         "@workspace/config": "workspace:*",
         "dotenv": "^17.4.2",
         "drizzle-orm": "^1.0.0-rc.2-e38a2ba",
@@ -1932,6 +1937,8 @@
     "zod-to-json-schema": ["zod-to-json-schema@3.25.2", "", { "peerDependencies": { "zod": "^3.25.28 || ^4" } }, "sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA=="],
 
     "zod-validation-error": ["zod-validation-error@4.0.2", "", { "peerDependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ=="],
+
+    "zustand": ["zustand@5.0.13", "", { "peerDependencies": { "@types/react": ">=18.0.0", "immer": ">=9.0.6", "react": ">=18.0.0", "use-sync-external-store": ">=1.2.0" }, "optionalPeers": ["@types/react", "immer", "react", "use-sync-external-store"] }, "sha512-efI2tVaVQPqtOh114loML/Z80Y4NP3yc+Ff0fYiZJPauNeWZeIp/bRFD7I9bfmCOYBh/PHxlglQ9+wvlwnPikQ=="],
 
     "@babel/core/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
 

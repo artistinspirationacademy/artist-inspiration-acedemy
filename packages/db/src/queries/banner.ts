@@ -11,6 +11,7 @@ import {
 import { db } from "../client";
 import { bannerContent, banners } from "../schemas";
 import { and, eq, ilike, inArray, sql } from "drizzle-orm";
+import { cache } from "@workspace/cache";
 
 class BannerQuery {
     async scan({
@@ -102,7 +103,7 @@ class BannerQuery {
     }
 
     async create(values: CreateBanner[]) {
-        return db.transaction(async (tx) => {
+        const data = await db.transaction(async (tx) => {
             const rows = await tx
                 .select({
                     max: sql<number>`coalesce(max(${banners.position}), -1)`,
@@ -117,6 +118,9 @@ class BannerQuery {
 
             return tx.insert(banners).values(withPositions).returning();
         });
+
+        await cache.home.drop();
+        return data;
     }
 
     async update({ id, values }: { id: string; values: UpdateBanner }) {
@@ -130,13 +134,14 @@ class BannerQuery {
             .returning()
             .then((res) => res[0]);
 
+        await cache.home.drop();
         return data;
     }
 
     async reorder({ values }: { values: ReorderBanner }) {
         if (values.length === 0) return [];
 
-        return db.transaction(async (tx) => {
+        const data = await db.transaction(async (tx) => {
             return Promise.all(
                 values.map(({ id, position }) =>
                     tx
@@ -148,6 +153,9 @@ class BannerQuery {
                 )
             );
         });
+
+        await cache.home.drop();
+        return data;
     }
 
     async delete({ ids }: { ids: string[] }) {
@@ -156,6 +164,7 @@ class BannerQuery {
             .where(inArray(banners.id, ids))
             .returning();
 
+        await cache.home.drop();
         return data;
     }
 }
@@ -183,6 +192,8 @@ class BannerContentQuery {
                 .returning()
                 .then((res) => res[0]);
 
+            await cache.home.drop();
+
             return data;
         } else {
             const data = await db
@@ -191,6 +202,7 @@ class BannerContentQuery {
                 .returning()
                 .then((res) => res[0]);
 
+            await cache.home.drop();
             return data;
         }
     }

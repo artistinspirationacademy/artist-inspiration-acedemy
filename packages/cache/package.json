@@ -13,10 +13,15 @@
         "./client": {
             "import": "./src/client.ts",
             "types": "./src/client.ts"
+        },
+        "./methods": {
+            "import": "./src/methods/index.ts",
+            "types": "./src/methods/index.ts"
         }
     },
     "dependencies": {
         "@workspace/config": "workspace:*",
+        "@workspace/db": "workspace:*",
         "dotenv": "^17.4.2",
         "ioredis": "^5.10.1",
         "zod": "^4.4.3"

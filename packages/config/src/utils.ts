@@ -327,3 +327,18 @@ export function generateUploadThingURL(fileKey: string) {
 
     return `https://${bucketId}.ufs.sh/f/${fileKey}`;
 }
+
+export function generateCustomCacheKey(
+    keys: (string | undefined)[],
+    prefix: string,
+    separator = "::"
+) {
+    return (
+        prefix +
+        separator +
+        keys
+            .map((k) => k ?? "*")
+            .filter(Boolean)
+            .join(separator)
+    );
+}

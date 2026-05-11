@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
+        "@workspace/cache": "workspace:*",
         "@workspace/config": "workspace:*",
         "dotenv": "^17.4.2",
         "drizzle-orm": "^1.0.0-rc.2-e38a2ba",
