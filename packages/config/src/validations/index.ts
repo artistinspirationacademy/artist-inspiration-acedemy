@@ -1,5 +1,7 @@
 export * from "./auth";
 export * from "./banner";
+export * from "./booking";
+export * from "./course";
 export * from "./general";
 export * from "./home";
 export * from "./media";

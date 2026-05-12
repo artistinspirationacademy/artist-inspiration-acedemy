@@ -79,3 +79,10 @@ export const MESSAGES = {
         },
     },
 } as const;
+
+export const COURSE_DETAIL_TYPES = [
+    "text",
+    "accordion",
+    "image",
+    "grid",
+] as const;

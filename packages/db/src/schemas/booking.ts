@@ -14,6 +14,7 @@ export const bookings = pgTable(
         experienceLevel: t.text("experience_level").notNull(),
         country: t.text("country").notNull(),
         timestamp: t.timestamp("timestamp").notNull().defaultNow(),
+        isActive: t.boolean("is_active").notNull().default(false),
         ...timestamps(t),
     }),
     (t) => [

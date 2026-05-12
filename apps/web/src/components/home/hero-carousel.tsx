@@ -12,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const SLIDE_DURATION_MS = 7000;
+const SLIDE_DURATION_MS = 5000;
 
 interface HeroCarouselProps {
     banners: Banner[];
@@ -47,7 +47,6 @@ export function HeroCarousel({
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            {/* Background slides */}
             <div className="absolute inset-0">
                 <AnimatePresence mode="sync">
                     {current && (
@@ -67,17 +66,14 @@ export function HeroCarousel({
                     )}
                 </AnimatePresence>
 
-                {/* Dark contrast overlay — strongest near content, lighter at edges */}
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.65)_60%,rgba(0,0,0,0.85)_100%)]" />
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/70" />
             </div>
 
-            {/* Foreground content */}
             <div className="relative z-10 flex h-full w-full items-center justify-center px-4 sm:px-6">
                 <HeroContent content={content} isLoading={isLoading} />
             </div>
 
-            {/* Slide indicators */}
             {banners.length > 1 && (
                 <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 sm:bottom-10">
                     {banners.map((b, i) => (
@@ -98,7 +94,6 @@ export function HeroCarousel({
                 </div>
             )}
 
-            {/* Scroll cue */}
             <div className="absolute right-0 bottom-6 left-0 z-10 flex justify-center text-[10px] tracking-[0.3em] text-white/60 uppercase sm:right-8 sm:bottom-8 sm:left-auto sm:justify-end sm:text-xs">
                 <span className="hidden sm:inline">Scroll to explore</span>
             </div>
@@ -222,11 +217,6 @@ function HeroContent({
     );
 }
 
-/**
- * Splits the title at the last word and wraps it in a highlight span so the
- * end of the headline gets a colored accent. Falls back to plain text for
- * single-word titles.
- */
 function renderTitleWithHighlight(title: string) {
     const words = title.trim().split(/\s+/);
     if (words.length <= 1) return title;
