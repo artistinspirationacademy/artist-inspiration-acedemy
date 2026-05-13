@@ -1,5 +1,6 @@
 import z from "zod";
 import { emailSchema, generateDateSchema, generateIdSchema } from "./general";
+import { courseSchema } from "./course";
 
 export const bookingSchema = z.object({
     id: generateIdSchema({ isUUID: true }),
@@ -19,7 +20,9 @@ export const bookingSchema = z.object({
         .string("Experience level is required")
         .min(1, "Experience level cannot be empty"),
     country: z.string("Country is required").min(1, "Country cannot be empty"),
-    timestamp: z.date("Timestamp is required and must be a valid date"),
+    timestamp: generateDateSchema({
+        error: "Timestamp is required and must be a valid date",
+    }),
     isActive: z.boolean("Is active is required"),
     createdAt: generateDateSchema({ error: "Created at must be a valid date" }),
     updatedAt: generateDateSchema({ error: "Updated at must be a valid date" }),
@@ -36,7 +39,9 @@ export const updateBookingSchema = bookingSchema.pick({
     isActive: true,
 });
 
-export const fullBookingSchema = bookingSchema.extend({});
+export const fullBookingSchema = bookingSchema.extend({
+    course: courseSchema,
+});
 
 export type Booking = z.infer<typeof bookingSchema>;
 export type CreateBooking = z.infer<typeof createBookingSchema>;

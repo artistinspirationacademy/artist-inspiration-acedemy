@@ -1,4 +1,5 @@
 import { bannerContentQueries, bannerQueries } from "./banner";
+import { bookingQueries } from "./booking";
 import { courseCategoryQueries, courseQueries } from "./course";
 import { mediaQueries } from "./media";
 import { userQueries } from "./user";
@@ -7,6 +8,7 @@ export const queries = {
     banner: Object.assign(bannerQueries, {
         content: bannerContentQueries,
     }),
+    booking: bookingQueries,
     course: Object.assign(courseQueries, {
         category: courseCategoryQueries,
     }),

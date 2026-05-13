@@ -48,6 +48,7 @@ import {
     RowsIcon,
     SpinnerIcon,
     CaretUpDownIcon,
+    CopyIcon,
 } from "@phosphor-icons/react/ssr";
 
 export const Icons = {
@@ -100,6 +101,7 @@ export const Icons = {
     Rows: RowsIcon,
     Spinner: SpinnerIcon,
     CaretUpDown: CaretUpDownIcon,
+    Copy: CopyIcon,
 };
 
 export type IconName = keyof typeof Icons;

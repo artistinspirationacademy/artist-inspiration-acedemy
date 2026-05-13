@@ -10,7 +10,16 @@
       "Bash(grep -E '^X[A-Z]?\\\\.d\\\\.ts$|^XLogo\\\\.d\\\\.ts$')",
       "Bash(Get-ChildItem -Path \"f:\\\\Programming\\\\Private\\\\artist-inspiration-acedemy\" -Directory)",
       "Bash(Select-Object -ExpandProperty Name)",
-      "Bash(bun run *)"
+      "Bash(bun run *)",
+      "Bash(Get-ChildItem -Path \"f:\\\\Programming\\\\Private\\\\artist-inspiration-acedemy\\\\apps\\\\web\\\\src\\\\components\\\\ui\" -Filter \"*.tsx\")",
+      "Bash(xargs grep -l '\"name\".*\"rq\"')",
+      "Bash(bun add *)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(bun pm *)",
+      "Bash(echo \"exit_code=$?\")",
+      "Bash(echo \"web_exit=$?\")",
+      "Bash(echo \"admin_exit=$?\")",
+      "Bash(echo \"db_exit=$?\")"
     ],
     "additionalDirectories": [
       "f:\\Programming\\Private\\artist-inspiration-acedemy\\apps\\admin\\src\\app\\(dashboard)\\banners\\[id]"

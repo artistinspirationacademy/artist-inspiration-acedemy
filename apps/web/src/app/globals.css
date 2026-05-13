@@ -157,3 +157,14 @@
         animation: hero-kenburns 10s ease-out forwards;
     }
 }
+
+/* remove top and bottom arrow from number input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}

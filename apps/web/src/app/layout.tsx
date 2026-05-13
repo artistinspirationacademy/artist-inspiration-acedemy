@@ -2,12 +2,16 @@ import "@workspace/config";
 import "./globals.css";
 import { ClientProvider } from "@/components/providers";
 import { cn, getAbsoluteURL, siteConfig } from "@workspace/config";
+import { ThemeProvider } from "@wrksz/themes/next";
 import { Metadata, Viewport } from "next";
 import { fontMono, nunitoSans } from "./font";
 
 export const viewport: Viewport = {
-    themeColor: [{ media: "(prefers-color-scheme: light)", color: "white" }],
-    colorScheme: "light",
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "white" },
+        { media: "(prefers-color-scheme: dark)", color: "black" },
+    ],
+    colorScheme: "dark",
     width: "device-width",
     initialScale: 1,
     maximumScale: 1,
@@ -82,7 +86,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
             )}
         >
             <body className="flex min-h-full flex-col">
-                <ClientProvider>{children}</ClientProvider>
+                <ThemeProvider attribute="class" defaultTheme="dark">
+                    <ClientProvider>{children}</ClientProvider>
+                </ThemeProvider>
             </body>
         </html>
     );

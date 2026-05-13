@@ -1,3 +1,4 @@
+import { BookingTable } from "@/components/dashboard/bookings";
 import { DashShell } from "@/components/globals/layouts";
 import { Metadata } from "next";
 import { Suspense } from "react";
@@ -19,7 +20,9 @@ export default function Page() {
                 </div>
             </div>
 
-            <Suspense></Suspense>
+            <Suspense>
+                <BookingTable />
+            </Suspense>
         </DashShell>
     );
 }
