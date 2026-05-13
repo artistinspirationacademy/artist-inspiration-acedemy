@@ -8,6 +8,7 @@ import {
     paginationQuerySchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
+import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 import z from "zod";
 
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest) {
         const parsed = createCourseSchema.array().parse(body);
 
         const data = await queries.course.create(parsed);
+        await cache.course.drop();
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -107,6 +109,7 @@ export async function DELETE(req: NextRequest) {
             );
 
         await queries.course.delete({ ids });
+        await cache.course.drop();
         return CResponse();
     } catch (err) {
         return handleError(err);

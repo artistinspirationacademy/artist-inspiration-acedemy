@@ -4,6 +4,7 @@ import {
     handleError,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
+import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 
 export async function GET() {
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
         const parsed = createBannerContentSchema.parse(body);
 
         const data = await queries.banner.content.update(parsed);
+        await cache.home.drop();
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

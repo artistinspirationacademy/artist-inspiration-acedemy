@@ -93,12 +93,11 @@ export function CourseDetailsReorder({
             </div>
 
             <div className="flex justify-end gap-2">
-                <Button size="sm" variant="ghost" onClick={() => onFinish?.()}>
+                <Button variant="ghost" onClick={() => onFinish?.()}>
                     Cancel
                 </Button>
 
                 <Button
-                    size="sm"
                     disabled={items.every((item, i) => item.position === i + 1)}
                     onClick={handleSave}
                 >

@@ -6,6 +6,7 @@ import {
     updateCourseCategorySchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
+import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 
 interface Context {
@@ -48,6 +49,7 @@ export async function PATCH(req: NextRequest, { params }: Context) {
         }
 
         const data = await queries.course.category.update({ id, values });
+        await cache.course.drop();
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

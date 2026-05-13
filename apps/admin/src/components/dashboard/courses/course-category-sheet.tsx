@@ -51,7 +51,7 @@ export function CourseCategorySheet() {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <Button size="sm" variant="outline">
+                <Button variant="outline">
                     <Icons.Folder />
                     Categories
                 </Button>
@@ -231,7 +231,6 @@ function CategoryForm({
                         <Button
                             type="button"
                             variant="ghost"
-                            size="sm"
                             disabled={isSubmitting}
                             onClick={() => {
                                 form.reset({
@@ -247,7 +246,6 @@ function CategoryForm({
                     )}
                     <Button
                         type="submit"
-                        size="sm"
                         disabled={isSubmitting || !form.formState.isDirty}
                     >
                         {isEdit ? "Update category" : "Create category"}
@@ -326,7 +324,6 @@ function CategoryRow({
 
                     <AlertDialogFooter>
                         <Button
-                            size="sm"
                             variant="ghost"
                             onClick={() => setIsDeleteOpen(false)}
                             disabled={isPending}
@@ -334,7 +331,6 @@ function CategoryRow({
                             Cancel
                         </Button>
                         <Button
-                            size="sm"
                             variant="destructive"
                             onClick={handleDelete}
                             disabled={isPending}

@@ -323,6 +323,8 @@ export type CreateCourseCategory = z.infer<typeof createCourseCategorySchema>;
 export type UpdateCourseCategory = z.infer<typeof updateCourseCategorySchema>;
 export type FullCourseCategory = z.infer<typeof fullCourseCategorySchema>;
 
+export type CourseDetails = z.infer<typeof courseDetailsSchema>;
+
 export type Course = z.infer<typeof courseSchema>;
 export type CreateCourse = z.infer<typeof createCourseSchema>;
 export type UpdateCourse = z.infer<typeof updateCourseSchema>;

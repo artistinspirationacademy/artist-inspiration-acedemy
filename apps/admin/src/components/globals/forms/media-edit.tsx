@@ -101,7 +101,6 @@ export function MediaEditForm({ data, onSuccess, onClose }: PageProps) {
                         <Button
                             type="reset"
                             variant="ghost"
-                            size="sm"
                             disabled={isUpdating}
                             onClick={() => onClose?.()}
                         >
@@ -111,7 +110,6 @@ export function MediaEditForm({ data, onSuccess, onClose }: PageProps) {
 
                     <Button
                         type="submit"
-                        size="sm"
                         disabled={isUpdating || !form.formState.isDirty}
                     >
                         Update

@@ -108,7 +108,7 @@ export function DataTableBulkActions<TData>({
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="h-8">
+                        <Button variant="outline" className="h-8">
                             Actions
                             <CaretDownIcon />
                         </Button>

@@ -216,7 +216,6 @@ export function BannerManageForm({ data }: PageProps) {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            size="sm"
                                             disabled={isSubmitting}
                                             onClick={() =>
                                                 setIsMediaSelectorOpen(true)
@@ -272,7 +271,6 @@ export function BannerManageForm({ data }: PageProps) {
                     <Button
                         type="button"
                         variant="ghost"
-                        size="sm"
                         disabled={isSubmitting}
                         onClick={() => router.push("/banners")}
                     >
@@ -280,7 +278,6 @@ export function BannerManageForm({ data }: PageProps) {
                     </Button>
                     <Button
                         type="submit"
-                        size="sm"
                         disabled={
                             isSubmitting ||
                             (isEdit && !form.formState.isDirty) ||

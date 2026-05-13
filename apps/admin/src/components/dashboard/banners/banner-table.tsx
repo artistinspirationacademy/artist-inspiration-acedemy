@@ -475,12 +475,11 @@ function BannerPreview({ banner }: { banner: TableBanner }) {
                             <Button
                                 type="button"
                                 variant="outline"
-                                size="sm"
                                 onClick={handleCopyLink}
                             >
                                 Copy link
                             </Button>
-                            <Button type="button" size="sm" asChild>
+                            <Button type="button" asChild>
                                 <a
                                     href={banner.url}
                                     target="_blank"

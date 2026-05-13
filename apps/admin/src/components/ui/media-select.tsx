@@ -270,7 +270,6 @@ export function MediaSelectModal({
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    size="sm"
                                     className="h-8"
                                     onClick={() =>
                                         setPage((p) => Math.max(1, p - 1))
@@ -286,7 +285,6 @@ export function MediaSelectModal({
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    size="sm"
                                     className="h-8"
                                     onClick={() =>
                                         setPage((p) =>
@@ -308,14 +306,13 @@ export function MediaSelectModal({
                         <Button
                             type="button"
                             variant="ghost"
-                            size="sm"
                             onClick={handleCancel}
                         >
                             Cancel
                         </Button>
                     </DialogClose>
 
-                    <Button type="button" size="sm" onClick={handleComplete}>
+                    <Button type="button" onClick={handleComplete}>
                         Select{" "}
                         {selectedItems.length > 0 &&
                             `(${selectedItems.length})`}

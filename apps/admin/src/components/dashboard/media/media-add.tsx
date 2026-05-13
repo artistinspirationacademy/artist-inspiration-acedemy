@@ -56,7 +56,6 @@ export function MediaAddButton() {
     return (
         <>
             <Button
-                size="sm"
                 onClick={() => fileInputRef.current.click()}
                 disabled={isUploading}
             >

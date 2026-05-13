@@ -110,7 +110,6 @@ export function CourseAction({ data, onDelete }: PageProps) {
 
                     <AlertDialogFooter>
                         <Button
-                            size="sm"
                             variant="ghost"
                             onClick={() => setIsDeleteModalOpen(false)}
                             disabled={isPending}
@@ -119,7 +118,6 @@ export function CourseAction({ data, onDelete }: PageProps) {
                         </Button>
 
                         <Button
-                            size="sm"
                             variant="destructive"
                             onClick={handleDelete}
                             disabled={isPending}

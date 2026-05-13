@@ -39,11 +39,6 @@ export const siteConfig: SiteConfig = {
     contact: "contact@artistinspiration.academy",
     menu: [
         {
-            name: "About",
-            href: "/about",
-            icon: "Users",
-        },
-        {
             name: "Courses",
             href: "/courses",
             icon: "Eye",
@@ -52,6 +47,11 @@ export const siteConfig: SiteConfig = {
             name: "Teachers",
             href: "/teachers",
             icon: "Teacher",
+        },
+        {
+            name: "About",
+            href: "/about",
+            icon: "Users",
         },
         {
             name: "Contact",

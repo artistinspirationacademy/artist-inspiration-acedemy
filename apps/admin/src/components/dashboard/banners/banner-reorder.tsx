@@ -25,7 +25,7 @@ export function BannerReorderDialog() {
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
+                <Button variant="outline">
                     <Icons.DotsSixVertical />
                     Reorder
                 </Button>
@@ -116,21 +116,11 @@ function BannerReorderBody({ onClose }: { onClose: () => void }) {
 
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        disabled={isSaving}
-                    >
+                    <Button type="button" variant="ghost" disabled={isSaving}>
                         Cancel
                     </Button>
                 </DialogClose>
-                <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleSave}
-                    disabled={isSaving}
-                >
+                <Button type="button" onClick={handleSave} disabled={isSaving}>
                     {isSaving ? "Saving..." : "Save Order"}
                 </Button>
             </DialogFooter>

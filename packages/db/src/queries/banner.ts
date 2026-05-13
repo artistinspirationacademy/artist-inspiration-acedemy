@@ -11,7 +11,6 @@ import {
 import { db } from "../client";
 import { bannerContent, banners } from "../schemas";
 import { and, eq, ilike, inArray, sql } from "drizzle-orm";
-import { cache } from "@workspace/cache";
 
 class BannerQuery {
     async scan({
@@ -119,7 +118,6 @@ class BannerQuery {
             return tx.insert(banners).values(withPositions).returning();
         });
 
-        await cache.home.drop();
         return data;
     }
 
@@ -134,7 +132,6 @@ class BannerQuery {
             .returning()
             .then((res) => res[0]);
 
-        await cache.home.drop();
         return data;
     }
 
@@ -154,7 +151,6 @@ class BannerQuery {
             );
         });
 
-        await cache.home.drop();
         return data;
     }
 
@@ -164,7 +160,6 @@ class BannerQuery {
             .where(inArray(banners.id, ids))
             .returning();
 
-        await cache.home.drop();
         return data;
     }
 }
@@ -192,8 +187,6 @@ class BannerContentQuery {
                 .returning()
                 .then((res) => res[0]);
 
-            await cache.home.drop();
-
             return data;
         } else {
             const data = await db
@@ -202,7 +195,6 @@ class BannerContentQuery {
                 .returning()
                 .then((res) => res[0]);
 
-            await cache.home.drop();
             return data;
         }
     }

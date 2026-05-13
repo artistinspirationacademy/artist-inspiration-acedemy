@@ -154,7 +154,6 @@ function BannerContentFormInner({
                 <div className="flex justify-end">
                     <Button
                         type="submit"
-                        size="sm"
                         disabled={isUpdating || !form.formState.isDirty}
                     >
                         {isUpdating ? "Saving..." : "Save changes"}

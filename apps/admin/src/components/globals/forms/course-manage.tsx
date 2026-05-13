@@ -2,12 +2,7 @@
 "use no memo";
 
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Dialog,
     DialogContent,
@@ -256,7 +251,7 @@ export function CourseManageForm({ data }: PageProps) {
                                                     <AutosizeTextarea
                                                         {...field}
                                                         placeholder="Describe what students will learn..."
-                                                        minHeight={120}
+                                                        rows={3}
                                                         disabled={isSubmitting}
                                                     />
                                                 </FormControl>
@@ -426,7 +421,6 @@ export function CourseManageForm({ data }: PageProps) {
                         <Button
                             type="button"
                             variant="ghost"
-                            size="sm"
                             disabled={isSubmitting}
                             onClick={() => router.push("/courses")}
                         >
@@ -434,7 +428,6 @@ export function CourseManageForm({ data }: PageProps) {
                         </Button>
                         <Button
                             type="submit"
-                            size="sm"
                             disabled={
                                 isSubmitting ||
                                 (isEdit && !form.formState.isDirty) ||
@@ -546,7 +539,6 @@ function ImagePickerField({
                             <Button
                                 type="button"
                                 variant="outline"
-                                size="sm"
                                 className="w-full"
                                 disabled={isPending}
                                 onClick={onOpen}
@@ -562,7 +554,7 @@ function ImagePickerField({
                             disabled={isPending}
                             onClick={onOpen}
                         >
-                            <Icons.PlusCircle className="mr-2 size-4" />
+                            <Icons.PlusCircle />
                             Select Image
                         </Button>
                     )}
@@ -621,7 +613,6 @@ function CourseDetailsCard({
                 <div className="flex gap-2">
                     <Button
                         type="button"
-                        size="sm"
                         variant="outline"
                         className="flex-1"
                         onClick={addDetail}
@@ -633,7 +624,6 @@ function CourseDetailsCard({
 
                     <Button
                         type="button"
-                        size="sm"
                         variant="outline"
                         onClick={onReorderClick}
                         disabled={isPending || detailFields.length === 0}
@@ -816,7 +806,11 @@ function DetailCard({
                         index={index}
                         addItem={addItem}
                         isPending={isPending}
-                        label={type === "accordion" ? "Accordion Items" : "Grid Items"}
+                        label={
+                            type === "accordion"
+                                ? "Accordion Items"
+                                : "Grid Items"
+                        }
                     />
                 )}
             </div>
@@ -839,9 +833,10 @@ function ImageDetailContent({
         control: form.control,
         name: `details.${index}.content`,
     });
-    const url = typeof value === "string" && value
-        ? generateUploadThingURL(value)
-        : null;
+    const url =
+        typeof value === "string" && value
+            ? generateUploadThingURL(value)
+            : null;
 
     return (
         <FormField
@@ -867,7 +862,6 @@ function ImageDetailContent({
                             <Button
                                 type="button"
                                 variant="outline"
-                                size="sm"
                                 className="w-full"
                                 disabled={isPending}
                                 onClick={() => setIsOpen(true)}
@@ -945,7 +939,6 @@ function KeyValueDetailContent({
             <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 className="w-full"
                 onClick={addItem}
                 disabled={isPending}

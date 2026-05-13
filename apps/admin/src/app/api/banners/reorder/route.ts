@@ -6,6 +6,7 @@ import {
     reorderBannerSchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
+import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 
 export async function PATCH(req: NextRequest) {
@@ -25,6 +26,7 @@ export async function PATCH(req: NextRequest) {
             );
 
         const data = await queries.banner.reorder({ values });
+        await cache.home.drop();
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

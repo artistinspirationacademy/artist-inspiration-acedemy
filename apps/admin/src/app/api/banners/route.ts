@@ -9,6 +9,7 @@ import {
     paginationQuerySchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
+import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 import z from "zod";
 
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
         const parsed = createBannerSchema.array().parse(body);
 
         const data = await queries.banner.create(parsed);
+        await cache.home.drop();
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -81,6 +83,7 @@ export async function DELETE(req: NextRequest) {
             );
 
         await queries.banner.delete({ ids });
+        await cache.home.drop();
         return CResponse();
     } catch (err) {
         return handleError(err);

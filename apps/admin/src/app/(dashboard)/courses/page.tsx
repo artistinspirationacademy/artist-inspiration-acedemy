@@ -1,4 +1,7 @@
-import { CourseCategorySheet, CourseTable } from "@/components/dashboard/courses";
+import {
+    CourseCategorySheet,
+    CourseTable,
+} from "@/components/dashboard/courses";
 import { DashShell } from "@/components/globals/layouts";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@workspace/config";
@@ -25,7 +28,7 @@ export default function Page() {
                 <div className="flex items-center justify-center gap-2 md:justify-end">
                     <CourseCategorySheet />
 
-                    <Button size="sm" asChild>
+                    <Button asChild>
                         <Link href={"/courses/create"}>
                             <Icons.Plus />
                             New Course

@@ -20,7 +20,7 @@ export function BannerContentSheet() {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-                <Button size="sm" variant="outline">
+                <Button variant="outline">
                     <Icons.PencilSimple />
                     Page Content
                 </Button>

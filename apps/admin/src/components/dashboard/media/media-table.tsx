@@ -538,12 +538,11 @@ function MediaPreview({ media }: { media: Media }) {
                             <Button
                                 type="button"
                                 variant="outline"
-                                size="sm"
                                 onClick={handleCopyLink}
                             >
                                 Copy link
                             </Button>
-                            <Button type="button" size="sm" asChild>
+                            <Button type="button" asChild>
                                 <a
                                     href={mediaUrl}
                                     target="_blank"

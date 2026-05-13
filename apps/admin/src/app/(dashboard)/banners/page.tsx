@@ -30,7 +30,7 @@ export default function Page() {
                     <BannerContentSheet />
                     <BannerReorderDialog />
 
-                    <Button size="sm" asChild>
+                    <Button asChild>
                         <Link href={"/banners/create"}>
                             <Icons.Plus />
                             New Banner

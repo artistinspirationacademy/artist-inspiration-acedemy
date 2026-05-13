@@ -238,13 +238,11 @@ export function ExportDialog<T extends Record<string, unknown>>({
                 </div>
 
                 <DialogFooter>
-                    <Button size="sm" variant="ghost" onClick={onClose}>
+                    <Button variant="ghost" onClick={onClose}>
                         Cancel
                     </Button>
 
-                    <Button size="sm" onClick={handleExport}>
-                        Export CSV
-                    </Button>
+                    <Button onClick={handleExport}>Export CSV</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

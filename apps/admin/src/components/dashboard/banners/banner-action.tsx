@@ -109,7 +109,6 @@ export function BannerAction({ data, onDelete }: PageProps) {
 
                     <AlertDialogFooter>
                         <Button
-                            size="sm"
                             variant="ghost"
                             onClick={() => setIsDeleteModalOpen(false)}
                             disabled={isPending}
@@ -118,7 +117,6 @@ export function BannerAction({ data, onDelete }: PageProps) {
                         </Button>
 
                         <Button
-                            size="sm"
                             variant="destructive"
                             onClick={handleDelete}
                             disabled={isPending}
