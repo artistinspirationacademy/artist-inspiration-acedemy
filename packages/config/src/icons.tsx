@@ -42,6 +42,12 @@ import {
     PlayIcon,
     PauseIcon,
     XIcon,
+    ImageIcon,
+    FolderIcon,
+    StackIcon,
+    RowsIcon,
+    SpinnerIcon,
+    CaretUpDownIcon,
 } from "@phosphor-icons/react/ssr";
 
 export const Icons = {
@@ -88,6 +94,12 @@ export const Icons = {
     House: HouseSimpleIcon,
     Facebook: FacebookLogoIcon,
     Instagram: InstagramLogoIcon,
+    Image: ImageIcon,
+    Folder: FolderIcon,
+    Stack: StackIcon,
+    Rows: RowsIcon,
+    Spinner: SpinnerIcon,
+    CaretUpDown: CaretUpDownIcon,
 };
 
 export type IconName = keyof typeof Icons;

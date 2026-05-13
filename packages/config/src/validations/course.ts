@@ -26,9 +26,12 @@ export const courseSchema = z.object({
     description: z
         .string("Description is required")
         .min(1, "Description cannot be empty"),
-    imageKey: z
-        .string("Image key is required")
-        .min(1, "Image key cannot be empty"),
+    cardImageKey: z
+        .string("Card image key is required")
+        .min(1, "Card image key cannot be empty"),
+    coverImageKey: z
+        .string("Cover image key is required")
+        .min(1, "Cover image key cannot be empty"),
     isActive: z.boolean("Is active is required"),
     createdAt: generateDateSchema({ error: "Created at must be a valid date" }),
     updatedAt: generateDateSchema({ error: "Updated at must be a valid date" }),

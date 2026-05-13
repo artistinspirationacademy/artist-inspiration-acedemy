@@ -36,6 +36,17 @@ export async function PATCH(req: NextRequest, { params }: Context) {
         if (!existing)
             throw new AppError(MESSAGES.ERRORS.GENERAL.NOT_FOUND, "NOT_FOUND");
 
+        if (values.slug) {
+            const slugConflict = await queries.course.category.get({
+                slug: values.slug,
+            });
+            if (slugConflict && slugConflict.id !== id)
+                throw new AppError(
+                    `A category with slug '${values.slug}' already exists`,
+                    "CONFLICT"
+                );
+        }
+
         const data = await queries.course.category.update({ id, values });
         return CResponse({ data });
     } catch (err) {

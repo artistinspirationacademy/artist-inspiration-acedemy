@@ -20,28 +20,33 @@ import { courseCategories, courseDetails, courses } from "../schemas";
 class CourseCategoryQuery {
     async scan(params: {
         ids?: string[];
+        slugs?: string[];
         isActive?: boolean;
         include: "courses";
     }): Promise<FullCourseCategory[]>;
 
     async scan(params?: {
         ids?: string[];
+        slugs?: string[];
         isActive?: boolean;
         include?: never;
     }): Promise<CourseCategory[]>;
 
     async scan({
         ids,
+        slugs,
         isActive,
         include,
     }: {
         ids?: string[];
+        slugs?: string[];
         isActive?: boolean;
         include?: "courses";
     } = {}): Promise<CourseCategory[] | FullCourseCategory[]> {
         const where = {
             AND: [
                 ...(ids?.length ? [{ id: { in: ids } }] : []),
+                ...(slugs?.length ? [{ slug: { in: slugs } }] : []),
                 ...(isActive !== undefined ? [{ isActive }] : []),
             ],
         };

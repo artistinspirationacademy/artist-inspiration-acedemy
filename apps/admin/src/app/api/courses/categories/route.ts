@@ -57,6 +57,14 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const parsed = createCourseCategorySchema.array().parse(body);
 
+        const slugs = parsed.map((item) => item.slug);
+        const conflicting = await queries.course.category.scan({ slugs });
+        if (conflicting.length)
+            throw new AppError(
+                `Categories with the following slugs already exist: ${conflicting.map((c) => `'${c.slug}'`).join(", ")}`,
+                "CONFLICT"
+            );
+
         const data = await queries.course.category.create(parsed);
         return CResponse({ message: "CREATED", data });
     } catch (err) {
