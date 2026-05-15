@@ -97,12 +97,16 @@ export const siteConfig: SiteConfig = {
                     url: "/courses",
                 },
                 {
-                    title: "Teachers",
-                    url: "/teachers",
+                    title: "Features",
+                    url: "/features",
                 },
                 {
                     title: "Media",
                     url: "/media",
+                },
+                {
+                    title: "Teachers",
+                    url: "/teachers",
                 },
                 {
                     title: "Testimonials",

@@ -2,6 +2,7 @@ import { bannerContentQueries, bannerQueries } from "./banner";
 import { bookingQueries } from "./booking";
 import { courseCategoryQueries, courseQueries } from "./course";
 import { mediaQueries } from "./media";
+import { teacherQueries } from "./teacher";
 import { userQueries } from "./user";
 
 export const queries = {
@@ -13,5 +14,6 @@ export const queries = {
         category: courseCategoryQueries,
     }),
     media: mediaQueries,
+    teacher: teacherQueries,
     user: userQueries,
 };
