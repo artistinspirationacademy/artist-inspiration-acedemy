@@ -1,12 +1,14 @@
 import {
     AppError,
     BANNER_MEDIA_TYPES,
+    bulkIdsSchema,
     createBannerSchema,
     CResponse,
     deleteDataSchema,
     handleError,
     MESSAGES,
     paginationQuerySchema,
+    updateBannerSchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
 import { cache } from "@workspace/cache";
@@ -60,6 +62,31 @@ export async function POST(req: NextRequest) {
         const data = await queries.banner.create(parsed);
         await cache.home.drop();
         return CResponse({ message: "CREATED", data });
+    } catch (err) {
+        return handleError(err);
+    }
+}
+
+export async function PATCH(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { ids, values } = z
+            .object({ ids: bulkIdsSchema, values: updateBannerSchema })
+            .parse(body);
+
+        const existingData = await queries.banner.scan({ ids });
+        const invalidIds = ids.filter(
+            (id) => !existingData.find((item) => item.id === id)
+        );
+        if (invalidIds.length)
+            throw new AppError(
+                MESSAGES.ERRORS.GENERAL.INVALID_IDS(invalidIds),
+                "BAD_REQUEST"
+            );
+
+        const data = await queries.banner.bulkUpdate({ ids, values });
+        await cache.home.drop();
+        return CResponse({ data });
     } catch (err) {
         return handleError(err);
     }

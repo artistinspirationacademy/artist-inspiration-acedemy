@@ -215,6 +215,14 @@ export const createCourseSchema = courseSchema
 
 export const updateCourseCategorySchema = createCourseCategorySchema.partial();
 
+export const bulkUpdateCourseSchema = courseSchema
+    .omit({
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+    })
+    .partial();
+
 export const updateCourseSchema = courseSchema
     .omit({
         id: true,
@@ -328,4 +336,5 @@ export type CourseDetails = z.infer<typeof courseDetailsSchema>;
 export type Course = z.infer<typeof courseSchema>;
 export type CreateCourse = z.infer<typeof createCourseSchema>;
 export type UpdateCourse = z.infer<typeof updateCourseSchema>;
+export type BulkUpdateCourse = z.infer<typeof bulkUpdateCourseSchema>;
 export type FullCourse = z.infer<typeof fullCourseSchema>;

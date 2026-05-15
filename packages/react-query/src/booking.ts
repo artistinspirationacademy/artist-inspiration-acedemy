@@ -154,6 +154,38 @@ export function useBooking() {
         });
     };
 
+    const useBulkUpdate = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Updating bookings...");
+                return { toastId };
+            },
+            mutationFn: async ({
+                ids,
+                values,
+            }: {
+                ids: string[];
+                values: UpdateBooking;
+            }) => {
+                const res = await cFetch<Booking[]>(`/api/bookings`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ ids, values }),
+                });
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (data, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["booking"] });
+                toast.success(
+                    `${data?.length ?? 0} booking(s) updated successfully!`,
+                    { id: toastId }
+                );
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -181,5 +213,12 @@ export function useBooking() {
         });
     };
 
-    return { useScan, usePaginate, useGet, useUpdate, useDelete };
+    return {
+        useScan,
+        usePaginate,
+        useGet,
+        useUpdate,
+        useBulkUpdate,
+        useDelete,
+    };
 }

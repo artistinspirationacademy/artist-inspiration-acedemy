@@ -181,7 +181,7 @@ export function BannerTable() {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [dataToExport, setDataToExport] = useState<TableBanner[]>([]);
 
-    const { usePaginate, useDelete } = useBanner();
+    const { usePaginate, useDelete, useBulkUpdate } = useBanner();
     const {
         data: dataRaw,
         isPending,
@@ -195,9 +195,17 @@ export function BannerTable() {
     });
 
     const { mutateAsync: deleteAsync, isPending: isDeleting } = useDelete();
+    const { mutateAsync: bulkUpdateAsync, isPending: isBulkUpdating } =
+        useBulkUpdate();
 
     const handleDelete = async (selectedIds: string[]) => {
         await deleteAsync({ ids: selectedIds });
+        refetch();
+        setRowSelection({});
+    };
+
+    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+        await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});
     };
@@ -296,6 +304,32 @@ export function BannerTable() {
                     bulkActions={
                         <DataTableBulkActions
                             actions={[
+                                {
+                                    label: "Activate",
+                                    icon: Icons.Eye,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, true),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Activate selected banners?",
+                                        description:
+                                            "Active banners are shown on the public site.",
+                                        confirm: "Activate",
+                                    },
+                                },
+                                {
+                                    label: "Deactivate",
+                                    icon: Icons.EyeOff,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, false),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Deactivate selected banners?",
+                                        description:
+                                            "Inactive banners are hidden from the public site.",
+                                        confirm: "Deactivate",
+                                    },
+                                },
                                 {
                                     label: "Export Selected",
                                     icon: Icons.Upload,

@@ -7,16 +7,58 @@ import {
     teacherSchema,
     UpdateTeacher,
 } from "@workspace/config";
-import { and, eq, ilike, inArray } from "drizzle-orm";
+import { and, eq, exists, ilike, inArray } from "drizzle-orm";
 import { db } from "../client";
-import { teachers } from "../schemas";
+import { courseTeachers, teachers } from "../schemas";
+
+function teacherFilters(params: {
+    ids?: string[];
+    courseId?: string;
+    isActive?: boolean;
+    search?: string;
+}) {
+    const { ids, courseId, isActive, search } = params;
+    return {
+        AND: [
+            ...(ids?.length ? [{ id: { in: ids } }] : []),
+            ...(isActive !== undefined ? [{ isActive }] : []),
+            ...(search ? [{ name: { ilike: `%${search}%` } }] : []),
+            ...(courseId ? [{ courses: { id: courseId } }] : []),
+        ],
+    };
+}
+
+function countWhereClause(params: {
+    courseId?: string;
+    isActive?: boolean;
+    search?: string;
+}) {
+    const { courseId, isActive, search } = params;
+    return and(
+        search?.length ? ilike(teachers.name, `%${search}%`) : undefined,
+        isActive !== undefined ? eq(teachers.isActive, isActive) : undefined,
+        courseId
+            ? exists(
+                  db
+                      .select({ teacherId: courseTeachers.teacherId })
+                      .from(courseTeachers)
+                      .where(
+                          and(
+                              eq(courseTeachers.teacherId, teachers.id),
+                              eq(courseTeachers.courseId, courseId)
+                          )
+                      )
+              )
+            : undefined
+    );
+}
 
 class TeacherQuery {
     async scan(params: {
         ids?: string[];
         courseId?: string;
         isActive?: boolean;
-        include: "course";
+        include: "courses";
     }): Promise<FullTeacher[]>;
 
     async scan(params?: {
@@ -35,21 +77,15 @@ class TeacherQuery {
         ids?: string[];
         courseId?: string;
         isActive?: boolean;
-        include?: "course";
+        include?: "courses";
     } = {}): Promise<Teacher[] | FullTeacher[]> {
-        const where = {
-            AND: [
-                ...(ids?.length ? [{ id: { in: ids } }] : []),
-                ...(courseId ? [{ courseId }] : []),
-                ...(isActive !== undefined ? [{ isActive }] : []),
-            ],
-        };
+        const where = teacherFilters({ ids, courseId, isActive });
 
-        if (include === "course") {
+        if (include === "courses") {
             const data = await db.query.teachers.findMany({
                 where,
                 orderBy: { createdAt: "desc" },
-                with: { course: true },
+                with: { courses: true },
             });
             return fullTeacherSchema.array().parse(data);
         }
@@ -67,7 +103,7 @@ class TeacherQuery {
         search?: string;
         courseId?: string;
         isActive?: boolean;
-        include: "course";
+        include: "courses";
     }): Promise<{ data: FullTeacher[]; count: number; pages: number }>;
 
     async paginate(params?: {
@@ -92,44 +128,27 @@ class TeacherQuery {
         search?: string;
         courseId?: string;
         isActive?: boolean;
-        include?: "course";
+        include?: "courses";
     } = {}) {
         limit = limit < 0 ? DEFAULT_PAGINATION.GENERAL.LIMIT : limit;
         page = page < 0 ? DEFAULT_PAGINATION.GENERAL.PAGE : page;
 
-        const where = {
-            AND: [
-                ...(search ? [{ name: { ilike: `%${search}%` } }] : []),
-                ...(courseId ? [{ courseId }] : []),
-                ...(isActive !== undefined ? [{ isActive }] : []),
-            ],
-        };
+        const where = teacherFilters({ courseId, isActive, search });
 
         const extras = {
             count: db
-                .$count(
-                    teachers,
-                    and(
-                        search?.length
-                            ? ilike(teachers.name, `%${search}%`)
-                            : undefined,
-                        courseId ? eq(teachers.courseId, courseId) : undefined,
-                        isActive !== undefined
-                            ? eq(teachers.isActive, isActive)
-                            : undefined
-                    )
-                )
+                .$count(teachers, countWhereClause({ courseId, isActive, search }))
                 .as("teacher_count"),
         };
 
-        if (include === "course") {
+        if (include === "courses") {
             const data = await db.query.teachers.findMany({
                 where,
                 orderBy: { createdAt: "desc" },
                 limit,
                 offset: (page - 1) * limit,
                 extras,
-                with: { course: true },
+                with: { courses: true },
             });
 
             const count = +(data?.[0]?.count || 0);
@@ -156,7 +175,7 @@ class TeacherQuery {
 
     async get(params: {
         id: string;
-        include: "course";
+        include: "courses";
     }): Promise<FullTeacher | null>;
 
     async get(params: {
@@ -169,12 +188,12 @@ class TeacherQuery {
         include,
     }: {
         id: string;
-        include?: "course";
+        include?: "courses";
     }): Promise<Teacher | FullTeacher | null> {
-        if (include === "course") {
+        if (include === "courses") {
             const data = await db.query.teachers.findFirst({
                 where: { id },
-                with: { course: true },
+                with: { courses: true },
             });
             if (!data) return null;
             return fullTeacherSchema.parse(data);
@@ -186,8 +205,32 @@ class TeacherQuery {
     }
 
     async create(values: CreateTeacher[]): Promise<Teacher[]> {
-        const data = await db.insert(teachers).values(values).returning();
-        return teacherSchema.array().parse(data);
+        return db.transaction(async (tx) => {
+            const results: Teacher[] = [];
+
+            for (const { courseIds, ...teacherData } of values) {
+                const inserted = await tx
+                    .insert(teachers)
+                    .values(teacherData)
+                    .returning()
+                    .then((res) => res[0]);
+
+                if (!inserted) continue;
+
+                if (courseIds.length) {
+                    await tx.insert(courseTeachers).values(
+                        courseIds.map((courseId) => ({
+                            teacherId: inserted.id,
+                            courseId,
+                        }))
+                    );
+                }
+
+                results.push(teacherSchema.parse(inserted));
+            }
+
+            return results;
+        });
     }
 
     async update({
@@ -197,15 +240,72 @@ class TeacherQuery {
         id: string;
         values: UpdateTeacher;
     }): Promise<Teacher | undefined> {
-        const data = await db
-            .update(teachers)
-            .set({ ...values, updatedAt: new Date() })
-            .where(eq(teachers.id, id))
-            .returning()
-            .then((res) => res[0]);
+        const { courseIds, ...teacherValues } = values;
 
-        if (!data) return undefined;
-        return teacherSchema.parse(data);
+        return db.transaction(async (tx) => {
+            const updated = await tx
+                .update(teachers)
+                .set({ ...teacherValues, updatedAt: new Date() })
+                .where(eq(teachers.id, id))
+                .returning()
+                .then((res) => res[0]);
+
+            if (!updated) return undefined;
+
+            if (courseIds !== undefined) {
+                await tx
+                    .delete(courseTeachers)
+                    .where(eq(courseTeachers.teacherId, id));
+
+                if (courseIds.length) {
+                    await tx.insert(courseTeachers).values(
+                        courseIds.map((courseId) => ({
+                            teacherId: id,
+                            courseId,
+                        }))
+                    );
+                }
+            }
+
+            return teacherSchema.parse(updated);
+        });
+    }
+
+    async bulkUpdate({
+        ids,
+        values,
+    }: {
+        ids: string[];
+        values: UpdateTeacher;
+    }): Promise<Teacher[]> {
+        const { courseIds, ...teacherValues } = values;
+
+        return db.transaction(async (tx) => {
+            const updated = Object.keys(teacherValues).length
+                ? await tx
+                      .update(teachers)
+                      .set({ ...teacherValues, updatedAt: new Date() })
+                      .where(inArray(teachers.id, ids))
+                      .returning()
+                : await tx.query.teachers.findMany({
+                      where: { id: { in: ids } },
+                  });
+
+            if (courseIds !== undefined) {
+                await tx
+                    .delete(courseTeachers)
+                    .where(inArray(courseTeachers.teacherId, ids));
+
+                if (courseIds.length) {
+                    const rows = ids.flatMap((teacherId) =>
+                        courseIds.map((courseId) => ({ teacherId, courseId }))
+                    );
+                    await tx.insert(courseTeachers).values(rows);
+                }
+            }
+
+            return teacherSchema.array().parse(updated);
+        });
     }
 
     async delete({ ids }: { ids: string[] }) {

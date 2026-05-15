@@ -189,7 +189,7 @@ export function BookingTable() {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [dataToExport, setDataToExport] = useState<FullBooking[]>([]);
 
-    const { usePaginate, useDelete } = useBooking();
+    const { usePaginate, useDelete, useBulkUpdate } = useBooking();
     const {
         data: dataRaw,
         isPending,
@@ -203,9 +203,17 @@ export function BookingTable() {
     });
 
     const { mutateAsync: deleteAsync, isPending: isDeleting } = useDelete();
+    const { mutateAsync: bulkUpdateAsync, isPending: isBulkUpdating } =
+        useBulkUpdate();
 
     const handleDelete = async (selectedIds: string[]) => {
         await deleteAsync({ ids: selectedIds });
+        refetch();
+        setRowSelection({});
+    };
+
+    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+        await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});
     };
@@ -291,6 +299,32 @@ export function BookingTable() {
                     bulkActions={
                         <DataTableBulkActions
                             actions={[
+                                {
+                                    label: "Mark as Completed",
+                                    icon: Icons.Check,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, true),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Mark selected bookings as completed?",
+                                        description:
+                                            "This will flag the bookings as completed in the dashboard.",
+                                        confirm: "Mark Completed",
+                                    },
+                                },
+                                {
+                                    label: "Mark as Inactive",
+                                    icon: Icons.Close,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, false),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Mark selected bookings as inactive?",
+                                        description:
+                                            "This will revert the bookings to an inactive state.",
+                                        confirm: "Mark Inactive",
+                                    },
+                                },
                                 {
                                     label: "Export Selected",
                                     icon: Icons.Upload,

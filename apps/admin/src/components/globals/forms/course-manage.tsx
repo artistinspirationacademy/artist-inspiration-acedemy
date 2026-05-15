@@ -28,6 +28,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
@@ -417,27 +418,20 @@ export function CourseManageForm({ data }: PageProps) {
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-2">
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            disabled={isSubmitting}
-                            onClick={() => router.push("/courses")}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            disabled={
-                                isSubmitting ||
-                                (isEdit && !form.formState.isDirty) ||
-                                !cardImageKey ||
-                                !coverImageKey
-                            }
-                        >
-                            {isEdit ? "Update Course" : "Create Course"}
-                        </Button>
-                    </div>
+                    <FormFooterBar
+                        visible={!isEdit || form.formState.isDirty}
+                        isSubmitting={isSubmitting}
+                        saveDisabled={!cardImageKey || !coverImageKey}
+                        saveLabel={isEdit ? "Update Course" : "Create Course"}
+                        savingLabel={isEdit ? "Updating..." : "Creating..."}
+                        message={
+                            isEdit
+                                ? "You have unsaved changes"
+                                : "New course — fill the details and save"
+                        }
+                        cancelLabel="Cancel"
+                        onCancel={() => router.push("/courses")}
+                    />
                 </form>
             </Form>
 

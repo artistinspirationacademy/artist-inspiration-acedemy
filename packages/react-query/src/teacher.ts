@@ -24,7 +24,7 @@ export function useTeacher() {
         ids?: string[];
         courseId?: string;
         isActive?: boolean;
-        include?: "course";
+        include?: "courses";
         initialData?: T;
         enabled?: boolean;
     }) => {
@@ -65,7 +65,7 @@ export function useTeacher() {
         search?: string;
         courseId?: string;
         isActive?: boolean;
-        include?: "course";
+        include?: "courses";
         initialData?: T;
         enabled?: boolean;
     }) => {
@@ -186,6 +186,38 @@ export function useTeacher() {
         });
     };
 
+    const useBulkUpdate = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Updating teachers...");
+                return { toastId };
+            },
+            mutationFn: async ({
+                ids,
+                values,
+            }: {
+                ids: string[];
+                values: UpdateTeacher;
+            }) => {
+                const res = await cFetch<Teacher[]>(`/api/teachers`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ ids, values }),
+                });
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (data, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["teacher"] });
+                toast.success(
+                    `${data?.length ?? 0} teacher(s) updated successfully!`,
+                    { id: toastId }
+                );
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -221,6 +253,7 @@ export function useTeacher() {
         useGet,
         useCreate,
         useUpdate,
+        useBulkUpdate,
         useDelete,
     };
 }

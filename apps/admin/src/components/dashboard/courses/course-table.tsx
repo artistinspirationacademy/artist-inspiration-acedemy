@@ -202,7 +202,7 @@ export function CourseTable() {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [dataToExport, setDataToExport] = useState<TableCourse[]>([]);
 
-    const { usePaginate, useDelete } = useCourse();
+    const { usePaginate, useDelete, useBulkUpdate } = useCourse();
     const { useScan: useCategoryScan } = useCourseCategory();
 
     const { data: categories } = useCategoryScan({});
@@ -219,9 +219,17 @@ export function CourseTable() {
     });
 
     const { mutateAsync: deleteAsync, isPending: isDeleting } = useDelete();
+    const { mutateAsync: bulkUpdateAsync, isPending: isBulkUpdating } =
+        useBulkUpdate();
 
     const handleDelete = async (selectedIds: string[]) => {
         await deleteAsync({ ids: selectedIds });
+        refetch();
+        setRowSelection({});
+    };
+
+    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+        await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});
     };
@@ -327,6 +335,32 @@ export function CourseTable() {
                     bulkActions={
                         <DataTableBulkActions
                             actions={[
+                                {
+                                    label: "Activate",
+                                    icon: Icons.Eye,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, true),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Activate selected courses?",
+                                        description:
+                                            "Active courses are visible on the public site.",
+                                        confirm: "Activate",
+                                    },
+                                },
+                                {
+                                    label: "Deactivate",
+                                    icon: Icons.EyeOff,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, false),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Deactivate selected courses?",
+                                        description:
+                                            "Inactive courses are hidden from the public site.",
+                                        confirm: "Deactivate",
+                                    },
+                                },
                                 {
                                     label: "Export Selected",
                                     icon: Icons.Upload,

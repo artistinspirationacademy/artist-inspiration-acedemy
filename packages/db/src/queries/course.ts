@@ -1,4 +1,5 @@
 import {
+    BulkUpdateCourse,
     Course,
     CourseCategory,
     courseCategorySchema,
@@ -446,6 +447,22 @@ class CourseQuery {
         });
 
         return fullCourseSchema.parse({ ...data, category });
+    }
+
+    async bulkUpdate({
+        ids,
+        values,
+    }: {
+        ids: string[];
+        values: BulkUpdateCourse;
+    }): Promise<Course[]> {
+        const data = await db
+            .update(courses)
+            .set({ ...values, updatedAt: new Date() })
+            .where(inArray(courses.id, ids))
+            .returning();
+
+        return courseSchema.array().parse(data);
     }
 
     async delete({ ids }: { ids: string[] }) {

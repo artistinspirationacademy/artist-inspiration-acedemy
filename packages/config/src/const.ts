@@ -86,3 +86,14 @@ export const COURSE_DETAIL_TYPES = [
     "image",
     "grid",
 ] as const;
+
+export const ABOUT_SECTION_TYPES = [
+    "text",
+    "image",
+    "image_text",
+    "image_text_reverse",
+    "accordion",
+    "grid",
+    "quote",
+    "cta",
+] as const;

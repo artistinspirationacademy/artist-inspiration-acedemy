@@ -154,6 +154,16 @@ class BannerQuery {
         return data;
     }
 
+    async bulkUpdate({ ids, values }: { ids: string[]; values: UpdateBanner }) {
+        const data = await db
+            .update(banners)
+            .set({ ...values, updatedAt: new Date() })
+            .where(inArray(banners.id, ids))
+            .returning();
+
+        return bannerSchema.array().parse(data);
+    }
+
     async delete({ ids }: { ids: string[] }) {
         const data = await db
             .delete(banners)

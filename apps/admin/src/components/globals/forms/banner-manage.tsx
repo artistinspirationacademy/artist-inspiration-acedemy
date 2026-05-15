@@ -11,6 +11,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
 import { MediaSelectModal } from "@/components/ui/media-select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -267,26 +268,20 @@ export function BannerManageForm({ data }: PageProps) {
                     />
                 </div>
 
-                <div className="flex justify-end gap-2">
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        disabled={isSubmitting}
-                        onClick={() => router.push("/banners")}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        disabled={
-                            isSubmitting ||
-                            (isEdit && !form.formState.isDirty) ||
-                            !mediaKey
-                        }
-                    >
-                        {isEdit ? "Update Banner" : "Create Banner"}
-                    </Button>
-                </div>
+                <FormFooterBar
+                    visible={!isEdit || form.formState.isDirty}
+                    isSubmitting={isSubmitting}
+                    saveDisabled={!mediaKey}
+                    saveLabel={isEdit ? "Update Banner" : "Create Banner"}
+                    savingLabel={isEdit ? "Updating..." : "Creating..."}
+                    message={
+                        isEdit
+                            ? "You have unsaved changes"
+                            : "New banner — fill the details and save"
+                    }
+                    cancelLabel="Cancel"
+                    onCancel={() => router.push("/banners")}
+                />
             </form>
 
             <MediaSelectModal

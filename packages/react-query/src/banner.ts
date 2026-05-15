@@ -206,6 +206,38 @@ export function useBanner() {
         });
     };
 
+    const useBulkUpdate = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Updating banners...");
+                return { toastId };
+            },
+            mutationFn: async ({
+                ids,
+                values,
+            }: {
+                ids: string[];
+                values: UpdateBanner;
+            }) => {
+                const res = await cFetch<Banner[]>(`/api/banners`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ ids, values }),
+                });
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (data, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["banner"] });
+                toast.success(
+                    `${data?.length ?? 0} banner(s) updated successfully!`,
+                    { id: toastId }
+                );
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -242,6 +274,7 @@ export function useBanner() {
         useCreate,
         useUpdate,
         useReorder,
+        useBulkUpdate,
         useDelete,
     };
 }

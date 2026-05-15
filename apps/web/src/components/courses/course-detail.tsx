@@ -1,11 +1,13 @@
 "use client";
 
+import { TeachersSection } from "@/components/teachers";
 import {
     cn,
     CourseDetails,
     FullCourse,
     generateUploadThingURL,
     Icons,
+    Teacher,
 } from "@workspace/config";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -13,9 +15,10 @@ import Link from "next/link";
 
 interface CourseDetailProps {
     course: FullCourse;
+    teachers?: Teacher[];
 }
 
-export function CourseDetail({ course }: CourseDetailProps) {
+export function CourseDetail({ course, teachers = [] }: CourseDetailProps) {
     const coverUrl = generateUploadThingURL(course.coverImageKey);
     const details = (course.details ?? [])
         .slice()
@@ -39,6 +42,8 @@ export function CourseDetail({ course }: CourseDetailProps) {
                         ))}
                     </div>
                 )}
+
+                <TeachersSection teachers={teachers} courseName={course.title} />
 
                 <CourseFooterCTA />
             </div>

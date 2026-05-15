@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+    BulkUpdateCourse,
     cFetch,
     Course,
     CourseCategory,
@@ -202,6 +203,38 @@ export function useCourse() {
         });
     };
 
+    const useBulkUpdate = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Updating courses...");
+                return { toastId };
+            },
+            mutationFn: async ({
+                ids,
+                values,
+            }: {
+                ids: string[];
+                values: BulkUpdateCourse;
+            }) => {
+                const res = await cFetch<Course[]>(`/api/courses`, {
+                    method: "PATCH",
+                    body: JSON.stringify({ ids, values }),
+                });
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (data, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["course"] });
+                toast.success(
+                    `${data?.length ?? 0} course(s) updated successfully!`,
+                    { id: toastId }
+                );
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -237,6 +270,7 @@ export function useCourse() {
         useGet,
         useCreate,
         useUpdate,
+        useBulkUpdate,
         useDelete,
     };
 }

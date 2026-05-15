@@ -1,5 +1,7 @@
 import {
     AppError,
+    bulkIdsSchema,
+    bulkUpdateCourseSchema,
     createCourseSchema,
     CResponse,
     deleteDataSchema,
@@ -86,6 +88,31 @@ export async function POST(req: NextRequest) {
         const data = await queries.course.create(parsed);
         await cache.course.drop();
         return CResponse({ message: "CREATED", data });
+    } catch (err) {
+        return handleError(err);
+    }
+}
+
+export async function PATCH(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { ids, values } = z
+            .object({ ids: bulkIdsSchema, values: bulkUpdateCourseSchema })
+            .parse(body);
+
+        const existingData = await queries.course.scan({ ids });
+        const invalidIds = ids.filter(
+            (id) => !existingData.find((item) => item.id === id)
+        );
+        if (invalidIds.length)
+            throw new AppError(
+                MESSAGES.ERRORS.GENERAL.INVALID_IDS(invalidIds),
+                "BAD_REQUEST"
+            );
+
+        const data = await queries.course.bulkUpdate({ ids, values });
+        await cache.course.drop();
+        return CResponse({ data });
     } catch (err) {
         return handleError(err);
     }

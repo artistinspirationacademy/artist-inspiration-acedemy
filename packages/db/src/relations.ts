@@ -19,8 +19,8 @@ export const relations = defineRelations(schema, (r) => ({
             to: r.courseDetails.courseId,
         }),
         teachers: r.many.teachers({
-            from: r.courses.id,
-            to: r.teachers.courseId,
+            from: r.courses.id.through(r.courseTeachers.courseId),
+            to: r.teachers.id.through(r.courseTeachers.teacherId),
         }),
         testimonials: r.many.testimonials({
             from: r.courses.id,
@@ -39,10 +39,9 @@ export const relations = defineRelations(schema, (r) => ({
         }),
     },
     teachers: {
-        course: r.one.courses({
-            from: r.teachers.courseId,
-            to: r.courses.id,
-            optional: false,
+        courses: r.many.courses({
+            from: r.teachers.id.through(r.courseTeachers.teacherId),
+            to: r.courses.id.through(r.courseTeachers.courseId),
         }),
     },
     testimonials: {

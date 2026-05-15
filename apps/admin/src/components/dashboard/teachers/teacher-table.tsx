@@ -11,14 +11,6 @@ import {
     FieldMapping,
 } from "@/components/ui/data-table";
 import {
-    Course,
-    DEFAULT_PAGINATION,
-    generateUploadThingURL,
-    Icons,
-    Teacher,
-    truncateText,
-} from "@workspace/config";
-import {
     ColumnDef,
     ColumnFiltersState,
     getFilteredRowModel,
@@ -26,6 +18,14 @@ import {
     RowSelectionState,
     VisibilityState,
 } from "@tanstack/react-table";
+import {
+    DEFAULT_PAGINATION,
+    FullTeacher,
+    generateUploadThingURL,
+    Icons,
+    truncateText,
+} from "@workspace/config";
+import { useTeacher } from "@workspace/rq";
 import { format } from "date-fns";
 import Image from "next/image";
 import {
@@ -37,11 +37,9 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { ActiveFilter, CourseFilter } from "./filters";
 import { TeacherAction } from "./teacher-action";
-import { useCourse, useTeacher } from "@workspace/rq";
 
-export type TableTeacher = Teacher & {
+export type TableTeacher = FullTeacher & {
     imageUrl: string;
-    courseTitle: string;
 };
 
 const columns = (
@@ -76,7 +74,7 @@ const columns = (
         header: "Name",
         cell: ({ row }) => (
             <div className="flex items-center gap-2">
-                <div className="bg-muted relative size-10 shrink-0 overflow-hidden rounded-full">
+                <div className="bg-muted relative size-10 shrink-0 overflow-hidden rounded-md">
                     <Image
                         src={row.original.imageUrl}
                         alt={row.original.name}
@@ -90,20 +88,47 @@ const columns = (
         ),
     },
     {
-        accessorKey: "courseTitle",
-        header: "Course",
-        cell: ({ row }) => (
-            <Badge variant="outline" className="whitespace-nowrap">
-                {row.original.courseTitle}
-            </Badge>
-        ),
+        accessorKey: "courses",
+        header: "Courses",
+        cell: ({ row }) => {
+            const courses = row.original.courses ?? [];
+            if (!courses.length)
+                return (
+                    <span className="text-muted-foreground text-xs">
+                        No courses
+                    </span>
+                );
+
+            const visible = courses.slice(0, 2);
+            const hidden = courses.length - visible.length;
+
+            return (
+                <div className="flex max-w-xs flex-wrap gap-1">
+                    {visible.map((c) => (
+                        <Badge
+                            key={c.id}
+                            variant="outline"
+                            className="whitespace-nowrap"
+                        >
+                            {truncateText(c.title, 18)}
+                        </Badge>
+                    ))}
+                    {hidden > 0 && (
+                        <Badge variant="secondary" title={courses.slice(2).map((c) => c.title).join(", ")}>
+                            +{hidden}
+                        </Badge>
+                    )}
+                </div>
+            );
+        },
+        enableSorting: false,
     },
     {
         accessorKey: "about",
         header: "About",
         cell: ({ row }) => (
             <p className="text-muted-foreground max-w-xs text-sm">
-                {truncateText(row.original.about, 60)}
+                {truncateText(row.original.about, 40)}
             </p>
         ),
     },
@@ -162,7 +187,14 @@ const columns = (
 const exportFields: FieldMapping<TableTeacher>[] = [
     { source: "id", target: "ID", include: true, order: 0 },
     { source: "name", target: "Name", include: true, order: 1 },
-    { source: "courseTitle", target: "Course", include: true, order: 2 },
+    {
+        source: "courses",
+        target: "Courses",
+        include: true,
+        order: 2,
+        formatter: (data) =>
+            (data.courses ?? []).map((c) => c.title).join(" | "),
+    },
     { source: "about", target: "About", include: true, order: 3 },
     { source: "rating", target: "Rating", include: true, order: 4 },
     { source: "experience", target: "Experience", include: true, order: 5 },
@@ -206,23 +238,24 @@ export function TeacherTable() {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [dataToExport, setDataToExport] = useState<TableTeacher[]>([]);
 
-    const { usePaginate, useDelete } = useTeacher();
-    const { useScan: useCourseScan } = useCourse();
+    const { usePaginate, useDelete, useBulkUpdate } = useTeacher();
 
-    const { data: courses } = useCourseScan({});
     const {
         data: dataRaw,
         isPending,
         refetch,
-    } = usePaginate({
+    } = usePaginate<{ data: FullTeacher[]; count: number; pages: number }>({
         limit,
         page,
         search,
         courseId: courseId ?? undefined,
         isActive: isActive ?? undefined,
+        include: "courses",
     });
 
     const { mutateAsync: deleteAsync, isPending: isDeleting } = useDelete();
+    const { mutateAsync: bulkUpdateAsync, isPending: isBulkUpdating } =
+        useBulkUpdate();
 
     const handleDelete = async (selectedIds: string[]) => {
         await deleteAsync({ ids: selectedIds });
@@ -230,17 +263,11 @@ export function TeacherTable() {
         setRowSelection({});
     };
 
-    const handleSingleDelete = useCallback(
-        (deletedId: string) => {
-            setRowSelection((prev) => {
-                const newSelection = { ...prev };
-                delete newSelection[deletedId];
-                return newSelection;
-            });
-            refetch();
-        },
-        [refetch]
-    );
+    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+        await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
+        refetch();
+        setRowSelection({});
+    };
 
     const handleExport = (_: string[], getSelected?: () => TableTeacher[]) => {
         const selected = getSelected ? getSelected() : [];
@@ -268,16 +295,22 @@ export function TeacherTable() {
         setPage(1);
     };
 
+    const handleSingleDelete = useCallback(
+        (deletedId: string) => {
+            setRowSelection((prev) => {
+                const newSelection = { ...prev };
+                delete newSelection[deletedId];
+                return newSelection;
+            });
+            refetch();
+        },
+        [refetch]
+    );
+
     const tableColumns = useMemo(
         () => columns(handleSingleDelete),
         [handleSingleDelete]
     );
-
-    const courseMap = useMemo(() => {
-        const map = new Map<string, Course>();
-        courses?.forEach((c) => map.set(c.id, c));
-        return map;
-    }, [courses]);
 
     const data = useMemo(
         () => ({
@@ -285,10 +318,9 @@ export function TeacherTable() {
             data: dataRaw?.data.map((d) => ({
                 ...d,
                 imageUrl: generateUploadThingURL(d.imageKey),
-                courseTitle: courseMap.get(d.courseId)?.title ?? "Unknown",
             })),
         }),
-        [dataRaw, courseMap]
+        [dataRaw]
     );
 
     if (!data) return null;
@@ -329,6 +361,32 @@ export function TeacherTable() {
                     bulkActions={
                         <DataTableBulkActions
                             actions={[
+                                {
+                                    label: "Activate",
+                                    icon: Icons.Eye,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, true),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Activate selected teachers?",
+                                        description:
+                                            "Active teachers are visible on the public site.",
+                                        confirm: "Activate",
+                                    },
+                                },
+                                {
+                                    label: "Deactivate",
+                                    icon: Icons.EyeOff,
+                                    onClick: (selectedRowIds) =>
+                                        handleBulkActive(selectedRowIds, false),
+                                    disabled: isBulkUpdating,
+                                    alert: {
+                                        title: "Deactivate selected teachers?",
+                                        description:
+                                            "Inactive teachers are hidden from the public site.",
+                                        confirm: "Deactivate",
+                                    },
+                                },
                                 {
                                     label: "Export Selected",
                                     icon: Icons.Upload,

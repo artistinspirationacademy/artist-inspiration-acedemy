@@ -1,8 +1,17 @@
 "use client";
 "use no memo";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
 import {
     Form,
     FormControl,
@@ -12,44 +21,50 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupInput,
+} from "@/components/ui/input-group";
 import { MediaSelectModal } from "@/components/ui/media-select";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+    cn,
     Course,
     CreateTeacher,
     createTeacherSchema,
+    FullCourseCategory,
+    FullTeacher,
     generateUploadThingURL,
     Icons,
     Media,
-    Teacher,
     UpdateTeacher,
 } from "@workspace/config";
-import { useCourse, useTeacher } from "@workspace/rq";
+import { useCourseCategory, useTeacher } from "@workspace/rq";
 import Image from "next/image";
 import { redirect, useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 interface PageProps {
-    data?: Teacher;
+    data?: FullTeacher;
 }
 
 export function TeacherFetch({ type }: { type: "create" | "edit" }) {
     const { id } = useParams<{ id?: string }>();
 
     const { useGet } = useTeacher();
-    const { data, isPending } = useGet({
+    const { data, isPending } = useGet<FullTeacher>({
         id: type === "edit" && typeof id === "string" ? id : "",
         enabled: type === "edit" && typeof id === "string",
     });
@@ -79,16 +94,18 @@ export function TeacherManageForm({ data }: PageProps) {
 
     const [isMediaSelectorOpen, setIsMediaSelectorOpen] = useState(false);
     const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
-
-    const { useScan: useCourseScan } = useCourse();
-    const { data: courses = [], isPending: isCoursesPending } = useCourseScan(
-        {}
+    const [experienceInput, setExperienceInput] = useState<string>(() =>
+        String(data?.experience ?? 1)
     );
+
+    const { useScan: useCourseCategoryScan } = useCourseCategory();
+    const { data: categories = [], isPending: isCoursesPending } =
+        useCourseCategoryScan<FullCourseCategory[]>({ include: "courses" });
 
     const form = useForm<CreateTeacher>({
         resolver: zodResolver(createTeacherSchema),
         defaultValues: {
-            courseId: data?.courseId ?? "",
+            courseIds: data?.courses?.map((c) => c.id) ?? [],
             name: data?.name ?? "",
             about: data?.about ?? "",
             imageKey: data?.imageKey ?? "",
@@ -178,79 +195,116 @@ export function TeacherManageForm({ data }: PageProps) {
                                     )}
                                 />
 
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                    <FormField
-                                        control={form.control}
-                                        name="rating"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Rating</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        min={1}
-                                                        max={5}
-                                                        step={1}
-                                                        value={field.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                e.target
-                                                                    .value === ""
-                                                                    ? 0
-                                                                    : Number(
-                                                                          e
-                                                                              .target
-                                                                              .value
-                                                                      )
-                                                            )
+                                <FormField
+                                    control={form.control}
+                                    name="rating"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Rating</FormLabel>
+                                            <FormControl>
+                                                <div className="bg-muted/40 flex items-center justify-between rounded-md border px-4 py-3">
+                                                    <StarRating
+                                                        value={field.value ?? 0}
+                                                        onChange={
+                                                            field.onChange
                                                         }
                                                         disabled={isSubmitting}
-                                                        placeholder="1 - 5"
                                                     />
-                                                </FormControl>
-                                                <FormDescription>
-                                                    Rating out of 5.
-                                                </FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                                    <span className="text-muted-foreground text-xs">
+                                                        Tap a star (left half
+                                                        for .5)
+                                                    </span>
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="experience"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Experience (years)
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="number"
-                                                        min={1}
-                                                        step={1}
-                                                        value={field.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.onChange(
-                                                                e.target
-                                                                    .value === ""
-                                                                    ? 0
-                                                                    : Number(
-                                                                          e
-                                                                              .target
-                                                                              .value
-                                                                      )
-                                                            )
-                                                        }
+                                <FormField
+                                    control={form.control}
+                                    name="experience"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Experience</FormLabel>
+                                            <FormControl>
+                                                <InputGroup>
+                                                    <InputGroupInput
+                                                        type="text"
+                                                        inputMode="decimal"
+                                                        pattern="[0-9]*\.?[0-9]*"
+                                                        maxLength={5}
+                                                        placeholder="e.g. 1.5"
+                                                        value={experienceInput}
+                                                        onChange={(e) => {
+                                                            const raw =
+                                                                e.target.value;
+                                                            const cleaned = raw
+                                                                .replace(
+                                                                    /[^0-9.]/g,
+                                                                    ""
+                                                                )
+                                                                .replace(
+                                                                    /(\..*)\./g,
+                                                                    "$1"
+                                                                );
+                                                            setExperienceInput(
+                                                                cleaned
+                                                            );
+                                                            if (
+                                                                cleaned === ""
+                                                            ) {
+                                                                field.onChange(
+                                                                    undefined
+                                                                );
+                                                            } else if (
+                                                                !cleaned.endsWith(
+                                                                    "."
+                                                                )
+                                                            ) {
+                                                                field.onChange(
+                                                                    Number(
+                                                                        cleaned
+                                                                    )
+                                                                );
+                                                            }
+                                                        }}
+                                                        onBlur={() => {
+                                                            if (
+                                                                experienceInput.endsWith(
+                                                                    "."
+                                                                )
+                                                            ) {
+                                                                const norm =
+                                                                    experienceInput.slice(
+                                                                        0,
+                                                                        -1
+                                                                    );
+                                                                setExperienceInput(
+                                                                    norm
+                                                                );
+                                                                field.onChange(
+                                                                    norm
+                                                                        ? Number(
+                                                                              norm
+                                                                          )
+                                                                        : undefined
+                                                                );
+                                                            }
+                                                            field.onBlur();
+                                                        }}
+                                                        name={field.name}
                                                         disabled={isSubmitting}
-                                                        placeholder="Years of experience"
                                                     />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                                                    <InputGroupAddon align="inline-end">
+                                                        year(s)
+                                                    </InputGroupAddon>
+                                                </InputGroup>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </CardContent>
                         </Card>
                     </div>
@@ -264,41 +318,24 @@ export function TeacherManageForm({ data }: PageProps) {
                             <CardContent className="space-y-4">
                                 <FormField
                                     control={form.control}
-                                    name="courseId"
+                                    name="courseIds"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Course</FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                value={field.value || ""}
-                                                disabled={
-                                                    isSubmitting ||
-                                                    isCoursesPending
-                                                }
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Select a course" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {courses.map(
-                                                        (course: Course) => (
-                                                            <SelectItem
-                                                                key={course.id}
-                                                                value={
-                                                                    course.id
-                                                                }
-                                                            >
-                                                                {course.title}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                            <FormLabel>Courses</FormLabel>
+                                            <FormControl>
+                                                <CourseMultiSelect
+                                                    categories={categories}
+                                                    value={field.value ?? []}
+                                                    onChange={field.onChange}
+                                                    disabled={
+                                                        isSubmitting ||
+                                                        isCoursesPending
+                                                    }
+                                                />
+                                            </FormControl>
                                             <FormDescription>
-                                                The course this teacher belongs
-                                                to.
+                                                Courses this teacher can teach.
+                                                Choose one or more.
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
@@ -406,26 +443,20 @@ export function TeacherManageForm({ data }: PageProps) {
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-2">
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        disabled={isSubmitting}
-                        onClick={() => router.push("/teachers")}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        disabled={
-                            isSubmitting ||
-                            (isEdit && !form.formState.isDirty) ||
-                            !imageKey
-                        }
-                    >
-                        {isEdit ? "Update Teacher" : "Create Teacher"}
-                    </Button>
-                </div>
+                <FormFooterBar
+                    visible={!isEdit || form.formState.isDirty}
+                    isSubmitting={isSubmitting}
+                    saveDisabled={!imageKey}
+                    saveLabel={isEdit ? "Update Teacher" : "Create Teacher"}
+                    savingLabel={isEdit ? "Updating..." : "Creating..."}
+                    message={
+                        isEdit
+                            ? "You have unsaved changes"
+                            : "New teacher — fill the details and save"
+                    }
+                    cancelLabel="Cancel"
+                    onCancel={() => router.push("/teachers")}
+                />
             </form>
 
             <MediaSelectModal
@@ -438,5 +469,228 @@ export function TeacherManageForm({ data }: PageProps) {
                 onSelectionComplete={handleMediaSelection}
             />
         </Form>
+    );
+}
+
+function CourseMultiSelect({
+    categories,
+    value,
+    onChange,
+    disabled,
+}: {
+    categories: FullCourseCategory[];
+    value: string[];
+    onChange: (next: string[]) => void;
+    disabled?: boolean;
+}) {
+    const [open, setOpen] = useState(false);
+
+    const allCourses = useMemo(
+        () =>
+            categories.flatMap((c) =>
+                (c.courses ?? []).map((course) => ({
+                    course,
+                    categoryName: c.name,
+                }))
+            ),
+        [categories]
+    );
+
+    const courseMap = useMemo(() => {
+        const map = new Map<string, Course>();
+        allCourses.forEach(({ course }) => map.set(course.id, course));
+        return map;
+    }, [allCourses]);
+
+    const selected = value
+        .map((id) => courseMap.get(id))
+        .filter((c): c is Course => !!c);
+
+    const toggle = (id: string) => {
+        if (value.includes(id)) onChange(value.filter((v) => v !== id));
+        else onChange([...value, id]);
+    };
+
+    const remove = (id: string) => onChange(value.filter((v) => v !== id));
+
+    return (
+        <div className="space-y-2">
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        role="combobox"
+                        disabled={disabled}
+                        className="h-auto min-h-10 w-full justify-between px-3 font-normal"
+                    >
+                        <span
+                            className={cn(
+                                "truncate",
+                                selected.length === 0 &&
+                                    "text-muted-foreground"
+                            )}
+                        >
+                            {selected.length === 0
+                                ? "Select courses"
+                                : `${selected.length} course${selected.length === 1 ? "" : "s"} selected`}
+                        </span>
+                        <Icons.CaretUpDown
+                            weight="bold"
+                            className="size-4 shrink-0 opacity-50"
+                        />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0"
+                    align="start"
+                >
+                    <Command>
+                        <CommandInput placeholder="Search courses..." />
+                        <CommandList>
+                            <CommandEmpty>No courses found.</CommandEmpty>
+                            {categories.map((category) => {
+                                const inCategory = category.courses ?? [];
+                                if (!inCategory.length) return null;
+                                return (
+                                    <CommandGroup
+                                        key={category.id}
+                                        heading={category.name}
+                                    >
+                                        {inCategory.map((course) => {
+                                            const isSelected = value.includes(
+                                                course.id
+                                            );
+                                            return (
+                                                <CommandItem
+                                                    key={course.id}
+                                                    value={`${course.title} ${category.name}`}
+                                                    onSelect={() =>
+                                                        toggle(course.id)
+                                                    }
+                                                >
+                                                    <Icons.Check
+                                                        weight="bold"
+                                                        className={cn(
+                                                            "mr-2 size-4",
+                                                            isSelected
+                                                                ? "opacity-100"
+                                                                : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {course.title}
+                                                </CommandItem>
+                                            );
+                                        })}
+                                    </CommandGroup>
+                                );
+                            })}
+                        </CommandList>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+
+            {selected.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                    {selected.map((course) => (
+                        <Badge
+                            key={course.id}
+                            variant="secondary"
+                            className="gap-1 pr-1"
+                        >
+                            <span className="max-w-[140px] truncate">
+                                {course.title}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => remove(course.id)}
+                                disabled={disabled}
+                                className="hover:bg-foreground/10 -mr-0.5 inline-flex size-4 items-center justify-center rounded-full"
+                                aria-label={`Remove ${course.title}`}
+                            >
+                                <Icons.Close className="size-3" />
+                            </button>
+                        </Badge>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function StarRating({
+    value,
+    onChange,
+    disabled,
+    max = 5,
+}: {
+    value: number;
+    onChange: (v: number) => void;
+    disabled?: boolean;
+    max?: number;
+}) {
+    const [hover, setHover] = useState<number | null>(null);
+    const display = hover ?? value;
+
+    return (
+        <div
+            className="flex items-center gap-1"
+            onMouseLeave={() => setHover(null)}
+        >
+            {Array.from({ length: max }, (_, i) => {
+                const starIndex = i + 1;
+                const halfValue = starIndex - 0.5;
+                const fullValue = starIndex;
+                const isFull = display >= fullValue;
+                const isHalf = !isFull && display >= halfValue;
+
+                return (
+                    <div
+                        key={starIndex}
+                        className={cn(
+                            "relative size-7",
+                            disabled
+                                ? "cursor-not-allowed opacity-60"
+                                : "cursor-pointer"
+                        )}
+                    >
+                        <Icons.Star
+                            weight={isFull ? "fill" : "regular"}
+                            className={cn(
+                                "size-7",
+                                isFull
+                                    ? "text-amber-500"
+                                    : "text-muted-foreground/40"
+                            )}
+                        />
+                        {isHalf && (
+                            <Icons.StarHalf
+                                weight="fill"
+                                className="absolute inset-0 size-7 text-amber-500"
+                            />
+                        )}
+                        <button
+                            type="button"
+                            aria-label={`Set rating to ${halfValue}`}
+                            disabled={disabled}
+                            className="absolute inset-y-0 left-0 w-1/2"
+                            onMouseEnter={() => setHover(halfValue)}
+                            onClick={() => onChange(halfValue)}
+                        />
+                        <button
+                            type="button"
+                            aria-label={`Set rating to ${fullValue}`}
+                            disabled={disabled}
+                            className="absolute inset-y-0 right-0 w-1/2"
+                            onMouseEnter={() => setHover(fullValue)}
+                            onClick={() => onChange(fullValue)}
+                        />
+                    </div>
+                );
+            })}
+            <span className="text-muted-foreground ml-2 text-sm font-medium tabular-nums">
+                {display.toFixed(1)}
+            </span>
+        </div>
     );
 }

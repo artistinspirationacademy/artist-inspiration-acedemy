@@ -242,6 +242,22 @@ class BookingQuery {
         return bookingSchema.parse(data);
     }
 
+    async bulkUpdate({
+        ids,
+        values,
+    }: {
+        ids: string[];
+        values: UpdateBooking;
+    }): Promise<Booking[]> {
+        const data = await db
+            .update(bookings)
+            .set({ ...values, updatedAt: new Date() })
+            .where(inArray(bookings.id, ids))
+            .returning();
+
+        return bookingSchema.array().parse(data);
+    }
+
     async delete({ ids }: { ids: string[] }) {
         return db
             .delete(bookings)

@@ -1,3 +1,4 @@
+export * from "./about-manage";
 export * from "./banner-content";
 export * from "./banner-manage";
 export * from "./course-manage";

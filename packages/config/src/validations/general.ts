@@ -63,6 +63,11 @@ export const deleteDataSchema = z.object({
     ),
 });
 
+export const bulkIdsSchema = z
+    .array(z.string("ID must be a string"))
+    .min(1, "At least one ID is required")
+    .max(100, "More than 100 IDs are not allowed");
+
 export const paginationQuerySchema = z.object({
     limit: z.preprocess((val) => {
         if (val === undefined || val === null || val === "") return undefined;

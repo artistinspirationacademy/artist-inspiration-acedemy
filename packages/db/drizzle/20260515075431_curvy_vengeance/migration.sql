@@ -1,0 +1,2 @@
+ALTER TABLE "teachers" ALTER COLUMN "rating" SET DATA TYPE real USING "rating"::real;--> statement-breakpoint
+ALTER TABLE "teachers" ALTER COLUMN "experience" SET DATA TYPE real USING "experience"::real;

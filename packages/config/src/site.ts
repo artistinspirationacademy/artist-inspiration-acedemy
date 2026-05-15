@@ -85,6 +85,10 @@ export const siteConfig: SiteConfig = {
             icon: "Layout",
             items: [
                 {
+                    title: "About",
+                    url: "/about",
+                },
+                {
                     title: "Banners",
                     url: "/banners",
                 },

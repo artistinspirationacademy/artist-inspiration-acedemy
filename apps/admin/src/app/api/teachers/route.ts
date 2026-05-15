@@ -1,11 +1,13 @@
 import {
     AppError,
+    bulkIdsSchema,
     createTeacherSchema,
     CResponse,
     deleteDataSchema,
     handleError,
     MESSAGES,
     paginationQuerySchema,
+    updateTeacherSchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
 import { cache } from "@workspace/cache";
@@ -18,7 +20,7 @@ const teacherPaginationQuerySchema = paginationQuerySchema.extend({
         if (val === undefined || val === null || val === "") return undefined;
         return val === "true";
     }, z.boolean().optional()),
-    include: z.enum(["course"]).optional(),
+    include: z.enum(["courses"]).optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -40,12 +42,12 @@ export async function GET(req: NextRequest) {
 
         if (!isPaginated) {
             const data =
-                include === "course"
+                include === "courses"
                     ? await queries.teacher.scan({
                           ids,
                           courseId,
                           isActive,
-                          include: "course",
+                          include: "courses",
                       })
                     : await queries.teacher.scan({
                           ids,
@@ -55,14 +57,14 @@ export async function GET(req: NextRequest) {
             return CResponse({ data });
         } else {
             const data =
-                include === "course"
+                include === "courses"
                     ? await queries.teacher.paginate({
                           limit,
                           page,
                           search,
                           courseId,
                           isActive,
-                          include: "course",
+                          include: "courses",
                       })
                     : await queries.teacher.paginate({
                           limit,
@@ -78,13 +80,38 @@ export async function GET(req: NextRequest) {
     }
 }
 
+export async function PATCH(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { ids, values } = z
+            .object({ ids: bulkIdsSchema, values: updateTeacherSchema })
+            .parse(body);
+
+        const existingData = await queries.teacher.scan({ ids });
+        const invalidIds = ids.filter(
+            (id) => !existingData.find((item) => item.id === id)
+        );
+        if (invalidIds.length)
+            throw new AppError(
+                MESSAGES.ERRORS.GENERAL.INVALID_IDS(invalidIds),
+                "BAD_REQUEST"
+            );
+
+        const data = await queries.teacher.bulkUpdate({ ids, values });
+        await cache.teacher.drop();
+        return CResponse({ data });
+    } catch (err) {
+        return handleError(err);
+    }
+}
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const parsed = createTeacherSchema.array().parse(body);
 
         const data = await queries.teacher.create(parsed);
-        await cache.course.drop();
+        await cache.teacher.drop();
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -109,7 +136,7 @@ export async function DELETE(req: NextRequest) {
             );
 
         await queries.teacher.delete({ ids });
-        await cache.course.drop();
+        await cache.teacher.drop();
         return CResponse();
     } catch (err) {
         return handleError(err);

@@ -20,7 +20,9 @@
       "Bash(echo \"web_exit=$?\")",
       "Bash(echo \"admin_exit=$?\")",
       "Bash(echo \"db_exit=$?\")",
-      "Bash(Get-ChildItem -Path \"f:\\\\Programming\\\\Private\\\\artist-inspiration-acedemy\\\\apps\\\\admin\\\\src\\\\app\\\\\\(dashboard\\)\" -Directory -ErrorAction SilentlyContinue)"
+      "Bash(Get-ChildItem -Path \"f:\\\\Programming\\\\Private\\\\artist-inspiration-acedemy\\\\apps\\\\admin\\\\src\\\\app\\\\\\(dashboard\\)\" -Directory -ErrorAction SilentlyContinue)",
+      "Bash(grep -E \"\\\\.tsx?$\")",
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")"
     ],
     "additionalDirectories": [
       "f:\\Programming\\Private\\artist-inspiration-acedemy\\apps\\admin\\src\\app\\(dashboard)\\banners\\[id]"
