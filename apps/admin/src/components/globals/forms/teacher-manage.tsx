@@ -54,7 +54,7 @@ import { useCourseCategory, useTeacher } from "@workspace/rq";
 import Image from "next/image";
 import { redirect, useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 
 interface PageProps {
     data?: FullTeacher;
@@ -94,6 +94,8 @@ export function TeacherManageForm({ data }: PageProps) {
 
     const [isMediaSelectorOpen, setIsMediaSelectorOpen] = useState(false);
     const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
+    const [isVideoSelectorOpen, setIsVideoSelectorOpen] = useState(false);
+    const [selectedVideo, setSelectedVideo] = useState<Media | null>(null);
     const [experienceInput, setExperienceInput] = useState<string>(() =>
         String(data?.experience ?? 1)
     );
@@ -103,12 +105,15 @@ export function TeacherManageForm({ data }: PageProps) {
         useCourseCategoryScan<FullCourseCategory[]>({ include: "courses" });
 
     const form = useForm<CreateTeacher>({
-        resolver: zodResolver(createTeacherSchema),
+        resolver: zodResolver(
+            createTeacherSchema
+        ) as unknown as Resolver<CreateTeacher>,
         defaultValues: {
             courseIds: data?.courses?.map((c) => c.id) ?? [],
             name: data?.name ?? "",
             about: data?.about ?? "",
             imageKey: data?.imageKey ?? "",
+            videoKey: data?.videoKey ?? null,
             rating: data?.rating ?? 5,
             experience: data?.experience ?? 1,
             isActive: data?.isActive ?? false,
@@ -122,7 +127,9 @@ export function TeacherManageForm({ data }: PageProps) {
     const isSubmitting = isCreating || isUpdating;
 
     const imageKey = useWatch({ control: form.control, name: "imageKey" });
+    const videoKey = useWatch({ control: form.control, name: "videoKey" });
     const previewUrl = imageKey ? generateUploadThingURL(imageKey) : null;
+    const videoUrl = videoKey ? generateUploadThingURL(videoKey) : null;
 
     const handleMediaSelection = (items: Media[]) => {
         const picked = items[0];
@@ -131,6 +138,20 @@ export function TeacherManageForm({ data }: PageProps) {
         setSelectedMedia(picked);
         form.setValue("imageKey", picked.key, { shouldDirty: true });
         form.clearErrors("imageKey");
+    };
+
+    const handleVideoSelection = (items: Media[]) => {
+        const picked = items[0];
+        if (!picked) return;
+
+        setSelectedVideo(picked);
+        form.setValue("videoKey", picked.key, { shouldDirty: true });
+        form.clearErrors("videoKey");
+    };
+
+    const clearVideo = () => {
+        setSelectedVideo(null);
+        form.setValue("videoKey", null, { shouldDirty: true });
     };
 
     const handleSubmit = async (values: CreateTeacher) => {
@@ -440,6 +461,93 @@ export function TeacherManageForm({ data }: PageProps) {
                                 />
                             </CardContent>
                         </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Intro Video</CardTitle>
+                                <p className="text-muted-foreground text-xs">
+                                    Optional 1–2 minute intro shown on the
+                                    teacher profile.
+                                </p>
+                            </CardHeader>
+
+                            <CardContent>
+                                <FormField
+                                    control={form.control}
+                                    name="videoKey"
+                                    render={() => (
+                                        <FormItem>
+                                            <FormControl>
+                                                {videoUrl ? (
+                                                    <div className="space-y-3">
+                                                        <div className="bg-muted relative aspect-video w-full overflow-hidden rounded-md">
+                                                            <video
+                                                                src={videoUrl}
+                                                                controls
+                                                                preload="metadata"
+                                                                className="size-full object-contain"
+                                                            />
+                                                        </div>
+                                                        <p className="text-muted-foreground truncate text-xs">
+                                                            {selectedVideo?.name ??
+                                                                videoKey}
+                                                        </p>
+                                                        <div className="flex gap-2">
+                                                            <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                className="flex-1"
+                                                                disabled={
+                                                                    isSubmitting
+                                                                }
+                                                                onClick={() =>
+                                                                    setIsVideoSelectorOpen(
+                                                                        true
+                                                                    )
+                                                                }
+                                                            >
+                                                                Change Video
+                                                            </Button>
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="text-destructive hover:text-destructive"
+                                                                disabled={
+                                                                    isSubmitting
+                                                                }
+                                                                onClick={
+                                                                    clearVideo
+                                                                }
+                                                                title="Remove video"
+                                                            >
+                                                                <Icons.Trash className="size-4" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        className="w-full"
+                                                        disabled={isSubmitting}
+                                                        onClick={() =>
+                                                            setIsVideoSelectorOpen(
+                                                                true
+                                                            )
+                                                        }
+                                                    >
+                                                        <Icons.PlusCircle />
+                                                        Select Video
+                                                    </Button>
+                                                )}
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
 
@@ -467,6 +575,16 @@ export function TeacherManageForm({ data }: PageProps) {
                 types={["image"]}
                 accept="image/*"
                 onSelectionComplete={handleMediaSelection}
+            />
+
+            <MediaSelectModal
+                isOpen={isVideoSelectorOpen}
+                setIsOpen={setIsVideoSelectorOpen}
+                selected={selectedVideo ? [selectedVideo] : []}
+                selectedKey={videoKey || undefined}
+                types={["video"]}
+                accept="video/*"
+                onSelectionComplete={handleVideoSelection}
             />
         </Form>
     );
@@ -527,8 +645,7 @@ function CourseMultiSelect({
                         <span
                             className={cn(
                                 "truncate",
-                                selected.length === 0 &&
-                                    "text-muted-foreground"
+                                selected.length === 0 && "text-muted-foreground"
                             )}
                         >
                             {selected.length === 0

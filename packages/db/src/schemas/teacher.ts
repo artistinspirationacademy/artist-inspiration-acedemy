@@ -9,6 +9,7 @@ export const teachers = pgTable(
         name: t.text("name").notNull(),
         about: t.text("about").notNull(),
         imageKey: t.text("image_key").notNull(),
+        videoKey: t.text("video_key"),
         rating: t.real("rating").notNull(),
         experience: t.real("experience").notNull(),
         isActive: t.boolean("is_active").notNull().default(true),

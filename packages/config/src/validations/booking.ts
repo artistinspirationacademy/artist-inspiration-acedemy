@@ -1,6 +1,7 @@
 import z from "zod";
 import { emailSchema, generateDateSchema, generateIdSchema } from "./general";
 import { courseSchema } from "./course";
+import { teacherSchema } from "./teacher";
 
 export const bookingSchema = z.object({
     id: generateIdSchema({ isUUID: true }),
@@ -16,6 +17,11 @@ export const bookingSchema = z.object({
         isUUID: true,
         error: "Course ID is required and must be a valid ID",
     }),
+    teacherId: z
+        .string()
+        .uuid("Teacher ID must be a valid UUID")
+        .nullable()
+        .default(null),
     experienceLevel: z
         .string("Experience level is required")
         .min(1, "Experience level cannot be empty"),
@@ -41,6 +47,7 @@ export const updateBookingSchema = bookingSchema.pick({
 
 export const fullBookingSchema = bookingSchema.extend({
     course: courseSchema,
+    teacher: teacherSchema.nullable().default(null),
 });
 
 export type Booking = z.infer<typeof bookingSchema>;

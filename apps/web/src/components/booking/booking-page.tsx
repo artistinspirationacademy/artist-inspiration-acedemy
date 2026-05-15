@@ -32,7 +32,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useBooking, useCourses } from "@/lib/rq";
+import { useBooking, useCourses, useTeacher } from "@/lib/rq";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     cn,
@@ -44,7 +44,7 @@ import {
 import { Country, ICountry } from "country-state-city";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "motion/react";
-import { useSearchParams } from "next/navigation";
+import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import {
     useForm,
@@ -242,8 +242,14 @@ function BookingForm({
     courses: Course[];
     categories: FullCourseCategory[];
 }) {
-    const searchParams = useSearchParams();
-    const preselectedCourse = searchParams.get("course") ?? "";
+    const [preselectedCourse] = useQueryState("course", parseAsString);
+    const [preselectedTeacher] = useQueryState("teacher", parseAsString);
+
+    const { useGet: useTeacherGet } = useTeacher();
+    const { data: teacher } = useTeacherGet({
+        id: preselectedTeacher ?? "",
+        enabled: !!preselectedTeacher,
+    });
 
     const [stepIndex, setStepIndex] = useState(0);
     const [submitted, setSubmitted] = useState<{
@@ -257,7 +263,9 @@ function BookingForm({
         ) as unknown as Resolver<BookingFormValues>,
         mode: "onTouched",
         defaultValues: {
-            courseId: courses.find((c) => c.id === preselectedCourse)?.id ?? "",
+            courseId:
+                courses.find((c) => c.id === preselectedCourse)?.id ?? "",
+            teacherId: preselectedTeacher ?? null,
             timestamp: undefined as unknown as Date,
             name: "",
             email: "",
@@ -322,6 +330,29 @@ function BookingForm({
 
     return (
         <Form {...form}>
+            {teacher && (
+                <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className={cn(
+                        "mb-4 flex items-center gap-3 rounded-2xl border px-4 py-3 backdrop-blur-md",
+                        "border-highlight/30 bg-highlight/10"
+                    )}
+                >
+                    <Icons.Sparkle
+                        weight="fill"
+                        className="text-highlight size-4 shrink-0"
+                    />
+                    <p className="text-sm text-white/90">
+                        Booking with{" "}
+                        <span className="text-highlight font-semibold">
+                            {teacher.name}
+                        </span>
+                    </p>
+                </motion.div>
+            )}
+
             <form
                 onSubmit={(e) => {
                     e.preventDefault();

@@ -664,7 +664,7 @@ function ImageTextContent({
             }) ?? {};
         form.setValue(
             `sections.${index}.content`,
-            { ...current, [key]: newValue },
+            { ...current, [key]: newValue } as never,
             { shouldDirty: true }
         );
     };
@@ -861,7 +861,7 @@ function QuoteContent({
             }) ?? {};
         form.setValue(
             `sections.${index}.content`,
-            { ...current, [key]: newValue },
+            { ...current, [key]: newValue } as never,
             { shouldDirty: true }
         );
     };
@@ -946,7 +946,7 @@ function CtaContent({
             }) ?? {};
         form.setValue(
             `sections.${index}.content`,
-            { ...current, [key]: newValue },
+            { ...current, [key]: newValue } as never,
             { shouldDirty: true }
         );
     };

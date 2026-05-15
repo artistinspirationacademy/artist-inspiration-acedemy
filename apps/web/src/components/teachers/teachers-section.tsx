@@ -1,9 +1,7 @@
 "use client";
 
-import { TeacherModal } from "@/components/globals/modals";
 import { Teacher } from "@workspace/config";
 import { motion } from "motion/react";
-import { useState } from "react";
 import { TeacherCard } from "./teacher-card";
 
 interface TeachersSectionProps {
@@ -15,11 +13,8 @@ export function TeachersSection({
     teachers,
     courseName,
 }: TeachersSectionProps) {
-    const [selected, setSelected] = useState<Teacher | null>(null);
-
     if (!teachers.length) return null;
 
-    const modalCourseNames = courseName ? [courseName] : undefined;
     const cardCourseNames = courseName ? [courseName] : undefined;
 
     return (
@@ -48,17 +43,9 @@ export function TeachersSection({
                         teacher={teacher}
                         courseNames={cardCourseNames}
                         index={index}
-                        onClick={() => setSelected(teacher)}
                     />
                 ))}
             </div>
-
-            <TeacherModal
-                teacher={selected}
-                courseNames={modalCourseNames}
-                open={!!selected}
-                onOpenChange={(open) => !open && setSelected(null)}
-            />
         </motion.section>
     );
 }

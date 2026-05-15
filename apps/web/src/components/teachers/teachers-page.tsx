@@ -1,6 +1,5 @@
 "use client";
 
-import { TeacherModal } from "@/components/globals/modals";
 import { useTeachers } from "@/lib/rq";
 import { cn, FullTeacher, Icons } from "@workspace/config";
 import { AnimatePresence, motion } from "motion/react";
@@ -110,7 +109,6 @@ function CourseFilteredGrid({ teachers }: { teachers: FullTeacher[] }) {
     }, [teachers]);
 
     const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
-    const [selected, setSelected] = useState<FullTeacher | null>(null);
 
     const filtered = useMemo(() => {
         if (!activeCourseId) return teachers;
@@ -144,18 +142,10 @@ function CourseFilteredGrid({ teachers }: { teachers: FullTeacher[] }) {
                                 (c) => c.title
                             )}
                             index={index}
-                            onClick={() => setSelected(teacher)}
                         />
                     ))}
                 </motion.div>
             </AnimatePresence>
-
-            <TeacherModal
-                teacher={selected}
-                courseNames={(selected?.courses ?? []).map((c) => c.title)}
-                open={!!selected}
-                onOpenChange={(open) => !open && setSelected(null)}
-            />
         </div>
     );
 }

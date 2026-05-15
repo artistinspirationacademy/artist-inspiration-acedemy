@@ -97,6 +97,19 @@ const columns = (
         ),
     },
     {
+        accessorKey: "teacher.name",
+        id: "teacherName",
+        header: "Teacher",
+        cell: ({ row }) =>
+            row.original.teacher ? (
+                <Badge variant="secondary" className="whitespace-nowrap">
+                    {truncateText(row.original.teacher.name, 24)}
+                </Badge>
+            ) : (
+                <span className="text-muted-foreground text-xs">—</span>
+            ),
+    },
+    {
         accessorKey: "isActive",
         header: "Status",
         cell: ({ row }) =>
@@ -142,6 +155,13 @@ const exportFields: FieldMapping<FullBooking>[] = [
         include: true,
         order: 8,
         formatter: (data) => data.course.title,
+    },
+    {
+        source: "teacher",
+        target: "Teacher",
+        include: true,
+        order: 9,
+        formatter: (data) => data.teacher?.name ?? "",
     },
     {
         source: "timestamp",

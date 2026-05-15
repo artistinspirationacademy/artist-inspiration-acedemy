@@ -11,6 +11,7 @@ export const bookings = pgTable(
         age: t.integer("age").notNull(),
         gender: t.text("gender").notNull(),
         courseId: t.uuid("course_id").notNull(),
+        teacherId: t.uuid("teacher_id"),
         experienceLevel: t.text("experience_level").notNull(),
         country: t.text("country").notNull(),
         timestamp: t.timestamp("timestamp").notNull().defaultNow(),
@@ -19,6 +20,7 @@ export const bookings = pgTable(
     }),
     (t) => [
         index("bookings_course_id_idx").on(t.courseId),
+        index("bookings_teacher_id_idx").on(t.teacherId),
         index("bookings_email_idx").on(t.email),
         index("bookings_timestamp_idx").on(t.timestamp),
     ]

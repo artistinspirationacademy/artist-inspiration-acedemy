@@ -69,7 +69,7 @@ class BookingQuery {
             const data = await db.query.bookings.findMany({
                 where,
                 orderBy: { timestamp: "desc" },
-                with: { course: true },
+                with: { course: true, teacher: true },
             });
             return fullBookingSchema.array().parse(data);
         }
@@ -163,7 +163,7 @@ class BookingQuery {
                 limit,
                 offset: (page - 1) * limit,
                 extras,
-                with: { course: true },
+                with: { course: true, teacher: true },
             });
 
             const count = +(data?.[0]?.count || 0);
@@ -208,7 +208,7 @@ class BookingQuery {
         if (include === "course") {
             const data = await db.query.bookings.findFirst({
                 where: { id },
-                with: { course: true },
+                with: { course: true, teacher: true },
             });
             if (!data) return null;
             return fullBookingSchema.parse(data);

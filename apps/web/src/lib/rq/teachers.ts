@@ -27,3 +27,25 @@ export function useTeachers() {
 
     return { useGet };
 }
+
+export function useTeacher() {
+    const useGet = ({
+        id,
+        enabled,
+    }: {
+        id: string;
+        enabled?: boolean;
+    }) => {
+        return useQuery({
+            queryKey: ["teacher", "get", id],
+            queryFn: async () => {
+                const res = await cFetch<FullTeacher>(`/api/teachers/${id}`);
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            enabled: enabled !== undefined ? enabled : !!id,
+        });
+    };
+
+    return { useGet };
+}

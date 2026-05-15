@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Media, UpdateMedia, updateMediaSchema } from "@workspace/config";
 import { useMedia } from "@workspace/rq";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 
 interface PageProps {
     data: Media;
@@ -27,8 +27,9 @@ export function MediaEditForm({ data, onSuccess, onClose }: PageProps) {
     const mediaType = data.name.split(".").pop();
 
     const form = useForm<UpdateMedia>({
-        // @ts-expect-error - zodResolver is not correctly inferring the type
-        resolver: zodResolver(updateMediaSchema),
+        resolver: zodResolver(
+            updateMediaSchema
+        ) as unknown as Resolver<UpdateMedia>,
         defaultValues: {
             name: mediaName,
             alt: data.alt ?? "",

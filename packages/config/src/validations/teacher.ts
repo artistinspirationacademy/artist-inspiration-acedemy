@@ -1,4 +1,5 @@
 import z from "zod";
+import { convertEmptyStringToNull } from "../utils";
 import { courseSchema } from "./course";
 import { generateDateSchema, generateIdSchema } from "./general";
 
@@ -9,6 +10,13 @@ export const teacherSchema = z.object({
     imageKey: z
         .string("Image key is required")
         .min(1, "Image key cannot be empty"),
+    videoKey: z.preprocess(
+        convertEmptyStringToNull,
+        z
+            .string("Video key must be a string")
+            .min(1, "Video key cannot be empty")
+            .nullable()
+    ),
     rating: z
         .number("Rating is required")
         .min(0.5, "Rating must be at least 0.5")

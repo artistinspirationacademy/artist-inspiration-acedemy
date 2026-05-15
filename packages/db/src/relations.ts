@@ -43,6 +43,10 @@ export const relations = defineRelations(schema, (r) => ({
             from: r.teachers.id.through(r.courseTeachers.teacherId),
             to: r.courses.id.through(r.courseTeachers.courseId),
         }),
+        bookings: r.many.bookings({
+            from: r.teachers.id,
+            to: r.bookings.teacherId,
+        }),
     },
     testimonials: {
         course: r.one.courses({
@@ -56,6 +60,10 @@ export const relations = defineRelations(schema, (r) => ({
             from: r.bookings.courseId,
             to: r.courses.id,
             optional: false,
+        }),
+        teacher: r.one.teachers({
+            from: r.bookings.teacherId,
+            to: r.teachers.id,
         }),
     },
 }));
