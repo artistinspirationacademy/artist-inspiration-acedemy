@@ -39,6 +39,11 @@ export async function PATCH(req: NextRequest, { params }: Context) {
 
         const data = await queries.testimonial.update({ id, values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "testimonial",
+            message: "Testimonial updated",
+            metadata: { id },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

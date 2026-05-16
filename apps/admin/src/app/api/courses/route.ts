@@ -87,6 +87,11 @@ export async function POST(req: NextRequest) {
 
         const data = await queries.course.create(parsed);
         await cache.course.drop();
+        await cache.logs.add({
+            type: "course",
+            message: "Courses created",
+            metadata: { count: data.length },
+        });
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -112,6 +117,11 @@ export async function PATCH(req: NextRequest) {
 
         const data = await queries.course.bulkUpdate({ ids, values });
         await cache.course.drop();
+        await cache.logs.add({
+            type: "course",
+            message: "Courses bulk updated",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);
@@ -137,6 +147,11 @@ export async function DELETE(req: NextRequest) {
 
         await queries.course.delete({ ids });
         await cache.course.drop();
+        await cache.logs.add({
+            type: "course",
+            message: "Courses deleted",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse();
     } catch (err) {
         return handleError(err);

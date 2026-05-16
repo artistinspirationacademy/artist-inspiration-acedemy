@@ -68,6 +68,11 @@ export async function POST(req: NextRequest) {
 
         const data = await queries.course.category.create(parsed);
         await cache.course.drop();
+        await cache.logs.add({
+            type: "course",
+            message: "Course categories created",
+            metadata: { count: data.length },
+        });
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -93,6 +98,11 @@ export async function DELETE(req: NextRequest) {
 
         await queries.course.category.delete({ ids });
         await cache.course.drop();
+        await cache.logs.add({
+            type: "course",
+            message: "Course categories deleted",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse();
     } catch (err) {
         return handleError(err);

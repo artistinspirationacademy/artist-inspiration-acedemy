@@ -11,6 +11,10 @@ export const env = createEnv({
         JWT_SECRET: z
             .string()
             .min(32, "JWT_SECRET must be at least 32 characters"),
+
+        CRON_SECRET: z
+            .string()
+            .min(16, "CRON_SECRET must be at least 16 characters"),
     },
     client: {
         NEXT_PUBLIC_DEPLOYMENT_URL: z
@@ -28,6 +32,8 @@ export const env = createEnv({
         UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
 
         JWT_SECRET: process.env.JWT_SECRET,
+
+        CRON_SECRET: process.env.CRON_SECRET,
 
         NEXT_PUBLIC_DEPLOYMENT_URL: process.env.NEXT_PUBLIC_DEPLOYMENT_URL,
 

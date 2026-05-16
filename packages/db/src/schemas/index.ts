@@ -4,6 +4,7 @@ export * from "./booking";
 export * from "./configuration";
 export * from "./course";
 export * from "./feature";
+export * from "./log";
 export * from "./media";
 export * from "./teacher";
 export * from "./testimonial";

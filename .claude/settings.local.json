@@ -22,7 +22,9 @@
       "Bash(echo \"db_exit=$?\")",
       "Bash(Get-ChildItem -Path \"f:\\\\Programming\\\\Private\\\\artist-inspiration-acedemy\\\\apps\\\\admin\\\\src\\\\app\\\\\\(dashboard\\)\" -Directory -ErrorAction SilentlyContinue)",
       "Bash(grep -E \"\\\\.tsx?$\")",
-      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")"
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
+      "Bash(grep -rn \"sql\\\\`\\\\|groupBy\\\\|drizzle-orm\" /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/packages/db/src/queries/)",
+      "Bash(bun turbo *)"
     ],
     "additionalDirectories": [
       "f:\\Programming\\Private\\artist-inspiration-acedemy\\apps\\admin\\src\\app\\(dashboard)\\banners\\[id]"

@@ -1,5 +1,6 @@
 import { AUTH_COOKIE_NAME } from "@/config/const";
 import { auth } from "@/lib/jwt";
+import { cache } from "@workspace/cache";
 import {
     AppError,
     CResponse,
@@ -65,6 +66,13 @@ export async function PATCH(req: NextRequest) {
         const cookieStore = await cookies();
         cookieStore.delete(AUTH_COOKIE_NAME);
 
+        await cache.logs.add({
+            type: "auth",
+            message: "Email updated",
+            level: "info",
+            actorId: existing.id,
+            metadata: { newEmail: email },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

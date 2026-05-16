@@ -54,6 +54,11 @@ export async function POST(req: NextRequest) {
 
         const data = await queries.feature.create(parsed);
         await cache.home.drop();
+        await cache.logs.add({
+            type: "feature",
+            message: "Features created",
+            metadata: { count: data.length },
+        });
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -79,6 +84,11 @@ export async function PATCH(req: NextRequest) {
 
         const data = await queries.feature.bulkUpdate({ ids, values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "feature",
+            message: "Features bulk updated",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);
@@ -104,6 +114,11 @@ export async function DELETE(req: NextRequest) {
 
         await queries.feature.delete({ ids });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "feature",
+            message: "Features deleted",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse();
     } catch (err) {
         return handleError(err);

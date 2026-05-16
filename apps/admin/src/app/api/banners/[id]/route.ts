@@ -39,6 +39,11 @@ export async function PATCH(req: NextRequest, { params }: Context) {
 
         const data = await queries.banner.update({ id, values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "banner",
+            message: "Banner updated",
+            metadata: { id },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

@@ -1,3 +1,4 @@
+import { cache } from "@workspace/cache";
 import {
     AppError,
     bulkIdsSchema,
@@ -96,6 +97,11 @@ export async function PATCH(req: NextRequest) {
             );
 
         const data = await queries.booking.bulkUpdate({ ids, values });
+        await cache.logs.add({
+            type: "booking",
+            message: "Bookings bulk updated",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);
@@ -120,6 +126,11 @@ export async function DELETE(req: NextRequest) {
             );
 
         await queries.booking.delete({ ids });
+        await cache.logs.add({
+            type: "booking",
+            message: "Bookings deleted",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse();
     } catch (err) {
         return handleError(err);

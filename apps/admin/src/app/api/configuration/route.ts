@@ -23,6 +23,10 @@ export async function PATCH(req: NextRequest) {
 
         const data = await queries.configuration.update(values);
         await cache.home.drop();
+        await cache.logs.add({
+            type: "configuration",
+            message: "Configuration updated",
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

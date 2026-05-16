@@ -1,5 +1,6 @@
 import { AUTH_COOKIE_NAME } from "@/config/const";
 import { signToken } from "@/lib/jwt";
+import { cache } from "@workspace/cache";
 import {
     AppError,
     CResponse,
@@ -49,6 +50,12 @@ export async function POST(req: NextRequest) {
             path: "/",
         });
 
+        await cache.logs.add({
+            type: "auth",
+            message: "User signed in",
+            level: "info",
+            actorId: existingData.id,
+        });
         return CResponse({ data: safeUserSchema.parse(existingData) });
     } catch (err) {
         return handleError(err);

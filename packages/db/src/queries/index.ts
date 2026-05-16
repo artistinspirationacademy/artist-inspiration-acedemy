@@ -3,7 +3,9 @@ import { bannerContentQueries, bannerQueries } from "./banner";
 import { bookingQueries } from "./booking";
 import { configurationQueries } from "./configuration";
 import { courseCategoryQueries, courseQueries } from "./course";
+import { dashboardQueries } from "./dashboard";
 import { featureQueries } from "./feature";
+import { logArchiveQueries } from "./log";
 import { mediaQueries } from "./media";
 import { teacherQueries } from "./teacher";
 import { testimonialQueries } from "./testimonial";
@@ -19,7 +21,9 @@ export const queries = {
     course: Object.assign(courseQueries, {
         category: courseCategoryQueries,
     }),
+    dashboard: dashboardQueries,
     feature: featureQueries,
+    logArchive: logArchiveQueries,
     media: mediaQueries,
     teacher: teacherQueries,
     testimonial: testimonialQueries,

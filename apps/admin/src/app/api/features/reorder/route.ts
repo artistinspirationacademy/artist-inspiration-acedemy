@@ -27,6 +27,11 @@ export async function PATCH(req: NextRequest) {
 
         const data = await queries.feature.reorder({ values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "feature",
+            message: "Features reordered",
+            metadata: { count: values.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

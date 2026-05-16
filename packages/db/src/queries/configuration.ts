@@ -32,6 +32,8 @@ class ConfigurationQuery {
                 teacherCount: values.teacherCount ?? 0,
                 contentHoursCount: values.contentHoursCount ?? 0,
                 enableBooking: values.enableBooking ?? true,
+                redisLogRetentionDays: values.redisLogRetentionDays ?? 7,
+                archiveRetentionDays: values.archiveRetentionDays ?? 365,
             })
             .returning()
             .then((res) => res[0]);

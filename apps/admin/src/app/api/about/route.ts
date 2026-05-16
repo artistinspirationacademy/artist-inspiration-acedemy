@@ -23,6 +23,11 @@ export async function PUT(req: NextRequest) {
 
         const data = await queries.about.replace(sections);
         await cache.about.drop();
+        await cache.logs.add({
+            type: "about",
+            message: "About sections replaced",
+            metadata: { count: sections.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

@@ -1,4 +1,5 @@
 import { utApi } from "@/lib/uploadthing";
+import { cache } from "@workspace/cache";
 import {
     AppError,
     createMediaSchema,
@@ -91,6 +92,11 @@ export async function POST(req: NextRequest) {
 
         const parsed = createMediaSchema.array().parse(mediaToCreate);
         const data = await queries.media.create(parsed);
+        await cache.logs.add({
+            type: "media",
+            message: "Media uploaded",
+            metadata: { count: data.length },
+        });
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         if (err instanceof UploadThingError)
@@ -132,6 +138,11 @@ export async function DELETE(req: NextRequest) {
         }
 
         await queries.media.delete({ ids });
+        await cache.logs.add({
+            type: "media",
+            message: "Media deleted",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse();
     } catch (err) {
         return handleError(err);

@@ -61,6 +61,11 @@ export async function POST(req: NextRequest) {
 
         const data = await queries.banner.create(parsed);
         await cache.home.drop();
+        await cache.logs.add({
+            type: "banner",
+            message: "Banners created",
+            metadata: { count: data.length },
+        });
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);
@@ -86,6 +91,11 @@ export async function PATCH(req: NextRequest) {
 
         const data = await queries.banner.bulkUpdate({ ids, values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "banner",
+            message: "Banners bulk updated",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);
@@ -111,6 +121,11 @@ export async function DELETE(req: NextRequest) {
 
         await queries.banner.delete({ ids });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "banner",
+            message: "Banners deleted",
+            metadata: { ids, count: ids.length },
+        });
         return CResponse();
     } catch (err) {
         return handleError(err);

@@ -70,10 +70,6 @@ export const siteConfig: SiteConfig = {
                     url: "/",
                 },
                 {
-                    title: "Analytics",
-                    url: "/analytics",
-                },
-                {
                     title: "Logs",
                     url: "/logs",
                 },

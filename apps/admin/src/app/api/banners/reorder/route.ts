@@ -27,6 +27,11 @@ export async function PATCH(req: NextRequest) {
 
         const data = await queries.banner.reorder({ values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "banner",
+            message: "Banners reordered",
+            metadata: { count: values.length },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

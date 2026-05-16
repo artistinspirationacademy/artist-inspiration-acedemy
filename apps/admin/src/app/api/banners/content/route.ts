@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
 
         const data = await queries.banner.content.update(parsed);
         await cache.home.drop();
+        await cache.logs.add({
+            type: "banner",
+            message: "Banner content updated",
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

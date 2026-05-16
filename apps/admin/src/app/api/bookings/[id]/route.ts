@@ -1,3 +1,4 @@
+import { cache } from "@workspace/cache";
 import {
     AppError,
     CResponse,
@@ -37,6 +38,11 @@ export async function PATCH(req: NextRequest, { params }: Context) {
             throw new AppError(MESSAGES.ERRORS.GENERAL.NOT_FOUND, "NOT_FOUND");
 
         const data = await queries.booking.update({ id, values });
+        await cache.logs.add({
+            type: "booking",
+            message: "Booking updated",
+            metadata: { id },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

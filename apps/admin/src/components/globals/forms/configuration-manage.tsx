@@ -27,7 +27,12 @@ import { useForm, type Control, type FieldPath } from "react-hook-form";
 
 type NumericFieldName = Extract<
     FieldPath<UpdateConfiguration>,
-    "learnerCount" | "teacherCount" | "contentHoursCount" | "countryCount"
+    | "learnerCount"
+    | "teacherCount"
+    | "contentHoursCount"
+    | "countryCount"
+    | "redisLogRetentionDays"
+    | "archiveRetentionDays"
 >;
 
 const NUMERIC_FIELDS: {
@@ -62,6 +67,28 @@ const NUMERIC_FIELDS: {
     },
 ];
 
+const LOG_RETENTION_FIELDS: {
+    name: NumericFieldName;
+    label: string;
+    description: string;
+    placeholder: string;
+}[] = [
+    {
+        name: "redisLogRetentionDays",
+        label: "Redis hot window (days)",
+        description:
+            "How long recent logs stay in Redis before the cron archives them to UploadThing.",
+        placeholder: "e.g., 7",
+    },
+    {
+        name: "archiveRetentionDays",
+        label: "Archive retention (days)",
+        description:
+            "How long archived log files stay in UploadThing before the cron deletes them.",
+        placeholder: "e.g., 365",
+    },
+];
+
 export function ConfigurationFetch() {
     const { useGet } = useConfiguration();
     const { data, isPending } = useGet({});
@@ -90,6 +117,8 @@ export function ConfigurationManageForm({
         teacherCount: data?.teacherCount ?? 0,
         contentHoursCount: data?.contentHoursCount ?? 0,
         enableBooking: data?.enableBooking ?? true,
+        redisLogRetentionDays: data?.redisLogRetentionDays ?? 7,
+        archiveRetentionDays: data?.archiveRetentionDays ?? 365,
     };
 
     const form = useForm<UpdateConfiguration>({
@@ -123,6 +152,31 @@ export function ConfigurationManageForm({
 
                     <CardContent className="grid gap-4 sm:grid-cols-2">
                         {NUMERIC_FIELDS.map((spec) => (
+                            <IntegerField
+                                key={spec.name}
+                                control={form.control}
+                                name={spec.name}
+                                label={spec.label}
+                                description={spec.description}
+                                placeholder={spec.placeholder}
+                                disabled={isSubmitting}
+                                initialValue={initialValues[spec.name]}
+                            />
+                        ))}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Log Retention</CardTitle>
+                        <p className="text-muted-foreground text-sm">
+                            Control how long logs stay hot in Redis and how
+                            long archives stay in UploadThing.
+                        </p>
+                    </CardHeader>
+
+                    <CardContent className="grid gap-4 sm:grid-cols-2">
+                        {LOG_RETENTION_FIELDS.map((spec) => (
                             <IntegerField
                                 key={spec.name}
                                 control={form.control}

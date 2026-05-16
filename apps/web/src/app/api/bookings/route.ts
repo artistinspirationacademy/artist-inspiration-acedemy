@@ -47,6 +47,17 @@ export async function POST(req: NextRequest) {
             );
 
         const data = await queries.booking.create(parsed);
+        for (const booking of data) {
+            await cache.logs.add({
+                type: "booking",
+                message: "New public booking received",
+                metadata: {
+                    id: booking.id,
+                    name: booking.name,
+                    courseId: booking.courseId,
+                },
+            });
+        }
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);

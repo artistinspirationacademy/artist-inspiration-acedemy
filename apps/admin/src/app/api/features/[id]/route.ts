@@ -39,6 +39,11 @@ export async function PATCH(req: NextRequest, { params }: Context) {
 
         const data = await queries.feature.update({ id, values });
         await cache.home.drop();
+        await cache.logs.add({
+            type: "feature",
+            message: "Feature updated",
+            metadata: { id },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

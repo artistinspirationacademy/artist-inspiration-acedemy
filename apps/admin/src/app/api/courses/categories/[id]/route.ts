@@ -50,6 +50,11 @@ export async function PATCH(req: NextRequest, { params }: Context) {
 
         const data = await queries.course.category.update({ id, values });
         await cache.course.drop();
+        await cache.logs.add({
+            type: "course",
+            message: "Course category updated",
+            metadata: { id },
+        });
         return CResponse({ data });
     } catch (err) {
         return handleError(err);

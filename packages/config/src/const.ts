@@ -97,3 +97,26 @@ export const ABOUT_SECTION_TYPES = [
     "quote",
     "cta",
 ] as const;
+
+export const LOG_TYPES = [
+    "auth",
+    "booking",
+    "course",
+    "teacher",
+    "testimonial",
+    "banner",
+    "feature",
+    "media",
+    "about",
+    "configuration",
+    "cron",
+    "system",
+] as const;
+
+export const LOG_LEVELS = ["info", "warn", "error"] as const;
+
+export const DEFAULT_LOG_RETENTION = {
+    REDIS_DAYS: 7,
+    ARCHIVE_DAYS: 365,
+} as const;
+
