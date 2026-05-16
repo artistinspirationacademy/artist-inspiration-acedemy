@@ -1,5 +1,12 @@
-import { SafeUser, safeUserSchema, User } from "@workspace/config";
+import {
+    SafeUser,
+    safeUserSchema,
+    UpdateProfile,
+    User,
+} from "@workspace/config";
+import { eq } from "drizzle-orm";
 import { db } from "../client";
+import { users } from "../schemas";
 
 class UserQuery {
     async get({
@@ -45,6 +52,45 @@ class UserQuery {
 
         const parsed = safeParse ? safeUserSchema.parse(data) : data;
         return parsed;
+    }
+
+    async updateProfile({ id, values }: { id: string; values: UpdateProfile }) {
+        const data = await db
+            .update(users)
+            .set({ ...values, updatedAt: new Date() })
+            .where(eq(users.id, id))
+            .returning()
+            .then((res) => res[0]);
+
+        return data;
+    }
+
+    async updateEmail({ id, email }: { id: string; email: string }) {
+        const data = await db
+            .update(users)
+            .set({ email, updatedAt: new Date() })
+            .where(eq(users.id, id))
+            .returning()
+            .then((res) => res[0]);
+
+        return data;
+    }
+
+    async updatePassword({
+        id,
+        passwordHash,
+    }: {
+        id: string;
+        passwordHash: string;
+    }) {
+        const data = await db
+            .update(users)
+            .set({ password: passwordHash, updatedAt: new Date() })
+            .where(eq(users.id, id))
+            .returning()
+            .then((res) => res[0]);
+
+        return data;
     }
 }
 

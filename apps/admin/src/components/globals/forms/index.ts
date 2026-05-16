@@ -5,6 +5,7 @@ export * from "./configuration-manage";
 export * from "./course-manage";
 export * from "./feature-manage";
 export * from "./media-edit";
+export * from "./profile-manage";
 export * from "./signin";
 export * from "./teacher-manage";
 export * from "./testimonial-manage";
