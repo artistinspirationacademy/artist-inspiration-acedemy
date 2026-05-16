@@ -1,21 +1,13 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-    convertValueToLabel,
-    DashboardGroupCount,
-} from "@workspace/config";
+import { convertValueToLabel, DashboardGroupCount } from "@workspace/config";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 const chartConfig: ChartConfig = {

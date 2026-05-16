@@ -80,10 +80,7 @@ function BackLink() {
                     "transition-all duration-300 hover:border-white/40 hover:bg-white/10"
                 )}
             >
-                <Icons.ArrowRight
-                    weight="bold"
-                    className="size-3 rotate-180"
-                />
+                <Icons.ArrowRight weight="bold" className="size-3 rotate-180" />
                 Back to mentors
             </Link>
         </motion.div>
@@ -232,7 +229,9 @@ function RatingStars({ value }: { value: number }) {
 
 function ExperienceBadge({ value }: { value: number }) {
     if (value <= 0) return null;
-    const rounded = Number.isInteger(value) ? value.toString() : value.toFixed(1);
+    const rounded = Number.isInteger(value)
+        ? value.toString()
+        : value.toFixed(1);
     return (
         <span className="text-sm text-white/80">
             <span className="text-highlight font-semibold tabular-nums">
@@ -391,13 +390,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
     );
 }
 
-function FooterCTA({
-    name,
-    teacherId,
-}: {
-    name: string;
-    teacherId: string;
-}) {
+function FooterCTA({ name, teacherId }: { name: string; teacherId: string }) {
     const firstName = name.split(/\s+/)[0] ?? name;
 
     return (
@@ -447,13 +440,7 @@ function FooterCTA({
     );
 }
 
-function SectionHeader({
-    label,
-    title,
-}: {
-    label: string;
-    title: string;
-}) {
+function SectionHeader({ label, title }: { label: string; title: string }) {
     return (
         <div className="flex items-baseline justify-between gap-4">
             <div className="flex items-center gap-3">

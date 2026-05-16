@@ -122,7 +122,9 @@ function TestimonialReorderBody({ onClose }: { onClose: () => void }) {
                                         <Icons.Star
                                             key={i}
                                             weight={
-                                                i < t.rating ? "fill" : "regular"
+                                                i < t.rating
+                                                    ? "fill"
+                                                    : "regular"
                                             }
                                             className={
                                                 i < t.rating

@@ -73,10 +73,7 @@ export function BookingDetailsSheet({
 
                         <Section title="About">
                             <DetailRow label="Age" value={booking.age} />
-                            <DetailRow
-                                label="Gender"
-                                value={booking.gender}
-                            />
+                            <DetailRow label="Gender" value={booking.gender} />
                             <DetailRow
                                 label="Experience"
                                 value={
@@ -125,11 +122,7 @@ export function BookingDetailsSheet({
                                     "PPP p"
                                 )}
                             />
-                            <CopyableRow
-                                label="ID"
-                                value={booking.id}
-                                mono
-                            />
+                            <CopyableRow label="ID" value={booking.id} mono />
                         </Section>
                     </div>
                 </ScrollArea>

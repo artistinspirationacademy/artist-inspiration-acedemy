@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Input } from "./input";
 import { cn, Icons } from "@workspace/config";
+import { useState } from "react";
 import { Button } from "./button";
+import { Input } from "./input";
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     showToggle?: boolean;
@@ -31,9 +31,9 @@ export function PasswordInput({
                     onClick={() => setShowPassword((prev) => !prev)}
                 >
                     {showPassword ? (
-                        <Icons.EyeOff className="h-4 w-4 text-muted-foreground" />
+                        <Icons.EyeOff className="text-muted-foreground h-4 w-4" />
                     ) : (
-                        <Icons.Eye className="h-4 w-4 text-muted-foreground" />
+                        <Icons.Eye className="text-muted-foreground h-4 w-4" />
                     )}
                 </Button>
             )}

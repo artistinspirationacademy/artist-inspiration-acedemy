@@ -81,10 +81,7 @@ export async function runArchive(): Promise<ArchiveRunResult> {
         try {
             await utApi.deleteFiles(expired.map((a) => a.fileKey));
         } catch (err) {
-            console.error(
-                "[archive-logs] failed to delete expired files",
-                err
-            );
+            console.error("[archive-logs] failed to delete expired files", err);
         }
         await queries.logArchive.deleteByIds(expired.map((a) => a.id));
     }

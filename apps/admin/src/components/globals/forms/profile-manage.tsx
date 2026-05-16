@@ -280,19 +280,14 @@ function EmailForm({ user }: { user: SafeUser }) {
                                     isSubmitting || !form.formState.isDirty
                                 }
                             >
-                                {isSubmitting
-                                    ? "Updating..."
-                                    : "Update email"}
+                                {isSubmitting ? "Updating..." : "Update email"}
                             </Button>
                         </div>
                     </form>
                 </Form>
             </CardContent>
 
-            <AlertDialog
-                open={isConfirmOpen}
-                onOpenChange={setIsConfirmOpen}
-            >
+            <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
@@ -357,8 +352,8 @@ function PasswordForm() {
             <CardHeader>
                 <CardTitle>Password</CardTitle>
                 <p className="text-muted-foreground text-sm">
-                    Use at least 8 characters, including a number and a
-                    symbol. Changing it will sign you out.
+                    Use at least 8 characters, including a number and a symbol.
+                    Changing it will sign you out.
                 </p>
             </CardHeader>
 
@@ -409,7 +404,9 @@ function PasswordForm() {
                                 name="confirmPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Confirm new password</FormLabel>
+                                        <FormLabel>
+                                            Confirm new password
+                                        </FormLabel>
                                         <FormControl>
                                             <PasswordInput
                                                 {...field}
@@ -439,10 +436,7 @@ function PasswordForm() {
                 </Form>
             </CardContent>
 
-            <AlertDialog
-                open={isConfirmOpen}
-                onOpenChange={setIsConfirmOpen}
-            >
+            <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>
@@ -450,8 +444,8 @@ function PasswordForm() {
                         </AlertDialogTitle>
                         <AlertDialogDescription>
                             Changing your password signs you out of this
-                            session. You&apos;ll need to sign in again with
-                            your new password. Continue?
+                            session. You&apos;ll need to sign in again with your
+                            new password. Continue?
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

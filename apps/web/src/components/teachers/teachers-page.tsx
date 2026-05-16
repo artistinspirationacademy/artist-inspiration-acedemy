@@ -69,7 +69,10 @@ function TeachersHeader({ count }: { count: number }) {
                     "text-xs font-semibold tracking-[0.25em] text-white/90 uppercase backdrop-blur-md"
                 )}
             >
-                <Icons.Sparkle weight="fill" className="text-highlight size-3" />
+                <Icons.Sparkle
+                    weight="fill"
+                    className="text-highlight size-3"
+                />
                 {count > 0
                     ? `${count} mentor${count === 1 ? "" : "s"}`
                     : "Mentors"}

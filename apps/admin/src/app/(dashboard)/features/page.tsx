@@ -1,8 +1,8 @@
-import { DashShell } from "@/components/globals/layouts";
 import {
     FeatureReorderDialog,
     FeatureTable,
 } from "@/components/dashboard/features";
+import { DashShell } from "@/components/globals/layouts";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@workspace/config";
 import { Metadata } from "next";

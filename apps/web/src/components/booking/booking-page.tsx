@@ -113,8 +113,7 @@ export function BookingPage() {
         [categories]
     );
 
-    const bookingsDisabled =
-        homeData?.configuration?.enableBooking === false;
+    const bookingsDisabled = homeData?.configuration?.enableBooking === false;
 
     return (
         <section className="relative isolate min-h-svh w-full overflow-hidden bg-neutral-950 text-white">
@@ -291,8 +290,7 @@ function BookingForm({
         ) as unknown as Resolver<BookingFormValues>,
         mode: "onTouched",
         defaultValues: {
-            courseId:
-                courses.find((c) => c.id === preselectedCourse)?.id ?? "",
+            courseId: courses.find((c) => c.id === preselectedCourse)?.id ?? "",
             teacherId: preselectedTeacher ?? null,
             timestamp: undefined as unknown as Date,
             name: "",

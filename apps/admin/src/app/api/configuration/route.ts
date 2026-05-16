@@ -1,10 +1,10 @@
+import { cache } from "@workspace/cache";
 import {
     CResponse,
     handleError,
     updateConfigurationSchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
-import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 
 export async function GET() {

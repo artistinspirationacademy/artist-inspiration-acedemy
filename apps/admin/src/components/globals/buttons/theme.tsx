@@ -1,8 +1,8 @@
 "use client";
 
 import { cn, Icons } from "@workspace/config";
-import { ButtonHTMLAttributes } from "react";
 import { useTheme } from "@wrksz/themes/client";
+import { ButtonHTMLAttributes } from "react";
 
 export function ThemeButton({
     className,

@@ -1,6 +1,7 @@
 "use client";
 "use no memo";
 
+import { CourseDetailsReorder } from "@/components/dashboard/courses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -19,6 +20,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
 import { MediaSelectModal } from "@/components/ui/media-select";
 import {
@@ -28,12 +30,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { AutosizeTextarea } from "@/components/ui/textarea";
-import { CourseDetailsReorder } from "@/components/dashboard/courses";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     CourseCategory,

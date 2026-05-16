@@ -1,9 +1,5 @@
-import {
-    CResponse,
-    handleError,
-    replaceAboutSchema,
-} from "@workspace/config";
 import { cache } from "@workspace/cache";
+import { CResponse, handleError, replaceAboutSchema } from "@workspace/config";
 import { queries } from "@workspace/db";
 import { NextRequest } from "next/server";
 

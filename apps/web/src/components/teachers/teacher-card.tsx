@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    cn,
-    generateUploadThingURL,
-    Icons,
-    Teacher,
-} from "@workspace/config";
+import { cn, generateUploadThingURL, Icons, Teacher } from "@workspace/config";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -144,6 +139,8 @@ function RatingStars({ value }: { value: number }) {
 
 function formatYears(value: number): string {
     if (value <= 0) return "—";
-    const rounded = Number.isInteger(value) ? value.toString() : value.toFixed(1);
+    const rounded = Number.isInteger(value)
+        ? value.toString()
+        : value.toFixed(1);
     return `${rounded} ${value === 1 ? "year" : "years"}`;
 }

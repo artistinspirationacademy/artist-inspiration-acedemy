@@ -55,11 +55,7 @@ export function TestimonialsSection({
                 </div>
             ) : (
                 <div className="relative mt-14 flex flex-col gap-6">
-                    <MarqueeRow
-                        items={rowA}
-                        direction="left"
-                        duration={48}
-                    />
+                    <MarqueeRow items={rowA} direction="left" duration={48} />
                     {rowB.length > 0 && (
                         <MarqueeRow
                             items={rowB}
@@ -69,7 +65,6 @@ export function TestimonialsSection({
                     )}
                 </div>
             )}
-
         </section>
     );
 }

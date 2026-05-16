@@ -1,8 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@workspace/config";
-import { Icons, UpdateCourse } from "@workspace/config";
+import { cn, Icons, UpdateCourse } from "@workspace/config";
 import { Reorder } from "motion/react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";

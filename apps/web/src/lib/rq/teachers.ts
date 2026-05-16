@@ -29,13 +29,7 @@ export function useTeachers() {
 }
 
 export function useTeacher() {
-    const useGet = ({
-        id,
-        enabled,
-    }: {
-        id: string;
-        enabled?: boolean;
-    }) => {
+    const useGet = ({ id, enabled }: { id: string; enabled?: boolean }) => {
         return useQuery({
             queryKey: ["teacher", "get", id],
             queryFn: async () => {

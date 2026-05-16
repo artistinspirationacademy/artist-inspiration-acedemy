@@ -1,9 +1,9 @@
-import { DashShell } from "@/components/globals/layouts";
 import {
     BannerContentSheet,
     BannerReorderDialog,
     BannerTable,
 } from "@/components/dashboard/banners";
+import { DashShell } from "@/components/globals/layouts";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@workspace/config";
 import { Metadata } from "next";

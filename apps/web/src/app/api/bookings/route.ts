@@ -1,3 +1,4 @@
+import { cache } from "@workspace/cache";
 import {
     AppError,
     createBookingSchema,
@@ -6,7 +7,6 @@ import {
     MESSAGES,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
-import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -32,10 +32,7 @@ export async function POST(req: NextRequest) {
 
         const activeCourseIds = new Set(courses.map((c) => c.id));
         if (parsed.some((b) => !activeCourseIds.has(b.courseId)))
-            throw new AppError(
-                MESSAGES.ERRORS.GENERAL.NOT_FOUND,
-                "NOT_FOUND"
-            );
+            throw new AppError(MESSAGES.ERRORS.GENERAL.NOT_FOUND, "NOT_FOUND");
 
         const existingKeys = new Set(
             existing.map((b) => `${b.email}|${b.phone}`)

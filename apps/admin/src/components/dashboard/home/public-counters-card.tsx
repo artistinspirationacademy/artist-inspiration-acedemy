@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Configuration } from "@workspace/config";
 import Link from "next/link";
 
@@ -16,11 +11,7 @@ const ROWS: { key: keyof Configuration; label: string }[] = [
     { key: "countryCount", label: "Countries" },
 ];
 
-export function PublicCountersCard({
-    data,
-}: {
-    data: Configuration | null;
-}) {
+export function PublicCountersCard({ data }: { data: Configuration | null }) {
     return (
         <Card size="sm" className="col-span-1 md:col-span-2">
             <CardHeader>
@@ -46,7 +37,7 @@ export function PublicCountersCard({
                             key={r.key}
                             className="bg-muted/40 rounded-md px-3 py-2"
                         >
-                            <p className="text-muted-foreground text-[11px] font-medium uppercase tracking-wide">
+                            <p className="text-muted-foreground text-[11px] font-medium tracking-wide uppercase">
                                 {r.label}
                             </p>
                             <p className="font-heading text-xl font-semibold tabular-nums">
@@ -64,8 +55,8 @@ export function PublicCountersCard({
                     <span
                         className={
                             data?.enableBooking
-                                ? "text-emerald-500 font-medium"
-                                : "text-red-500 font-medium"
+                                ? "font-medium text-emerald-500"
+                                : "font-medium text-red-500"
                         }
                     >
                         {data?.enableBooking ? "Enabled" : "Disabled"}

@@ -12,12 +12,6 @@ import {
     FieldMapping,
 } from "@/components/ui/data-table";
 import {
-    DEFAULT_PAGINATION,
-    FullBooking,
-    Icons,
-    truncateText,
-} from "@workspace/config";
-import {
     ColumnDef,
     ColumnFiltersState,
     getFilteredRowModel,
@@ -25,6 +19,13 @@ import {
     RowSelectionState,
     VisibilityState,
 } from "@tanstack/react-table";
+import {
+    DEFAULT_PAGINATION,
+    FullBooking,
+    Icons,
+    truncateText,
+} from "@workspace/config";
+import { useBooking } from "@workspace/rq";
 import { format } from "date-fns";
 import {
     parseAsBoolean,
@@ -34,9 +35,8 @@ import {
 } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ActiveFilter, CourseFilter } from "./filters";
 import { BookingAction } from "./booking-action";
-import { useBooking } from "@workspace/rq";
+import { ActiveFilter, CourseFilter } from "./filters";
 
 const columns = (
     handleSingleDelete: (id: string) => void
@@ -232,7 +232,10 @@ export function BookingTable() {
         setRowSelection({});
     };
 
-    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+    const handleBulkActive = async (
+        selectedIds: string[],
+        isActive: boolean
+    ) => {
         await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});

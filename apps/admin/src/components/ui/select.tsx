@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
-import { Select as SelectPrimitive } from "radix-ui";
-
+import { CaretDownIcon, CaretUpIcon, CheckIcon } from "@phosphor-icons/react";
 import { cn } from "@workspace/config";
-import { CaretDownIcon, CheckIcon, CaretUpIcon } from "@phosphor-icons/react";
+import { Select as SelectPrimitive } from "radix-ui";
+import * as React from "react";
 
 function Select({
     ...props

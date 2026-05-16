@@ -1,5 +1,5 @@
-import { DashShell } from "@/components/globals/layouts";
 import { AboutFetch } from "@/components/globals/forms";
+import { DashShell } from "@/components/globals/layouts";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

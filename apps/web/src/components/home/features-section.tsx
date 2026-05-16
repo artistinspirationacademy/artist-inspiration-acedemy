@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    cn,
-    Feature,
-    generateUploadThingURL,
-    Icons,
-} from "@workspace/config";
+import { cn, Feature, generateUploadThingURL, Icons } from "@workspace/config";
 import { motion } from "motion/react";
 import Image from "next/image";
 
@@ -14,10 +9,7 @@ interface FeaturesSectionProps {
     isLoading?: boolean;
 }
 
-export function FeaturesSection({
-    features,
-    isLoading,
-}: FeaturesSectionProps) {
+export function FeaturesSection({ features, isLoading }: FeaturesSectionProps) {
     if (!isLoading && features.length === 0) return null;
 
     return (
@@ -56,13 +48,7 @@ export function FeaturesSection({
     );
 }
 
-function FeatureCard({
-    feature,
-    index,
-}: {
-    feature: Feature;
-    index: number;
-}) {
+function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
     const url = generateUploadThingURL(feature.imageKey);
 
     return (
@@ -136,7 +122,7 @@ export function SectionHeader({
                         "text-xs font-semibold tracking-[0.25em] uppercase backdrop-blur-md",
                         isDark
                             ? "border-white/20 bg-white/5 text-white/85"
-                            : "border-black/10 bg-black/5 text-foreground/80"
+                            : "text-foreground/80 border-black/10 bg-black/5"
                     )}
                 >
                     <Icons.Sparkle

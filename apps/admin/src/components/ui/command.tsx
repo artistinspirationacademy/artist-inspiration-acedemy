@@ -1,9 +1,5 @@
 "use client";
 
-import * as React from "react";
-import { Command as CommandPrimitive } from "cmdk";
-
-import { cn } from "@workspace/config";
 import {
     Dialog,
     DialogContent,
@@ -12,7 +8,10 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
-import { MagnifyingGlassIcon, CheckIcon } from "@phosphor-icons/react";
+import { CheckIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { cn } from "@workspace/config";
+import { Command as CommandPrimitive } from "cmdk";
+import * as React from "react";
 
 function Command({
     className,

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     ChartConfig,
     ChartContainer,
@@ -64,7 +59,9 @@ export function BookingsByCourseChart({
                             />
                             <ChartTooltip
                                 cursor={false}
-                                content={<ChartTooltipContent indicator="line" />}
+                                content={
+                                    <ChartTooltipContent indicator="line" />
+                                }
                             />
                             <Bar
                                 dataKey="count"

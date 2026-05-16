@@ -170,8 +170,8 @@ export function ConfigurationManageForm({
                     <CardHeader>
                         <CardTitle>Log Retention</CardTitle>
                         <p className="text-muted-foreground text-sm">
-                            Control how long logs stay hot in Redis and how
-                            long archives stay in UploadThing.
+                            Control how long logs stay hot in Redis and how long
+                            archives stay in UploadThing.
                         </p>
                     </CardHeader>
 

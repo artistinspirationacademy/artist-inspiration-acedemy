@@ -1,7 +1,7 @@
+import { CResponse } from "@workspace/config";
 import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME } from "./config/const";
 import { signToken, verifyToken } from "./lib/jwt";
-import { CResponse } from "@workspace/config";
 
 const PUBLIC_PATHS = ["/auth/signin", "/api/auth/signin"];
 

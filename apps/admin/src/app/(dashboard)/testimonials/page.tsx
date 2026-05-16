@@ -1,8 +1,8 @@
-import { DashShell } from "@/components/globals/layouts";
 import {
     TestimonialReorderDialog,
     TestimonialTable,
 } from "@/components/dashboard/testimonials";
+import { DashShell } from "@/components/globals/layouts";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@workspace/config";
 import { Metadata } from "next";

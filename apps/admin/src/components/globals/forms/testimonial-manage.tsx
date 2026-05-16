@@ -178,10 +178,13 @@ export function TestimonialManageForm({ data }: PageProps) {
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        value={field.value ?? ""}
+                                                        value={
+                                                            field.value ?? ""
+                                                        }
                                                         onChange={(e) =>
                                                             field.onChange(
-                                                                e.target.value ||
+                                                                e.target
+                                                                    .value ||
                                                                     null
                                                             )
                                                         }
@@ -224,7 +227,9 @@ export function TestimonialManageForm({ data }: PageProps) {
                                                 <div className="bg-muted/40 flex items-center justify-between rounded-md border px-4 py-3">
                                                     <StarRating
                                                         value={field.value ?? 0}
-                                                        onChange={field.onChange}
+                                                        onChange={
+                                                            field.onChange
+                                                        }
                                                         disabled={isSubmitting}
                                                     />
                                                     <span className="text-muted-foreground text-xs">
@@ -361,8 +366,7 @@ export function TestimonialManageForm({ data }: PageProps) {
                                                                         "avatarKey",
                                                                         null,
                                                                         {
-                                                                            shouldDirty:
-                                                                                true,
+                                                                            shouldDirty: true,
                                                                         }
                                                                     )
                                                                 }
@@ -458,7 +462,9 @@ function CourseSelect({
                             !selected && "text-muted-foreground"
                         )}
                     >
-                        {selected ? selected.title : "Select a course (optional)"}
+                        {selected
+                            ? selected.title
+                            : "Select a course (optional)"}
                     </span>
                     <Icons.CaretUpDown
                         weight="bold"
@@ -504,7 +510,9 @@ function CourseSelect({
                                             value={course.title}
                                             onSelect={() => {
                                                 onChange(
-                                                    isSelected ? null : course.id
+                                                    isSelected
+                                                        ? null
+                                                        : course.id
                                                 );
                                                 setOpen(false);
                                             }}

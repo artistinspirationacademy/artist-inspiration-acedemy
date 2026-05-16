@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { cn, DashboardKpi, type IconName, Icons } from "@workspace/config";
+import { cn, DashboardKpi, Icons, type IconName } from "@workspace/config";
 
 function getDelta(kpi: DashboardKpi): {
     pct: number | null;

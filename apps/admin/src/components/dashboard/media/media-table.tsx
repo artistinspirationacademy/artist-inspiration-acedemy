@@ -2,6 +2,7 @@
 "use no memo";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     DataTable,
@@ -18,7 +19,14 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    getFilteredRowModel,
+    getSortedRowModel,
+    RowSelectionState,
+    VisibilityState,
+} from "@tanstack/react-table";
 import {
     DEFAULT_PAGINATION,
     formatFileSize,
@@ -28,14 +36,7 @@ import {
     MEDIA_TYPES,
     truncateText,
 } from "@workspace/config";
-import {
-    ColumnDef,
-    ColumnFiltersState,
-    getFilteredRowModel,
-    getSortedRowModel,
-    RowSelectionState,
-    VisibilityState,
-} from "@tanstack/react-table";
+import { useMedia } from "@workspace/rq";
 import { format } from "date-fns";
 import Image from "next/image";
 import {
@@ -48,7 +49,6 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { TypeFilter } from "./filters";
 import { MediaAction } from "./media-action";
-import { useMedia } from "@workspace/rq";
 
 export type TableMedia = Media & {
     url: string;

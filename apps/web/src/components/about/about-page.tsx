@@ -20,10 +20,7 @@ export function AboutPage() {
     const { data, isPending } = useGet();
 
     const sections = useMemo(
-        () =>
-            (data ?? [])
-                .slice()
-                .sort((a, b) => a.position - b.position),
+        () => (data ?? []).slice().sort((a, b) => a.position - b.position),
         [data]
     );
 
@@ -91,7 +88,10 @@ function AboutHeader({ hasSections }: { hasSections: boolean }) {
                     "text-xs font-semibold tracking-[0.25em] text-white/90 uppercase backdrop-blur-md"
                 )}
             >
-                <Icons.Sparkle weight="fill" className="text-highlight size-3" />
+                <Icons.Sparkle
+                    weight="fill"
+                    className="text-highlight size-3"
+                />
                 About us
             </span>
 
@@ -177,16 +177,9 @@ function SectionRenderer({
                 />
             );
         case "quote":
-            return (
-                <QuoteSection
-                    content={section.content}
-                    delay={delay}
-                />
-            );
+            return <QuoteSection content={section.content} delay={delay} />;
         case "cta":
-            return (
-                <CtaSection content={section.content} delay={delay} />
-            );
+            return <CtaSection content={section.content} delay={delay} />;
         default:
             return null;
     }
@@ -355,7 +348,7 @@ function AccordionSection({
                     >
                         <summary
                             className={cn(
-                                "flex cursor-pointer items-center justify-between gap-4 px-5 py-4 list-none",
+                                "flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4",
                                 "text-base font-medium text-white",
                                 "[&::-webkit-details-marker]:hidden"
                             )}

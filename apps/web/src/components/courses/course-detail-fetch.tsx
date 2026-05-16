@@ -12,7 +12,11 @@ export function CourseDetailFetch() {
     const courseId = typeof id === "string" ? id : "";
 
     const { useGet: useCourseGet } = useCourse();
-    const { data: course, isPending: isCoursePending, isError } = useCourseGet({
+    const {
+        data: course,
+        isPending: isCoursePending,
+        isError,
+    } = useCourseGet({
         id: courseId,
     });
 

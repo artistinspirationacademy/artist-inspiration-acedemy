@@ -1,14 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
+import { cn } from "@workspace/config";
 import useEmblaCarousel, {
     type UseEmblaCarouselType,
 } from "embla-carousel-react";
-
-import { cn } from "@workspace/config";
-
-import { Button } from "@/components/ui/button";
-import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
+import * as React from "react";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;

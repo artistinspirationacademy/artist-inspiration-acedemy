@@ -18,11 +18,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-    DEFAULT_PAGINATION,
-    FullTestimonial,
-    Icons,
-} from "@workspace/config";
+import { DEFAULT_PAGINATION, FullTestimonial, Icons } from "@workspace/config";
 import { useTestimonial } from "@workspace/rq";
 import { useRouter } from "next/navigation";
 import { parseAsInteger, useQueryState } from "nuqs";

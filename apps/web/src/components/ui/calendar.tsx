@@ -1,5 +1,12 @@
 "use client";
 
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+    CaretDownIcon,
+    CaretLeftIcon,
+    CaretRightIcon,
+} from "@phosphor-icons/react";
+import { cn } from "@workspace/config";
 import * as React from "react";
 import {
     DayPicker,
@@ -7,15 +14,6 @@ import {
     type DayButton,
     type Locale,
 } from "react-day-picker";
-
-import { cn } from "@workspace/config";
-
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-    CaretLeftIcon,
-    CaretRightIcon,
-    CaretDownIcon,
-} from "@phosphor-icons/react";
 
 function Calendar({
     className,
@@ -85,7 +83,7 @@ function Calendar({
                     defaultClassNames.dropdown_root
                 ),
                 dropdown: cn(
-                    "absolute inset-0 bg-popover opacity-0",
+                    "bg-popover absolute inset-0 opacity-0",
                     defaultClassNames.dropdown
                 ),
                 caption_label: cn(
@@ -97,7 +95,7 @@ function Calendar({
                 ),
                 weekdays: cn("flex", defaultClassNames.weekdays),
                 weekday: cn(
-                    "flex-1 rounded-(--cell-radius) text-[0.75rem] font-medium tracking-wider uppercase text-white/40 select-none",
+                    "flex-1 rounded-(--cell-radius) text-[0.75rem] font-medium tracking-wider text-white/40 uppercase select-none",
                     defaultClassNames.weekday
                 ),
                 week: cn("mt-2 flex w-full", defaultClassNames.week),
@@ -117,7 +115,7 @@ function Calendar({
                     defaultClassNames.day
                 ),
                 range_start: cn(
-                    "relative isolate z-0 rounded-l-(--cell-radius) bg-highlight/20 after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-highlight/20",
+                    "bg-highlight/20 after:bg-highlight/20 relative isolate z-0 rounded-l-(--cell-radius) after:absolute after:inset-y-0 after:right-0 after:w-4",
                     defaultClassNames.range_start
                 ),
                 range_middle: cn(
@@ -125,11 +123,11 @@ function Calendar({
                     defaultClassNames.range_middle
                 ),
                 range_end: cn(
-                    "relative isolate z-0 rounded-r-(--cell-radius) bg-highlight/20 after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-highlight/20",
+                    "bg-highlight/20 after:bg-highlight/20 relative isolate z-0 rounded-r-(--cell-radius) after:absolute after:inset-y-0 after:left-0 after:w-4",
                     defaultClassNames.range_end
                 ),
                 today: cn(
-                    "rounded-(--cell-radius) ring-1 ring-inset ring-highlight/60 data-[selected=true]:ring-0",
+                    "ring-highlight/60 rounded-(--cell-radius) ring-1 ring-inset data-[selected=true]:ring-0",
                     defaultClassNames.today
                 ),
                 outside: cn(
@@ -231,11 +229,11 @@ function CalendarDayButton({
             className={cn(
                 "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal text-white/90 transition-colors",
                 "hover:bg-white/10 hover:text-white",
-                "group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-highlight/40 group-data-[focused=true]/day:ring-2 group-data-[focused=true]/day:ring-highlight/40",
-                "data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-highlight data-[range-end=true]:text-highlight-foreground hover:data-[range-end=true]:bg-highlight/15 hover:data-[range-end=true]:text-highlight hover:data-[range-end=true]:ring-1 hover:data-[range-end=true]:ring-inset hover:data-[range-end=true]:ring-highlight/60",
-                "data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-highlight/25 data-[range-middle=true]:text-white hover:data-[range-middle=true]:bg-highlight/40 hover:data-[range-middle=true]:text-white",
-                "data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-highlight data-[range-start=true]:text-highlight-foreground hover:data-[range-start=true]:bg-highlight/15 hover:data-[range-start=true]:text-highlight hover:data-[range-start=true]:ring-1 hover:data-[range-start=true]:ring-inset hover:data-[range-start=true]:ring-highlight/60",
-                "data-[selected-single=true]:bg-highlight data-[selected-single=true]:text-highlight-foreground hover:data-[selected-single=true]:bg-highlight/15 hover:data-[selected-single=true]:text-highlight hover:data-[selected-single=true]:ring-1 hover:data-[selected-single=true]:ring-inset hover:data-[selected-single=true]:ring-highlight/60",
+                "group-data-[focused=true]/day:border-highlight/40 group-data-[focused=true]/day:ring-highlight/40 group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-2",
+                "data-[range-end=true]:bg-highlight data-[range-end=true]:text-highlight-foreground hover:data-[range-end=true]:bg-highlight/15 hover:data-[range-end=true]:text-highlight hover:data-[range-end=true]:ring-highlight/60 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) hover:data-[range-end=true]:ring-1 hover:data-[range-end=true]:ring-inset",
+                "data-[range-middle=true]:bg-highlight/25 hover:data-[range-middle=true]:bg-highlight/40 data-[range-middle=true]:rounded-none data-[range-middle=true]:text-white hover:data-[range-middle=true]:text-white",
+                "data-[range-start=true]:bg-highlight data-[range-start=true]:text-highlight-foreground hover:data-[range-start=true]:bg-highlight/15 hover:data-[range-start=true]:text-highlight hover:data-[range-start=true]:ring-highlight/60 data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) hover:data-[range-start=true]:ring-1 hover:data-[range-start=true]:ring-inset",
+                "data-[selected-single=true]:bg-highlight data-[selected-single=true]:text-highlight-foreground hover:data-[selected-single=true]:bg-highlight/15 hover:data-[selected-single=true]:text-highlight hover:data-[selected-single=true]:ring-highlight/60 hover:data-[selected-single=true]:ring-1 hover:data-[selected-single=true]:ring-inset",
                 "[&>span]:text-xs [&>span]:opacity-70",
                 defaultClassNames.day,
                 className

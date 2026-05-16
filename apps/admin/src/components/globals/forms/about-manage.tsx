@@ -20,6 +20,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
 import { MediaSelectModal } from "@/components/ui/media-select";
 import {
@@ -29,7 +30,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
@@ -140,7 +140,9 @@ export function AboutManageForm({ data }: { data: AboutSection[] }) {
     const [isReorderModalOpen, setIsReorderModalOpen] = useState(false);
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(replaceAboutSchema) as unknown as Resolver<FormValues>,
+        resolver: zodResolver(
+            replaceAboutSchema
+        ) as unknown as Resolver<FormValues>,
         defaultValues: {
             sections: data
                 .slice()
@@ -465,19 +467,11 @@ function SectionContentEditor({
     switch (type) {
         case "text":
             return (
-                <TextContent
-                    form={form}
-                    index={index}
-                    isPending={isPending}
-                />
+                <TextContent form={form} index={index} isPending={isPending} />
             );
         case "image":
             return (
-                <ImageContent
-                    form={form}
-                    index={index}
-                    isPending={isPending}
-                />
+                <ImageContent form={form} index={index} isPending={isPending} />
             );
         case "image_text":
         case "image_text_reverse":
@@ -495,16 +489,14 @@ function SectionContentEditor({
                     form={form}
                     index={index}
                     isPending={isPending}
-                    label={type === "accordion" ? "Accordion Items" : "Grid Items"}
+                    label={
+                        type === "accordion" ? "Accordion Items" : "Grid Items"
+                    }
                 />
             );
         case "quote":
             return (
-                <QuoteContent
-                    form={form}
-                    index={index}
-                    isPending={isPending}
-                />
+                <QuoteContent form={form} index={index} isPending={isPending} />
             );
         case "cta":
             return (
@@ -757,7 +749,10 @@ function KeyValueContent({
         if (Array.isArray(current)) {
             const next = current.map((it, i) =>
                 i === itemIndex
-                    ? { ...(it as { key: string; value: string }), [key]: newValue }
+                    ? {
+                          ...(it as { key: string; value: string }),
+                          [key]: newValue,
+                      }
                     : it
             );
             form.setValue(`sections.${index}.content`, next, {
@@ -845,14 +840,9 @@ function QuoteContent({
     const value = useWatch({
         control: form.control,
         name: `sections.${index}.content`,
-    }) as
-        | { text?: string; author?: string; role?: string }
-        | undefined;
+    }) as { text?: string; author?: string; role?: string } | undefined;
 
-    const setField = (
-        key: "text" | "author" | "role",
-        newValue: string
-    ) => {
+    const setField = (key: "text" | "author" | "role", newValue: string) => {
         const current =
             (form.getValues(`sections.${index}.content`) as {
                 text?: string;

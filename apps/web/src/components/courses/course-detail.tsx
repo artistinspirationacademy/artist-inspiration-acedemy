@@ -43,7 +43,10 @@ export function CourseDetail({ course, teachers = [] }: CourseDetailProps) {
                     </div>
                 )}
 
-                <TeachersSection teachers={teachers} courseName={course.title} />
+                <TeachersSection
+                    teachers={teachers}
+                    courseName={course.title}
+                />
 
                 <CourseFooterCTA />
             </div>
@@ -291,7 +294,7 @@ function AccordionRow({
         >
             <summary
                 className={cn(
-                    "flex cursor-pointer items-center justify-between gap-4 px-5 py-4 list-none",
+                    "flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4",
                     "text-base font-medium text-white",
                     "[&::-webkit-details-marker]:hidden"
                 )}

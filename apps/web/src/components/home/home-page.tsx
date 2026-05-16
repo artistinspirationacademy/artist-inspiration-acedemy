@@ -1,12 +1,12 @@
 "use client";
 
 import { useHome } from "@/lib/rq";
-import { HeroCarousel } from "./hero-carousel";
-import { FeaturesSection } from "./features-section";
-import { TestimonialsSection } from "./testimonials-section";
-import { StatsSection } from "./stats-section";
-import { HowItWorksSection } from "./how-it-works-section";
 import { CtaSection } from "./cta-section";
+import { FeaturesSection } from "./features-section";
+import { HeroCarousel } from "./hero-carousel";
+import { HowItWorksSection } from "./how-it-works-section";
+import { StatsSection } from "./stats-section";
+import { TestimonialsSection } from "./testimonials-section";
 
 export function HomePage() {
     const { useGet } = useHome();

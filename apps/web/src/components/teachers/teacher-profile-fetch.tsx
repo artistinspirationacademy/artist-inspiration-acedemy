@@ -71,8 +71,8 @@ function NotFoundState() {
                     Mentor not found
                 </h1>
                 <p className="text-white/70">
-                    The mentor you&rsquo;re looking for may have stepped away
-                    or moved on.
+                    The mentor you&rsquo;re looking for may have stepped away or
+                    moved on.
                 </p>
 
                 <a

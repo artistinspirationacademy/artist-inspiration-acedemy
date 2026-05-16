@@ -7,15 +7,10 @@ import {
     type ColumnFiltersState,
     type OnChangeFn,
     type RowSelectionState,
-    type Table as TableType,
     type TableOptions,
+    type Table as TableType,
 } from "@tanstack/react-table";
-import {
-    createContext,
-    use,
-    useMemo,
-    type PropsWithChildren,
-} from "react";
+import { createContext, use, useMemo, type PropsWithChildren } from "react";
 
 type DataTableProps<TData, TValue> = {
     columns: ColumnDef<TData, TValue>[];

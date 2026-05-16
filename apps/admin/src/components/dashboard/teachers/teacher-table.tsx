@@ -114,7 +114,13 @@ const columns = (
                         </Badge>
                     ))}
                     {hidden > 0 && (
-                        <Badge variant="secondary" title={courses.slice(2).map((c) => c.title).join(", ")}>
+                        <Badge
+                            variant="secondary"
+                            title={courses
+                                .slice(2)
+                                .map((c) => c.title)
+                                .join(", ")}
+                        >
                             +{hidden}
                         </Badge>
                     )}
@@ -263,7 +269,10 @@ export function TeacherTable() {
         setRowSelection({});
     };
 
-    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+    const handleBulkActive = async (
+        selectedIds: string[],
+        isActive: boolean
+    ) => {
         await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});

@@ -102,9 +102,8 @@ export function FeatureAction({ data, onDelete }: PageProps) {
                         </AlertDialogTitle>
 
                         <AlertDialogDescription>
-                            Deleting this feature will permanently remove it
-                            and all associated data. This action cannot be
-                            undone.
+                            Deleting this feature will permanently remove it and
+                            all associated data. This action cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
 

@@ -22,13 +22,7 @@ export function useCourses() {
 }
 
 export function useCourse() {
-    const useGet = ({
-        id,
-        enabled,
-    }: {
-        id: string;
-        enabled?: boolean;
-    }) => {
+    const useGet = ({ id, enabled }: { id: string; enabled?: boolean }) => {
         return useQuery({
             queryKey: ["course", "get", id],
             queryFn: async () => {

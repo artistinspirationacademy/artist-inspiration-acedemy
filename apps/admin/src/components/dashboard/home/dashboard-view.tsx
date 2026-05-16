@@ -24,7 +24,7 @@ export function DashboardView() {
                 </p>
                 <button
                     onClick={() => refetch()}
-                    className="text-foreground hover:underline text-xs"
+                    className="text-foreground text-xs hover:underline"
                 >
                     Try again
                 </button>

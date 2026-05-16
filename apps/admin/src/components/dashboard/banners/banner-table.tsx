@@ -2,6 +2,7 @@
 "use no memo";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     DataTable,
@@ -10,7 +11,6 @@ import {
     ExportDialog,
     FieldMapping,
 } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -20,14 +20,6 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import {
-    Banner,
-    BANNER_MEDIA_TYPES,
-    DEFAULT_PAGINATION,
-    generateUploadThingURL,
-    Icons,
-    truncateText,
-} from "@workspace/config";
-import {
     ColumnDef,
     ColumnFiltersState,
     getFilteredRowModel,
@@ -35,6 +27,15 @@ import {
     RowSelectionState,
     VisibilityState,
 } from "@tanstack/react-table";
+import {
+    Banner,
+    BANNER_MEDIA_TYPES,
+    DEFAULT_PAGINATION,
+    generateUploadThingURL,
+    Icons,
+    truncateText,
+} from "@workspace/config";
+import { useBanner } from "@workspace/rq";
 import { format } from "date-fns";
 import Image from "next/image";
 import {
@@ -45,9 +46,8 @@ import {
 } from "nuqs";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ActiveFilter, MediaTypeFilter } from "./filters";
 import { BannerAction } from "./banner-action";
-import { useBanner } from "@workspace/rq";
+import { ActiveFilter, MediaTypeFilter } from "./filters";
 
 export type TableBanner = Banner & {
     url: string;
@@ -204,7 +204,10 @@ export function BannerTable() {
         setRowSelection({});
     };
 
-    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+    const handleBulkActive = async (
+        selectedIds: string[],
+        isActive: boolean
+    ) => {
         await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});
