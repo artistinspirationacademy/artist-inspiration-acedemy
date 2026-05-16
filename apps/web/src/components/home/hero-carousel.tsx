@@ -67,7 +67,9 @@ export function HeroCarousel({
                 </AnimatePresence>
 
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.65)_60%,rgba(0,0,0,0.85)_100%)]" />
-                <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/70" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/70" />
+
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-linear-to-b from-white/45 via-white/15 to-transparent sm:h-40" />
             </div>
 
             <div className="relative z-10 flex h-full w-full items-center justify-center px-4 sm:px-6">

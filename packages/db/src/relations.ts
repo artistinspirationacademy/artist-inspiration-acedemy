@@ -52,7 +52,7 @@ export const relations = defineRelations(schema, (r) => ({
         course: r.one.courses({
             from: r.testimonials.courseId,
             to: r.courses.id,
-            optional: false,
+            optional: true,
         }),
     },
     bookings: {

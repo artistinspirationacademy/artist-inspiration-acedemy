@@ -3,5 +3,7 @@ export * from "./auth";
 export * from "./banner";
 export * from "./booking";
 export * from "./course";
+export * from "./feature";
 export * from "./media";
 export * from "./teacher";
+export * from "./testimonial";

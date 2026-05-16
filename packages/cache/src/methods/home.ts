@@ -7,17 +7,27 @@ const key = "home";
 class HomeCache {
     async get() {
         const cachedRaw = await redis.get(key);
-        let cached = homeSchema.nullable().parse(parseToJSON(cachedRaw));
+        const parsed = homeSchema.nullable().safeParse(parseToJSON(cachedRaw));
+        let cached = parsed.success ? parsed.data : null;
 
         if (!cached) {
-            const existingBanners = await queries.banner.scan({
-                isActive: true,
-            });
-            const existingBannerContent = await queries.banner.content.get();
+            const [
+                existingBanners,
+                existingBannerContent,
+                existingFeatures,
+                existingTestimonials,
+            ] = await Promise.all([
+                queries.banner.scan({ isActive: true }),
+                queries.banner.content.get(),
+                queries.feature.scan({ isActive: true }),
+                queries.testimonial.scan({ isActive: true }),
+            ]);
 
             cached = {
                 banners: existingBanners,
                 bannerContent: existingBannerContent,
+                features: existingFeatures,
+                testimonials: existingTestimonials,
             };
 
             await redis.set(key, JSON.stringify(cached));

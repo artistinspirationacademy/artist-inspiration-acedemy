@@ -8,8 +8,12 @@ export const features = pgTable(
         name: t.text("name").notNull(),
         description: t.text("description").notNull(),
         imageKey: t.text("image_key").notNull(),
+        position: t.integer("position").notNull(),
         isActive: t.boolean("is_active").notNull().default(true),
         ...timestamps(t),
     }),
-    (t) => [index("features_is_active_idx").on(t.isActive)]
+    (t) => [
+        index("features_position_idx").on(t.position),
+        index("features_is_active_idx").on(t.isActive),
+    ]
 );
