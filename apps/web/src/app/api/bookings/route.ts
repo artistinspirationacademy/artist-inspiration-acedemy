@@ -6,12 +6,20 @@ import {
     MESSAGES,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
+import { cache } from "@workspace/cache";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const parsed = createBookingSchema.array().parse(body);
+
+        const home = await cache.home.get();
+        if (home.configuration && !home.configuration.enableBooking)
+            throw new AppError(
+                "Bookings are currently disabled. Please check back later.",
+                "FORBIDDEN"
+            );
 
         const courseIds = [...new Set(parsed.map((b) => b.courseId))];
         const emails = [...new Set(parsed.map((b) => b.email))];

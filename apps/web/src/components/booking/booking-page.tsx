@@ -32,7 +32,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useBooking, useCourses, useTeacher } from "@/lib/rq";
+import { useBooking, useCourses, useHome, useTeacher } from "@/lib/rq";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     cn,
@@ -101,6 +101,9 @@ export function BookingPage() {
     const { useGet } = useCourses();
     const { data, isPending } = useGet({});
 
+    const { useGet: useHomeGet } = useHome();
+    const { data: homeData, isPending: isHomePending } = useHomeGet({});
+
     const categories = useMemo(
         () => data?.categories ?? [],
         [data?.categories]
@@ -110,6 +113,9 @@ export function BookingPage() {
         [categories]
     );
 
+    const bookingsDisabled =
+        homeData?.configuration?.enableBooking === false;
+
     return (
         <section className="relative isolate min-h-svh w-full overflow-hidden bg-neutral-950 text-white">
             <BackgroundAura />
@@ -118,8 +124,10 @@ export function BookingPage() {
                 <BookingHeader />
 
                 <div className="mt-10">
-                    {isPending ? (
+                    {isPending || isHomePending ? (
                         <FormSkeleton />
+                    ) : bookingsDisabled ? (
+                        <BookingsDisabledState />
                     ) : !courses.length ? (
                         <NoCoursesState />
                     ) : (
@@ -131,6 +139,26 @@ export function BookingPage() {
                 </div>
             </div>
         </section>
+    );
+}
+
+function BookingsDisabledState() {
+    return (
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-white/3 p-10 text-center backdrop-blur-md">
+            <div className="bg-highlight/10 border-highlight/30 flex size-16 items-center justify-center rounded-full border">
+                <Icons.Pause
+                    weight="duotone"
+                    className="text-highlight size-7"
+                />
+            </div>
+            <h2 className="text-2xl font-semibold">
+                Bookings are paused right now
+            </h2>
+            <p className="max-w-md text-sm text-white/70">
+                We&rsquo;re not accepting new bookings at the moment. Please
+                check back soon — enrolment will reopen shortly.
+            </p>
+        </div>
     );
 }
 

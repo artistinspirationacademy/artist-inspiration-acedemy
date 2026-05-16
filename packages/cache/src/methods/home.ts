@@ -16,11 +16,13 @@ class HomeCache {
                 existingBannerContent,
                 existingFeatures,
                 existingTestimonials,
+                existingConfiguration,
             ] = await Promise.all([
                 queries.banner.scan({ isActive: true }),
                 queries.banner.content.get(),
                 queries.feature.scan({ isActive: true }),
                 queries.testimonial.scan({ isActive: true }),
+                queries.configuration.get(),
             ]);
 
             cached = {
@@ -28,6 +30,7 @@ class HomeCache {
                 bannerContent: existingBannerContent,
                 features: existingFeatures,
                 testimonials: existingTestimonials,
+                configuration: existingConfiguration,
             };
 
             await redis.set(key, JSON.stringify(cached));

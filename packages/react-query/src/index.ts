@@ -2,6 +2,7 @@ export * from "./about";
 export * from "./auth";
 export * from "./banner";
 export * from "./booking";
+export * from "./configuration";
 export * from "./course";
 export * from "./feature";
 export * from "./media";

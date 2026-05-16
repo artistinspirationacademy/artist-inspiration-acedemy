@@ -6,5 +6,7 @@ export const configuration = pgTable("configuration", (t) => ({
     learnerCount: t.integer("learner_count").notNull().default(0),
     countryCount: t.integer("country_count").notNull().default(0),
     teacherCount: t.integer("teacher_count").notNull().default(0),
+    contentHoursCount: t.integer("content_hours_count").notNull().default(0),
+    enableBooking: t.boolean("enable_booking").notNull().default(true),
     ...timestamps(t),
 }));

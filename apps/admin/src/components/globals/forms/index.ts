@@ -1,6 +1,7 @@
 export * from "./about-manage";
 export * from "./banner-content";
 export * from "./banner-manage";
+export * from "./configuration-manage";
 export * from "./course-manage";
 export * from "./feature-manage";
 export * from "./media-edit";

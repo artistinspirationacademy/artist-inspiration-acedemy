@@ -19,7 +19,7 @@ export function HomePage() {
                 content={data?.bannerContent ?? null}
                 isLoading={isPending}
             />
-            <StatsSection />
+            <StatsSection configuration={data?.configuration ?? null} />
             <FeaturesSection
                 features={data?.features ?? []}
                 isLoading={isPending}
