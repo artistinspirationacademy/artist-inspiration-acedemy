@@ -7,7 +7,7 @@ import {
     WarningIcon,
     XCircleIcon,
 } from "@phosphor-icons/react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@wrksz/themes/client";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
