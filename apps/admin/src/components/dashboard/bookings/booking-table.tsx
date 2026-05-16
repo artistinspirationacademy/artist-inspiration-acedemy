@@ -97,8 +97,8 @@ const columns = (
         ),
     },
     {
-        accessorKey: "teacher.name",
         id: "teacherName",
+        accessorFn: (row) => row.teacher?.name ?? "",
         header: "Teacher",
         cell: ({ row }) =>
             row.original.teacher ? (

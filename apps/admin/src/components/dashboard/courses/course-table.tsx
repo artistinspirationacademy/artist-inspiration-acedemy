@@ -11,14 +11,6 @@ import {
     FieldMapping,
 } from "@/components/ui/data-table";
 import {
-    Course,
-    CourseCategory,
-    DEFAULT_PAGINATION,
-    generateUploadThingURL,
-    Icons,
-    truncateText,
-} from "@workspace/config";
-import {
     ColumnDef,
     ColumnFiltersState,
     getFilteredRowModel,
@@ -26,6 +18,15 @@ import {
     RowSelectionState,
     VisibilityState,
 } from "@tanstack/react-table";
+import {
+    Course,
+    CourseCategory,
+    DEFAULT_PAGINATION,
+    generateUploadThingURL,
+    Icons,
+    truncateText,
+} from "@workspace/config";
+import { useCourse, useCourseCategory } from "@workspace/rq";
 import { format } from "date-fns";
 import Image from "next/image";
 import {
@@ -35,9 +36,8 @@ import {
     useQueryState,
 } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
-import { ActiveFilter, CategoryFilter } from "./filters";
 import { CourseAction } from "./course-action";
-import { useCourse, useCourseCategory } from "@workspace/rq";
+import { ActiveFilter, CategoryFilter } from "./filters";
 
 export type TableCourse = Course & {
     cardImageUrl: string;
@@ -105,7 +105,7 @@ const columns = (
         header: "Description",
         cell: ({ row }) => (
             <p className="text-muted-foreground max-w-xs text-sm">
-                {truncateText(row.original.description, 60)}
+                {truncateText(row.original.description, 40)}
             </p>
         ),
     },
@@ -228,7 +228,10 @@ export function CourseTable() {
         setRowSelection({});
     };
 
-    const handleBulkActive = async (selectedIds: string[], isActive: boolean) => {
+    const handleBulkActive = async (
+        selectedIds: string[],
+        isActive: boolean
+    ) => {
         await bulkUpdateAsync({ ids: selectedIds, values: { isActive } });
         refetch();
         setRowSelection({});
