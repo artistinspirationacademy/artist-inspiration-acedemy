@@ -458,7 +458,7 @@ function CourseSelect({
                 >
                     <span
                         className={cn(
-                            "truncate",
+                            "min-w-0 flex-1 truncate text-left",
                             !selected && "text-muted-foreground"
                         )}
                     >

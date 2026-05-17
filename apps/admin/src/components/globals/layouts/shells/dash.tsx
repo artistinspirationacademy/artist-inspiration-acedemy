@@ -18,7 +18,7 @@ export function DashShell({ children, classNames }: ShellProps) {
         >
             <div
                 className={cn(
-                    "w-full max-w-6xl space-y-6 p-6 py-10",
+                    "w-full min-w-0 max-w-6xl space-y-6 p-6 py-10",
                     classNames?.innerWrapper
                 )}
             >

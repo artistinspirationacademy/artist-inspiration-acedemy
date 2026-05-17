@@ -13,7 +13,12 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Feature, generateUploadThingURL, Icons } from "@workspace/config";
+import {
+    Feature,
+    generateUploadThingURL,
+    Icons,
+    truncateText,
+} from "@workspace/config";
 import { useFeature } from "@workspace/rq";
 import { Reorder } from "motion/react";
 import Image from "next/image";
@@ -148,8 +153,8 @@ function FeatureReorderRow({ feature }: { feature: Feature }) {
 
             <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{feature.name}</p>
-                <p className="text-muted-foreground truncate text-xs">
-                    {feature.description}
+                <p className="text-muted-foreground text-xs">
+                    {truncateText(feature.description, 30)}
                 </p>
             </div>
         </div>

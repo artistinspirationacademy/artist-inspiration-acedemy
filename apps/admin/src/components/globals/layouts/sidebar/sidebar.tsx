@@ -20,6 +20,7 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -32,8 +33,17 @@ import {
 import { useAuth } from "@workspace/rq";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 export function Sidebar() {
+    const pathname = usePathname();
+    const { isMobile, setOpenMobile } = useSidebar();
+
+    useEffect(() => {
+        if (isMobile) setOpenMobile(false);
+    }, [pathname, isMobile, setOpenMobile]);
+
     return (
         <ShadSidebar collapsible="icon">
             <SidebarHeader>

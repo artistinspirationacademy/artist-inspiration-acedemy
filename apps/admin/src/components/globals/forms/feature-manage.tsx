@@ -166,7 +166,7 @@ export function FeatureManageForm({ data }: PageProps) {
                         </Card>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="min-w-0 space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Settings</CardTitle>

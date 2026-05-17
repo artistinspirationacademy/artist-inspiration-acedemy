@@ -330,7 +330,7 @@ export function TeacherManageForm({ data }: PageProps) {
                         </Card>
                     </div>
 
-                    <div className="space-y-6">
+                    <div className="min-w-0 space-y-6">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Settings</CardTitle>
@@ -490,7 +490,8 @@ export function TeacherManageForm({ data }: PageProps) {
                                                         </div>
                                                         <p className="text-muted-foreground truncate text-xs">
                                                             {selectedVideo?.name ??
-                                                                videoKey}
+                                                                videoKey ??
+                                                                ""}
                                                         </p>
                                                         <div className="flex gap-2">
                                                             <Button

@@ -205,13 +205,14 @@ export function BannerManageForm({ data }: PageProps) {
                                                 />
                                             )}
                                         </div>
-                                        <div className="flex-1 space-y-1 text-sm">
+                                        <div className="min-w-0 flex-1 space-y-1 text-sm">
                                             <p className="font-medium capitalize">
                                                 {mediaType}
                                             </p>
                                             <p className="text-muted-foreground truncate text-xs">
                                                 {selectedMedia?.name ??
-                                                    mediaKey}
+                                                    mediaKey ??
+                                                    ""}
                                             </p>
                                         </div>
                                         <Button

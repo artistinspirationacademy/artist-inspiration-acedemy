@@ -190,16 +190,16 @@ function CopyableRow({
 
     return (
         <div className="flex items-center justify-between gap-3 text-sm">
-            <span className="text-muted-foreground flex items-center gap-2">
+            <span className="text-muted-foreground flex shrink-0 items-center gap-2">
                 {icon}
                 {label}
             </span>
-            <div className="flex min-w-0 items-center gap-1">
+            <div className="flex min-w-0 flex-1 items-center justify-end gap-1">
                 <span
                     className={
                         mono
-                            ? "text-foreground truncate font-mono text-xs"
-                            : "text-foreground truncate"
+                            ? "text-foreground min-w-0 truncate font-mono text-xs"
+                            : "text-foreground min-w-0 truncate"
                     }
                     title={value}
                 >

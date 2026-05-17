@@ -36,6 +36,7 @@ import { Switch } from "@/components/ui/switch";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+    convertValueToLabel,
     CourseCategory,
     CreateCourse,
     createCourseSchema,
@@ -275,7 +276,7 @@ export function CourseManageForm({ data }: PageProps) {
                             />
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="min-w-0 space-y-6">
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Settings</CardTitle>
@@ -528,7 +529,7 @@ function ImagePickerField({
                                 />
                             </div>
                             <p className="text-muted-foreground truncate text-xs">
-                                {previewLabel}
+                                {previewLabel || convertValueToLabel(name)}
                             </p>
                             <Button
                                 type="button"
