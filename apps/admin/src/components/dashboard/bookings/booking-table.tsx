@@ -36,6 +36,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BookingAction } from "./booking-action";
+import { BookingDeepLinkSheet } from "./booking-deep-link-sheet";
 import { ActiveFilter, CourseFilter } from "./filters";
 
 const columns = (
@@ -415,6 +416,8 @@ export function BookingTable() {
                 filename={`bookings_export_${format(new Date(), "dd-MM-yyyy")}.csv`}
                 fields={exportFields}
             />
+
+            <BookingDeepLinkSheet />
         </>
     );
 }

@@ -54,6 +54,7 @@
         "@workspace/typescript-config": "workspace:*",
         "clsx": "^2.1.1",
         "eslint": "^9.39.2",
+        "next": "16.2.4",
         "tailwind-merge": "^3.5.0",
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.51.0"

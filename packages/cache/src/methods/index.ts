@@ -4,7 +4,11 @@ import { dashboardCache } from "./dashboard";
 import { homeCache } from "./home";
 import { logsCache } from "./logs";
 import { notificationCache } from "./notification";
+import { rateLimitCache } from "./rate-limit";
 import { teacherCache } from "./teacher";
+
+export { enforceRateLimit, resetRateLimit } from "./rate-limit";
+export type { RateLimitResult } from "./rate-limit";
 
 export const cache = {
     about: aboutCache,
@@ -13,5 +17,6 @@ export const cache = {
     home: homeCache,
     logs: logsCache,
     notification: notificationCache,
+    rateLimit: rateLimitCache,
     teacher: teacherCache,
 };

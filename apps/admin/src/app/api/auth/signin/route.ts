@@ -1,6 +1,6 @@
 import { AUTH_COOKIE_NAME } from "@/config/const";
 import { signToken } from "@/lib/jwt";
-import { cache } from "@workspace/cache";
+import { cache, enforceRateLimit, resetRateLimit } from "@workspace/cache";
 import {
     AppError,
     CResponse,
@@ -16,8 +16,26 @@ import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
+        await enforceRateLimit({
+            req,
+            scope: "auth:signin:ip",
+            limit: 10,
+            windowSec: 60 * 15,
+            logType: "auth",
+        });
+
         const body = await req.json();
         const { email, password } = signInSchema.parse(body);
+
+        const emailIdentifier = email.toLowerCase();
+        await enforceRateLimit({
+            req,
+            scope: "auth:signin:email",
+            identifier: emailIdentifier,
+            limit: 5,
+            windowSec: 60 * 60,
+            logType: "auth",
+        });
 
         const existingData = await queries.user.get({
             email,
@@ -39,6 +57,11 @@ export async function POST(req: NextRequest) {
                 "FORBIDDEN"
             );
 
+        await resetRateLimit({
+            scope: "auth:signin:email",
+            identifier: emailIdentifier,
+        });
+
         const token = await signToken({ id: existingData.id });
 
         const cookieStore = await cookies();
@@ -56,6 +79,7 @@ export async function POST(req: NextRequest) {
             level: "info",
             actorId: existingData.id,
         });
+
         return CResponse({ data: safeUserSchema.parse(existingData) });
     } catch (err) {
         return handleError(err);

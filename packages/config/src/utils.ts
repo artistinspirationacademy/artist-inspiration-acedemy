@@ -22,6 +22,23 @@ export function getAbsoluteURL(path: string = "/") {
     return "http://localhost:3000" + path;
 }
 
+/**
+ * Best-effort client IP extraction. Honors common reverse-proxy headers,
+ * falling back to a stable sentinel so rate-limit keys never become empty.
+ */
+export function getClientIp(req: Request): string {
+    const forwardedFor = req.headers.get("x-forwarded-for");
+    if (forwardedFor) {
+        const first = forwardedFor.split(",")[0]?.trim();
+        if (first) return first;
+    }
+    const realIp = req.headers.get("x-real-ip");
+    if (realIp) return realIp;
+    const cfConnecting = req.headers.get("cf-connecting-ip");
+    if (cfConnecting) return cfConnecting;
+    return "unknown";
+}
+
 export class AppError extends Error {
     status: ResponseMessages;
 
