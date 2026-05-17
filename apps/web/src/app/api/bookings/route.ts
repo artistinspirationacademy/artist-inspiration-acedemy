@@ -44,6 +44,29 @@ export async function POST(req: NextRequest) {
             );
 
         const data = await queries.booking.create(parsed);
+
+        const courseTitleById = new Map(courses.map((c) => [c.id, c.title]));
+        await queries.notification.create(
+            data.map((booking) => ({
+                type: "booking_created" as const,
+                title: "New booking received",
+                message: `${booking.name} booked ${
+                    courseTitleById.get(booking.courseId) ?? "a course"
+                }`,
+                bookingId: booking.id,
+                metadata: {
+                    bookingId: booking.id,
+                    name: booking.name,
+                    email: booking.email,
+                    phone: booking.phone,
+                    courseId: booking.courseId,
+                    courseTitle:
+                        courseTitleById.get(booking.courseId) ?? null,
+                },
+            }))
+        );
+        await cache.notification.drop();
+
         for (const booking of data) {
             await cache.logs.add({
                 type: "booking",

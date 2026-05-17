@@ -1,12 +1,13 @@
 import { ThemeButton } from "@/components/globals/buttons";
 import { Sidebar, SidebarInset } from "@/components/globals/layouts";
+import { NotificationPopover } from "@/components/globals/layouts/notification-popover";
 import { Separator } from "@/components/ui/separator";
 import {
     SidebarInset as ShadSidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Icons, siteConfig } from "@workspace/config";
+import { siteConfig } from "@workspace/config";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -39,9 +40,7 @@ export default function Layout({ children }: RootLayoutProps) {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <button className="hover:bg-muted rounded-md p-1">
-                                <Icons.Bell className="size-5" />
-                            </button>
+                            <NotificationPopover />
 
                             <ThemeButton className="rounded-md p-1" />
                         </div>

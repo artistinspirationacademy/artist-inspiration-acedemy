@@ -7,6 +7,7 @@ import { dashboardQueries } from "./dashboard";
 import { featureQueries } from "./feature";
 import { logArchiveQueries } from "./log";
 import { mediaQueries } from "./media";
+import { notificationQueries } from "./notification";
 import { teacherQueries } from "./teacher";
 import { testimonialQueries } from "./testimonial";
 import { userQueries } from "./user";
@@ -25,6 +26,7 @@ export const queries = {
     feature: featureQueries,
     logArchive: logArchiveQueries,
     media: mediaQueries,
+    notification: notificationQueries,
     teacher: teacherQueries,
     testimonial: testimonialQueries,
     user: userQueries,

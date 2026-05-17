@@ -11,6 +11,7 @@ export * from "./general";
 export * from "./home";
 export * from "./log";
 export * from "./media";
+export * from "./notification";
 export * from "./response";
 export * from "./teacher";
 export * from "./testimonial";

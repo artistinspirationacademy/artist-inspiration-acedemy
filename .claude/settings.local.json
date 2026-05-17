@@ -30,7 +30,8 @@
       "Bash(grep -nA 10 \"data-slot=\\\\\"sidebar-wrapper\\\\\"\" /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/ui/sidebar.tsx)",
       "Bash(grep -nA 12 \"function FormItem\\\\|const FormItem\" /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/ui/form.tsx)",
       "Bash(grep -nA 18 \"function FormControl\" /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/ui/form.tsx)",
-      "Bash(grep -nB1 -A4 \"<SheetContent\" /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/dashboard/bookings/booking-details-sheet.tsx /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/dashboard/banners/banner-content-sheet.tsx /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/dashboard/courses/course-category-sheet.tsx /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/ui/sidebar.tsx)"
+      "Bash(grep -nB1 -A4 \"<SheetContent\" /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/dashboard/bookings/booking-details-sheet.tsx /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/dashboard/banners/banner-content-sheet.tsx /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/dashboard/courses/course-category-sheet.tsx /Users/koonei-sarthak/Programming/private/artist-inspiration-acedemy/apps/admin/src/components/ui/sidebar.tsx)",
+      "Bash(xargs find)"
     ],
     "additionalDirectories": [
       "f:\\Programming\\Private\\artist-inspiration-acedemy\\apps\\admin\\src\\app\\(dashboard)\\banners\\[id]"

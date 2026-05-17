@@ -8,5 +8,6 @@ export * from "./dashboard";
 export * from "./feature";
 export * from "./log";
 export * from "./media";
+export * from "./notification";
 export * from "./teacher";
 export * from "./testimonial";

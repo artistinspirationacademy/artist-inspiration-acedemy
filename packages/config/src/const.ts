@@ -115,6 +115,12 @@ export const LOG_TYPES = [
 
 export const LOG_LEVELS = ["info", "warn", "error"] as const;
 
+export const NOTIFICATION_TYPES = ["booking_created"] as const;
+
+export const NOTIFICATION_STATUSES = ["unread", "read", "archived"] as const;
+
+export const DEFAULT_NOTIFICATION_POLL_MS = 60_000;
+
 export const DEFAULT_LOG_RETENTION = {
     REDIS_DAYS: 7,
     ARCHIVE_DAYS: 365,

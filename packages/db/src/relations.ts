@@ -65,5 +65,15 @@ export const relations = defineRelations(schema, (r) => ({
             from: r.bookings.teacherId,
             to: r.teachers.id,
         }),
+        notifications: r.many.notifications({
+            from: r.bookings.id,
+            to: r.notifications.bookingId,
+        }),
+    },
+    notifications: {
+        booking: r.one.bookings({
+            from: r.notifications.bookingId,
+            to: r.bookings.id,
+        }),
     },
 }));
