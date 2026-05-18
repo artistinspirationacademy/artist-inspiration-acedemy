@@ -2,11 +2,8 @@ export const MEDIA_TYPES = ["image", "video", "audio", "document"] as const;
 
 export const MEDIA_FILE_ACCEPT = [
     // Images
-    "image/png",
-    "image/jpeg",
     "image/webp",
     // Videos
-    "video/mp4",
     "video/webm",
     // Audio
     "audio/wav",
@@ -18,6 +15,19 @@ export const MEDIA_FILE_ACCEPT = [
     "application/pdf",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
 ] as const;
+
+export const MEDIA_FILE_ACCEPT_LABELS = [
+    "WEBP",
+    "WEBM",
+    "WAV",
+    "MP3",
+    "DOCX",
+    "PPTX",
+    "PDF",
+    "XLSX",
+] as const;
+
+export const MAX_MEDIA_FILE_SIZE = 200 * 1024 * 1024;
 
 export const MEDIA_TYPE_PATTERNS: Record<
     (typeof MEDIA_TYPES)[number],
@@ -125,4 +135,3 @@ export const DEFAULT_LOG_RETENTION = {
     REDIS_DAYS: 7,
     ARCHIVE_DAYS: 365,
 } as const;
-

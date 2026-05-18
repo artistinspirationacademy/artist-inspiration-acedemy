@@ -7,6 +7,8 @@ import {
     Icons,
     MEDIA_FILE_ACCEPT,
     MEDIA_TYPES,
+    reportMediaRejections,
+    validateMediaFiles,
 } from "@workspace/config";
 import { useMedia } from "@workspace/rq";
 import {
@@ -48,7 +50,15 @@ export function MediaAddButton() {
         const files = e.target.files;
         if (!files || !files.length) return;
 
-        await uploadMedia({ files: Array.from(files) });
+        const { accepted, rejected } = validateMediaFiles(Array.from(files));
+        reportMediaRejections(rejected);
+
+        if (accepted.length === 0) {
+            fileInputRef.current.value = "";
+            return;
+        }
+
+        await uploadMedia({ files: accepted });
         fileInputRef.current.value = "";
         refetch();
     };

@@ -21,6 +21,8 @@ import {
     Media,
     MEDIA_FILE_ACCEPT,
     MEDIA_TYPES,
+    reportMediaRejections,
+    validateMediaFiles,
 } from "@workspace/config";
 import { useMedia } from "@workspace/rq";
 import Image from "next/image";
@@ -133,7 +135,18 @@ export function MediaSelectModal({
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
-        await mutateAsync({ files: Array.from(e.target.files) });
+
+        const { accepted, rejected } = validateMediaFiles(
+            Array.from(e.target.files)
+        );
+        reportMediaRejections(rejected);
+
+        if (accepted.length === 0) {
+            e.target.value = "";
+            return;
+        }
+
+        await mutateAsync({ files: accepted });
         e.target.value = "";
         setPage(DEFAULT_PAGINATION.GENERAL.PAGE);
         refetch();

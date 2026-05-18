@@ -538,7 +538,7 @@ function StepCourse({
                 name="timestamp"
                 render={({ field }) => (
                     <FormItem className="flex flex-col">
-                        <FormLabel>Preferred start date</FormLabel>
+                        <FormLabel>Preferred demo date</FormLabel>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <FormControl>

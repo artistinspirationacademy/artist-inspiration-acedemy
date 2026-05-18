@@ -121,6 +121,12 @@ const columns = (
             ),
     },
     {
+        accessorKey: "timestamp",
+        header: "Demo Date",
+        cell: ({ row }) =>
+            format(new Date(row.original.timestamp), "MMM dd, yyyy"),
+    },
+    {
         accessorKey: "createdAt",
         header: "Booked At",
         cell: ({ row }) =>
@@ -166,24 +172,24 @@ const exportFields: FieldMapping<FullBooking>[] = [
     },
     {
         source: "timestamp",
-        target: "Preferred Start",
+        target: "Demo Date",
         include: true,
-        order: 9,
+        order: 10,
         formatter: (data) => format(new Date(data.timestamp), "yyyy-MM-dd"),
     },
-    { source: "isActive", target: "Is Active", include: true, order: 10 },
+    { source: "isActive", target: "Is Active", include: true, order: 11 },
     {
         source: "createdAt",
         target: "Booked At",
         include: true,
-        order: 11,
+        order: 12,
         formatter: (data) => format(new Date(data.createdAt), "yyyy-MM-dd"),
     },
     {
         source: "updatedAt",
         target: "Modified At",
         include: true,
-        order: 12,
+        order: 13,
         formatter: (data) => format(new Date(data.updatedAt), "yyyy-MM-dd"),
     },
 ];

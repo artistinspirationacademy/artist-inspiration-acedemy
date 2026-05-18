@@ -4,7 +4,12 @@ import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
 import { ResponseData, ResponseMessages } from "./validations";
 import { toast } from "sonner";
-import { MESSAGES } from "./const";
+import {
+    MAX_MEDIA_FILE_SIZE,
+    MEDIA_FILE_ACCEPT,
+    MEDIA_FILE_ACCEPT_LABELS,
+    MESSAGES,
+} from "./const";
 
 export function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -276,6 +281,68 @@ export function handleClientError(
     ctx?: { toastId?: string | number }
 ) {
     return toast.error(sanitizeError(error), { id: ctx?.toastId });
+}
+
+export function formatBytes(bytes: number): string {
+    if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+    const units = ["B", "KB", "MB", "GB"];
+    const i = Math.min(
+        Math.floor(Math.log(bytes) / Math.log(1024)),
+        units.length - 1
+    );
+    const value = bytes / Math.pow(1024, i);
+    return `${value % 1 === 0 ? value : value.toFixed(1)} ${units[i]}`;
+}
+
+export interface MediaFileRejection {
+    file: File;
+    reason: string;
+}
+
+export interface MediaFileValidation {
+    accepted: File[];
+    rejected: MediaFileRejection[];
+}
+
+export function validateMediaFiles(files: File[]): MediaFileValidation {
+    const allowed = MEDIA_FILE_ACCEPT as readonly string[];
+    const accepted: File[] = [];
+    const rejected: MediaFileRejection[] = [];
+
+    for (const file of files) {
+        if (!allowed.includes(file.type.toLowerCase())) {
+            rejected.push({
+                file,
+                reason: `Unsupported file type. Allowed: ${MEDIA_FILE_ACCEPT_LABELS.join(", ")}`,
+            });
+            continue;
+        }
+        if (file.size > MAX_MEDIA_FILE_SIZE) {
+            rejected.push({
+                file,
+                reason: `Exceeds ${formatBytes(MAX_MEDIA_FILE_SIZE)} limit (file is ${formatBytes(file.size)})`,
+            });
+            continue;
+        }
+        accepted.push(file);
+    }
+
+    return { accepted, rejected };
+}
+
+export function reportMediaRejections(rejected: MediaFileRejection[]) {
+    if (rejected.length === 0) return;
+    const groups = new Map<string, string[]>();
+    for (const { file, reason } of rejected) {
+        const names = groups.get(reason) ?? [];
+        names.push(file.name);
+        groups.set(reason, names);
+    }
+    for (const [reason, names] of groups) {
+        const shown = names.slice(0, 3).join(", ");
+        const more = names.length > 3 ? ` and ${names.length - 3} more` : "";
+        toast.error(`${shown}${more}: ${reason}`);
+    }
 }
 
 export function slugify(str: string, separator: string = "-") {

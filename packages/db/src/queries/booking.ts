@@ -159,7 +159,7 @@ class BookingQuery {
         if (include === "course") {
             const data = await db.query.bookings.findMany({
                 where,
-                orderBy: { timestamp: "desc" },
+                orderBy: { createdAt: "desc" },
                 limit,
                 offset: (page - 1) * limit,
                 extras,
@@ -177,7 +177,7 @@ class BookingQuery {
 
         const data = await db.query.bookings.findMany({
             where,
-            orderBy: { timestamp: "desc" },
+            orderBy: { createdAt: "desc" },
             limit,
             offset: (page - 1) * limit,
             extras,
