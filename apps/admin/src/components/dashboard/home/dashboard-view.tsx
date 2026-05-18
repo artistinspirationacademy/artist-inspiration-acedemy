@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardSkeleton } from "@/components/globals/skeletons";
 import { useDashboard } from "@workspace/rq";
 import { BookingsByCountryChart } from "./bookings-by-country-chart";
 import { BookingsByCourseChart } from "./bookings-by-course-chart";
@@ -76,24 +76,6 @@ export function DashboardView() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <RecentBookingsCard data={data.recentBookings} />
             </div>
-        </div>
-    );
-}
-
-function DashboardSkeleton() {
-    return (
-        <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <Skeleton key={i} className="h-[96px] w-full rounded-xl" />
-                ))}
-            </div>
-            <Skeleton className="h-[280px] w-full rounded-xl" />
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Skeleton className="h-[280px] w-full rounded-xl md:col-span-2" />
-                <Skeleton className="h-[280px] w-full rounded-xl" />
-            </div>
-            <Skeleton className="h-[280px] w-full rounded-xl" />
         </div>
     );
 }

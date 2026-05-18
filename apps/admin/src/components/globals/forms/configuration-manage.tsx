@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/form";
 import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { ConfigurationFormSkeleton } from "@/components/globals/skeletons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Configuration,
@@ -95,15 +95,6 @@ export function ConfigurationFetch() {
 
     if (isPending) return <ConfigurationFormSkeleton />;
     return <ConfigurationManageForm data={data ?? null} />;
-}
-
-function ConfigurationFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-32 w-full" />
-        </div>
-    );
 }
 
 export function ConfigurationManageForm({

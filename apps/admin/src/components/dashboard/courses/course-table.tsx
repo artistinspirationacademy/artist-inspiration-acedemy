@@ -36,6 +36,7 @@ import {
     useQueryState,
 } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { CourseAction } from "./course-action";
 import { ActiveFilter, CategoryFilter } from "./filters";
 
@@ -299,6 +300,16 @@ export function CourseTable() {
         }),
         [dataRaw, categoryMap]
     );
+
+    if (isPending) {
+        return (
+            <DataTableSkeleton
+                columnCount={tableColumns.length}
+                pageSize={limit}
+                filterCount={2}
+            />
+        );
+    }
 
     if (!data) return null;
 

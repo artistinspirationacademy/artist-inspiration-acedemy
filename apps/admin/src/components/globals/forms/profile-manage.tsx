@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ProfileSkeleton } from "@/components/globals/skeletons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     SafeUser,
@@ -52,17 +52,6 @@ export function ProfileFetch() {
             <PersonalInfoForm user={data} />
             <EmailForm user={data} />
             <PasswordForm />
-        </div>
-    );
-}
-
-function ProfileSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-44 w-full" />
-            <Skeleton className="h-44 w-full" />
-            <Skeleton className="h-56 w-full" />
         </div>
     );
 }

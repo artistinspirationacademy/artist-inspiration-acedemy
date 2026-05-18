@@ -15,8 +15,8 @@ import {
 import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
 import { MediaSelectModal } from "@/components/ui/media-select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { FeatureFormSkeleton } from "@/components/globals/skeletons";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -54,16 +54,6 @@ export function FeatureFetch({ type }: { type: "create" | "edit" }) {
     if (!data) redirect("/features");
 
     return <FeatureManageForm data={data} />;
-}
-
-function FeatureFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-16 w-full" />
-        </div>
-    );
 }
 
 export function FeatureManageForm({ data }: PageProps) {

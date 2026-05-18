@@ -1,8 +1,8 @@
 "use client";
 
+import { LogListSkeleton } from "@/components/globals/skeletons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatFileSize, Icons, LogArchive } from "@workspace/config";
 import { useLogs } from "@workspace/rq";
 import { format } from "date-fns";
@@ -31,7 +31,7 @@ export function ArchivesList() {
             </div>
 
             {isPending ? (
-                <ListSkeleton />
+                <LogListSkeleton rowCount={4} rowHeight="h-10" />
             ) : isError ? (
                 <Card size="sm">
                     <CardContent className="flex flex-col items-center gap-2 py-8 text-sm">
@@ -92,14 +92,3 @@ function ArchiveRow({ archive }: { archive: LogArchive }) {
     );
 }
 
-function ListSkeleton() {
-    return (
-        <Card size="sm">
-            <CardContent className="space-y-2 px-4 py-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                    <Skeleton key={i} className="h-10 w-full" />
-                ))}
-            </CardContent>
-        </Card>
-    );
-}

@@ -14,8 +14,8 @@ import {
 import { FormFooterBar } from "@/components/ui/form-footer-bar";
 import { Input } from "@/components/ui/input";
 import { MediaSelectModal } from "@/components/ui/media-select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { BannerFormSkeleton } from "@/components/globals/skeletons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Banner,
@@ -60,16 +60,6 @@ export function BannerFetch({ type }: { type: "create" | "edit" }) {
     if (!data) redirect("/banners");
 
     return <BannerManageForm data={data} />;
-}
-
-function BannerFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-16 w-full" />
-        </div>
-    );
 }
 
 export function BannerManageForm({ data }: PageProps) {

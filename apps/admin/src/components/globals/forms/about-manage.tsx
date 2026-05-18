@@ -31,8 +31,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { AboutFormSkeleton } from "@/components/globals/skeletons";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -114,16 +114,6 @@ export function AboutFetch() {
 
     if (isPending) return <AboutFormSkeleton />;
     return <AboutManageForm data={data ?? []} />;
-}
-
-function AboutFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-16 w-full" />
-        </div>
-    );
 }
 
 function toCreateShape(section: AboutSection): CreateAboutSection {

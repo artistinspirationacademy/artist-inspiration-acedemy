@@ -30,6 +30,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { FeatureAction } from "./feature-action";
 import { ActiveFilter } from "./filters";
 
@@ -254,6 +255,16 @@ export function FeatureTable() {
         }),
         [dataRaw]
     );
+
+    if (isPending) {
+        return (
+            <DataTableSkeleton
+                columnCount={tableColumns.length}
+                pageSize={limit}
+                filterCount={1}
+            />
+        );
+    }
 
     if (!data) return null;
 

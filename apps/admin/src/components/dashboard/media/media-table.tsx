@@ -47,6 +47,7 @@ import {
 } from "nuqs";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { TypeFilter } from "./filters";
 import { MediaAction } from "./media-action";
 
@@ -281,6 +282,16 @@ export function MediaTable() {
         }),
         [dataRaw]
     );
+
+    if (isPending) {
+        return (
+            <DataTableSkeleton
+                columnCount={tableColumns.length}
+                pageSize={limit}
+                filterCount={1}
+            />
+        );
+    }
 
     if (!data) return null;
 

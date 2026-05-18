@@ -28,8 +28,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { TestimonialFormSkeleton } from "@/components/globals/skeletons";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -69,16 +69,6 @@ export function TestimonialFetch({ type }: { type: "create" | "edit" }) {
     if (!data) redirect("/testimonials");
 
     return <TestimonialManageForm data={data} />;
-}
-
-function TestimonialFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-16 w-full" />
-        </div>
-    );
 }
 
 export function TestimonialManageForm({ data }: PageProps) {

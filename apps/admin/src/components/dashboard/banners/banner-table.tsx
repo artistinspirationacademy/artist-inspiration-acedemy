@@ -46,6 +46,7 @@ import {
 } from "nuqs";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { BannerAction } from "./banner-action";
 import { ActiveFilter, MediaTypeFilter } from "./filters";
 
@@ -268,6 +269,16 @@ export function BannerTable() {
         }),
         [dataRaw]
     );
+
+    if (isPending) {
+        return (
+            <DataTableSkeleton
+                columnCount={tableColumns.length}
+                pageSize={limit}
+                filterCount={2}
+            />
+        );
+    }
 
     if (!data) return null;
 

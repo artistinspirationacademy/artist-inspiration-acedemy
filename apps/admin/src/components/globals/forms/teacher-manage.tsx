@@ -34,8 +34,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { TeacherFormSkeleton } from "@/components/globals/skeletons";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -76,16 +76,6 @@ export function TeacherFetch({ type }: { type: "create" | "edit" }) {
     if (!data) redirect("/teachers");
 
     return <TeacherManageForm data={data} />;
-}
-
-function TeacherFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-16 w-full" />
-        </div>
-    );
 }
 
 export function TeacherManageForm({ data }: PageProps) {

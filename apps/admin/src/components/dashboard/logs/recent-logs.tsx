@@ -1,5 +1,6 @@
 "use client";
 
+import { LogListSkeleton } from "@/components/globals/skeletons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,7 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
     convertValueToLabel,
     Icons,
@@ -73,7 +73,7 @@ export function RecentLogs() {
             </div>
 
             {isPending ? (
-                <ListSkeleton />
+                <LogListSkeleton rowCount={8} rowHeight="h-8" />
             ) : isError ? (
                 <ErrorState onRetry={refetch} />
             ) : data && data.length === 0 ? (
@@ -130,18 +130,6 @@ function LogRow({ entry }: { entry: LogEntry }) {
                 </pre>
             )}
         </li>
-    );
-}
-
-function ListSkeleton() {
-    return (
-        <Card size="sm">
-            <CardContent className="space-y-2 px-4 py-3">
-                {Array.from({ length: 8 }).map((_, i) => (
-                    <Skeleton key={i} className="h-8 w-full" />
-                ))}
-            </CardContent>
-        </Card>
     );
 }
 

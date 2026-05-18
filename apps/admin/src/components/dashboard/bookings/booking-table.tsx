@@ -35,6 +35,7 @@ import {
 } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { BookingAction } from "./booking-action";
 import { BookingDeepLinkSheet } from "./booking-deep-link-sheet";
 import { ActiveFilter, CourseFilter } from "./filters";
@@ -290,6 +291,16 @@ export function BookingTable() {
         () => columns(handleSingleDelete),
         [handleSingleDelete]
     );
+
+    if (isPending) {
+        return (
+            <DataTableSkeleton
+                columnCount={tableColumns.length}
+                pageSize={limit}
+                filterCount={2}
+            />
+        );
+    }
 
     if (!dataRaw) return null;
 

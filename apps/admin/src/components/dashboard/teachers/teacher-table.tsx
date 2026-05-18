@@ -35,6 +35,7 @@ import {
     useQueryState,
 } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { ActiveFilter, CourseFilter } from "./filters";
 import { TeacherAction } from "./teacher-action";
 
@@ -331,6 +332,16 @@ export function TeacherTable() {
         }),
         [dataRaw]
     );
+
+    if (isPending) {
+        return (
+            <DataTableSkeleton
+                columnCount={tableColumns.length}
+                pageSize={limit}
+                filterCount={2}
+            />
+        );
+    }
 
     if (!data) return null;
 

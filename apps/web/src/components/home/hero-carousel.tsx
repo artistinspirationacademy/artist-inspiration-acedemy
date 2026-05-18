@@ -73,8 +73,23 @@ export function HeroCarousel({
             </div>
 
             <div className="relative z-10 flex h-full w-full items-center justify-center px-4 sm:px-6">
-                <HeroContent content={content} isLoading={isLoading} />
+                <HeroContent content={content} />
             </div>
+
+            <AnimatePresence>
+                {isLoading && (
+                    <motion.div
+                        key="hero-curtain"
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
+                        className="absolute inset-0 z-30 flex items-center justify-center bg-neutral-950"
+                    >
+                        <EqualizerLoader />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {banners.length > 1 && (
                 <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 sm:bottom-10">
@@ -134,23 +149,7 @@ function HeroSlide({ banner }: { banner: Banner }) {
     );
 }
 
-function HeroContent({
-    content,
-    isLoading,
-}: {
-    content: BannerContent | null;
-    isLoading?: boolean;
-}) {
-    if (isLoading) {
-        return (
-            <div className="flex w-full max-w-3xl flex-col items-center gap-5 text-center">
-                <div className="h-3 w-24 animate-pulse rounded-full bg-white/20" />
-                <div className="h-12 w-3/4 animate-pulse rounded-md bg-white/20" />
-                <div className="h-4 w-5/6 animate-pulse rounded-md bg-white/10" />
-            </div>
-        );
-    }
-
+function HeroContent({ content }: { content: BannerContent | null }) {
     const title = content?.title ?? "Find your sound";
     const description =
         content?.description ??
@@ -158,12 +157,7 @@ function HeroContent({
     const tagline = content?.content ?? "Artist Inspiration Academy";
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            className="flex w-full max-w-3xl flex-col items-center gap-5 text-center sm:gap-7"
-        >
+        <div className="flex w-full max-w-3xl flex-col items-center gap-5 text-center sm:gap-7">
             <span
                 className={cn(
                     "inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1",
@@ -215,7 +209,33 @@ function HeroContent({
                     Explore Courses
                 </Link>
             </div>
-        </motion.div>
+        </div>
+    );
+}
+
+function EqualizerLoader() {
+    const bars = [0, 1, 2, 3, 4];
+    return (
+        <div
+            className="flex h-12 items-center gap-1.5"
+            role="status"
+            aria-label="Loading"
+        >
+            {bars.map((i) => (
+                <motion.span
+                    key={i}
+                    className="bg-highlight w-1 rounded-full"
+                    style={{ height: 40 }}
+                    animate={{ scaleY: [0.2, 1, 0.4, 0.85, 0.25] }}
+                    transition={{
+                        duration: 1.1,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        delay: i * 0.12,
+                    }}
+                />
+            ))}
+        </div>
     );
 }
 

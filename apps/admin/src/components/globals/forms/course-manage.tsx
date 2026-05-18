@@ -31,8 +31,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { CourseFormSkeleton } from "@/components/globals/skeletons";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -78,16 +78,6 @@ export function CourseFetch({ type }: { type: "create" | "edit" }) {
     if (!data) redirect("/courses");
 
     return <CourseManageForm data={data} />;
-}
-
-function CourseFormSkeleton() {
-    return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-16 w-full" />
-        </div>
-    );
 }
 
 export function CourseManageForm({ data }: PageProps) {
