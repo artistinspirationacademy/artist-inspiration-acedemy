@@ -6,13 +6,12 @@ import {
     CResponse,
     deleteDataSchema,
     handleError,
-    MEDIA_FILE_ACCEPT,
     MESSAGES,
     paginationQuerySchema,
+    uploadMediaPayloadSchema,
 } from "@workspace/config";
 import { queries } from "@workspace/db";
 import { NextRequest } from "next/server";
-import { UploadThingError } from "uploadthing/server";
 
 const mediaPaginationQuerySchema = paginationQuerySchema.extend({
     types: createMediaSchema.shape.type
@@ -48,47 +47,22 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const formData = await req.formData();
-        const filesField = formData.getAll("files");
+        const body = await req.json();
+        const { files } = uploadMediaPayloadSchema.parse(body);
 
-        const files = filesField.filter(
-            (file): file is File =>
-                file instanceof File &&
-                MEDIA_FILE_ACCEPT.includes(
-                    file.type.toLowerCase() as (typeof MEDIA_FILE_ACCEPT)[number]
-                )
-        );
         if (files.length === 0)
             throw new AppError(
                 MESSAGES.ERRORS.MEDIA.NO_VALID_FILES,
                 "BAD_REQUEST"
             );
 
-        const uploadThingFiles = await Promise.all(
-            files.map(async (file) => {
-                const arrayBuffer = await file.arrayBuffer();
-                return new File([arrayBuffer], file.name, {
-                    type: file.type,
-                    lastModified: file.lastModified || Date.now(),
-                });
-            })
-        );
-
-        const uploadResponse = await utApi.uploadFiles(uploadThingFiles);
-
-        const mediaToCreate = uploadResponse
-            .filter((response) => response.data)
-            .map((response) => {
-                const file = response.data!;
-                const originalFile = files.find((f) => f.name === file.name);
-                return {
-                    name: file.name,
-                    alt: null,
-                    key: file.key,
-                    type: originalFile?.type || "unknown",
-                    size: file.size,
-                };
-            });
+        const mediaToCreate = files.map((file) => ({
+            name: file.name,
+            alt: null,
+            key: file.key,
+            type: file.type,
+            size: file.size,
+        }));
 
         const parsed = createMediaSchema.array().parse(mediaToCreate);
         const data = await queries.media.create(parsed);
@@ -99,11 +73,6 @@ export async function POST(req: NextRequest) {
         });
         return CResponse({ message: "CREATED", data });
     } catch (err) {
-        if (err instanceof UploadThingError)
-            return CResponse({
-                message: "INTERNAL_SERVER_ERROR",
-                longMessage: err.message,
-            });
         return handleError(err);
     }
 }

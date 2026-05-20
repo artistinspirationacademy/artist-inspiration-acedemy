@@ -13,15 +13,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { uploadMediaFiles } from "@/lib/uploadthing/client";
 import {
     cn,
     DEFAULT_PAGINATION,
     generateUploadThingURL,
+    handleClientError,
     Icons,
     Media,
     MEDIA_FILE_ACCEPT,
     MEDIA_TYPES,
     reportMediaRejections,
+    UploadedMedia,
     validateMediaFiles,
 } from "@workspace/config";
 import { useMedia } from "@workspace/rq";
@@ -34,6 +37,7 @@ import {
     useState,
     type ChangeEvent,
 } from "react";
+import { toast } from "sonner";
 
 interface PageProps {
     isOpen: boolean;
@@ -105,7 +109,9 @@ export function MediaSelectModal({
         types,
         enabled: isOpen,
     });
-    const { mutateAsync, isPending: isUploading } = useCreate();
+    const { mutateAsync, isPending: isSaving } = useCreate();
+    const [isUploadingFiles, setIsUploadingFiles] = useState(false);
+    const isUploading = isUploadingFiles || isSaving;
 
     const items = paginated?.data ?? [];
     const pageCount = paginated?.pages ?? 0;
@@ -136,20 +142,42 @@ export function MediaSelectModal({
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
+        const input = e.target;
         const { accepted, rejected } = validateMediaFiles(
-            Array.from(e.target.files)
+            Array.from(input.files ?? [])
         );
         reportMediaRejections(rejected);
 
         if (accepted.length === 0) {
-            e.target.value = "";
+            input.value = "";
             return;
         }
 
-        await mutateAsync({ files: accepted });
-        e.target.value = "";
-        setPage(DEFAULT_PAGINATION.GENERAL.PAGE);
-        refetch();
+        const toastId = toast.loading(
+            "Uploading media, please DO NOT refresh or leave the page..."
+        );
+
+        setIsUploadingFiles(true);
+        let uploaded: UploadedMedia[];
+        try {
+            uploaded = await uploadMediaFiles(accepted);
+        } catch (err) {
+            toast.dismiss(toastId);
+            handleClientError(err, undefined);
+            setIsUploadingFiles(false);
+            input.value = "";
+            return;
+        }
+        setIsUploadingFiles(false);
+        toast.dismiss(toastId);
+
+        try {
+            await mutateAsync({ files: uploaded });
+        } finally {
+            input.value = "";
+            setPage(DEFAULT_PAGINATION.GENERAL.PAGE);
+            refetch();
+        }
     };
 
     const handleComplete = () => {

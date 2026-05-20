@@ -4,7 +4,6 @@ import {
     cFetch,
     handleClientError,
     Media,
-    ResponseData,
     UpdateMedia,
     UploadMedia,
 } from "@workspace/config";
@@ -107,49 +106,17 @@ export function useMedia() {
     const useCreate = () => {
         return useMutation({
             onMutate: () => {
-                const toastId = toast.loading(
-                    "Uploading media, please DO NOT refresh or leave the page..."
-                );
+                const toastId = toast.loading("Saving media...");
                 return { toastId };
             },
             mutationFn: async (values: UploadMedia) => {
-                const formData = new FormData();
-
-                for (const file of values.files) {
-                    formData.append("files", file, file.name);
-                }
-
-                const res = await fetch("/api/media", {
+                const res = await cFetch<Media[]>("/api/media", {
                     method: "POST",
-                    body: formData,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(values),
                 });
-
-                const rawBody = await res.text();
-                let parsedBody: unknown = null;
-                if (rawBody) {
-                    try {
-                        parsedBody = JSON.parse(rawBody);
-                    } catch {
-                        parsedBody = null;
-                    }
-                }
-
-                if (!res.ok) {
-                    const message =
-                        (parsedBody as { longMessage?: string } | null)
-                            ?.longMessage ||
-                        (rawBody && rawBody.length < 500
-                            ? rawBody
-                            : `Upload failed (${res.status} ${res.statusText})`);
-                    throw new Error(message);
-                }
-
-                const responseData = parsedBody as ResponseData<Media[]> | null;
-                if (!responseData?.success)
-                    throw new Error(
-                        responseData?.longMessage || "Upload failed"
-                    );
-                return responseData.data;
+                if (!res.ok) throw res.error;
+                return res.data;
             },
             onSuccess: (_, __, { toastId }) => {
                 queryClient.invalidateQueries({ queryKey: ["media"] });
