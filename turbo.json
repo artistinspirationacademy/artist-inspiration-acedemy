@@ -5,7 +5,22 @@
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["$TURBO_DEFAULT$", ".env*"],
-            "outputs": [".next/**", "!.next/cache/**"]
+            "outputs": [".next/**", "!.next/cache/**"],
+            "env": [
+                "DATABASE_URL",
+                "REDIS_URL",
+                "RESEND_API_KEY",
+                "EMAIL_FROM",
+                "ADMIN_EMAIL",
+                "ADMIN_URL",
+                "JWT_SECRET",
+                "UPLOADTHING_TOKEN",
+                "CRON_SECRET",
+                "NEXT_PUBLIC_DEPLOYMENT_URL",
+                "NEXT_PUBLIC_UPLOADTHING_BUCKET_ID",
+                "VERCEL_URL",
+                "SKIP_ENV_VALIDATION"
+            ]
         },
         "start": {
             "dependsOn": ["build"],
