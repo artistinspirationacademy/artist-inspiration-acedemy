@@ -18,7 +18,7 @@ export const env = createEnv({
     },
     client: {
         NEXT_PUBLIC_DEPLOYMENT_URL: z
-            .url("'NEXT_PUBLIC_DEPLOYMENT_URL' must be a valid URL")
+            .string("'NEXT_PUBLIC_DEPLOYMENT_URL' must be a valid URL")
             .optional(),
 
         NEXT_PUBLIC_UPLOADTHING_BUCKET_ID: z
