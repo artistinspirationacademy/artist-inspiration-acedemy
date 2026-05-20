@@ -123,12 +123,32 @@ export function useMedia() {
                     method: "POST",
                     body: formData,
                 });
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(errorData.longMessage || "Upload failed");
+
+                const rawBody = await res.text();
+                let parsedBody: unknown = null;
+                if (rawBody) {
+                    try {
+                        parsedBody = JSON.parse(rawBody);
+                    } catch {
+                        parsedBody = null;
+                    }
                 }
 
-                const responseData: ResponseData<Media[]> = await res.json();
+                if (!res.ok) {
+                    const message =
+                        (parsedBody as { longMessage?: string } | null)
+                            ?.longMessage ||
+                        (rawBody && rawBody.length < 500
+                            ? rawBody
+                            : `Upload failed (${res.status} ${res.statusText})`);
+                    throw new Error(message);
+                }
+
+                const responseData = parsedBody as ResponseData<Media[]> | null;
+                if (!responseData?.success)
+                    throw new Error(
+                        responseData?.longMessage || "Upload failed"
+                    );
                 return responseData.data;
             },
             onSuccess: (_, __, { toastId }) => {
