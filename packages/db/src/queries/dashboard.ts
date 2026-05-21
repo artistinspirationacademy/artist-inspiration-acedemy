@@ -3,7 +3,7 @@ import {
     DashboardStats,
     dashboardStatsSchema,
 } from "@workspace/config";
-import { count, desc, eq, gte, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { db } from "../client";
 import {
     bookings,
@@ -45,10 +45,10 @@ class DashboardQuery {
             .select({
                 total: count(),
                 last7d: count(
-                    sql`case when ${createdAtCol} >= ${sevenDaysAgo} then 1 end`
+                    sql`case when ${gte(createdAtCol, sevenDaysAgo)} then 1 end`
                 ),
                 prev7d: count(
-                    sql`case when ${createdAtCol} >= ${fourteenDaysAgo} and ${createdAtCol} < ${sevenDaysAgo} then 1 end`
+                    sql`case when ${and(gte(createdAtCol, fourteenDaysAgo), lt(createdAtCol, sevenDaysAgo))} then 1 end`
                 ),
             })
             .from(table)
