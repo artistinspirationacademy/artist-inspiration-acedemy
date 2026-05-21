@@ -7,7 +7,7 @@ import { queries } from "@workspace/db";
 import { redis } from "../client";
 
 const key = "dashboard:stats";
-const TTL_SECONDS = 60;
+const TTL_SECONDS = 60 * 5;
 
 class DashboardCache {
     async get(): Promise<DashboardStats> {

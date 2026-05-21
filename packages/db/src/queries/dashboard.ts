@@ -3,7 +3,7 @@ import {
     DashboardStats,
     dashboardStatsSchema,
 } from "@workspace/config";
-import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
+import { desc, eq, gte, sql } from "drizzle-orm";
 import { db } from "../client";
 import {
     bookings,
@@ -30,31 +30,31 @@ function isoDate(d: Date) {
 
 class DashboardQuery {
     private async kpi(
-        table: Parameters<typeof db.$count>[0],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        table: any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         createdAtCol: any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         extraCondition?: any
     ): Promise<DashboardKpi> {
         const now = new Date();
         const sevenDaysAgo = new Date(now.getTime() - 7 * DAY);
         const fourteenDaysAgo = new Date(now.getTime() - 14 * DAY);
 
-        const [total, last7d, prev7d] = await Promise.all([
-            db.$count(table, extraCondition),
-            db.$count(
-                table,
-                and(gte(createdAtCol, sevenDaysAgo), extraCondition)
-            ),
-            db.$count(
-                table,
-                and(
-                    gte(createdAtCol, fourteenDaysAgo),
-                    lt(createdAtCol, sevenDaysAgo),
-                    extraCondition
-                )
-            ),
-        ]);
+        const [row] = await db
+            .select({
+                total: sql<number>`count(*)::int`,
+                last7d: sql<number>`count(*) filter (where ${createdAtCol} >= ${sevenDaysAgo})::int`,
+                prev7d: sql<number>`count(*) filter (where ${createdAtCol} >= ${fourteenDaysAgo} and ${createdAtCol} < ${sevenDaysAgo})::int`,
+            })
+            .from(table)
+            .where(extraCondition);
 
-        return { total, last7d, prev7d };
+        return {
+            total: row?.total ?? 0,
+            last7d: row?.last7d ?? 0,
+            prev7d: row?.prev7d ?? 0,
+        };
     }
 
     async getStats(): Promise<DashboardStats> {
