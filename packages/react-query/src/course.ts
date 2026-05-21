@@ -8,6 +8,7 @@ import {
     CreateCourseCategory,
     FullCourse,
     handleClientError,
+    ReorderCourseCategory,
     UpdateCourse,
     UpdateCourseCategory,
 } from "@workspace/config";
@@ -447,6 +448,37 @@ export function useCourseCategory() {
         });
     };
 
+    const useReorder = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Saving category order...");
+                return { toastId };
+            },
+            mutationFn: async ({
+                values,
+            }: {
+                values: ReorderCourseCategory;
+            }) => {
+                const res = await cFetch<CourseCategory[]>(
+                    `/api/courses/categories/reorder`,
+                    {
+                        method: "PATCH",
+                        body: JSON.stringify(values),
+                    }
+                );
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (_, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["course-category"] });
+                queryClient.invalidateQueries({ queryKey: ["course"] });
+                toast.success("Category order saved!", { id: toastId });
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -483,6 +515,7 @@ export function useCourseCategory() {
         useGet,
         useCreate,
         useUpdate,
+        useReorder,
         useDelete,
     };
 }

@@ -8,12 +8,14 @@ export const courseCategories = pgTable(
         id: t.uuid("id").notNull().primaryKey().defaultRandom(),
         name: t.text("name").notNull(),
         slug: t.text("slug").notNull(),
+        position: t.integer("position").notNull().default(0),
         isActive: t.boolean("is_active").notNull().default(true),
         ...timestamps(t),
     }),
     (t) => [
         uniqueIndex("course_categories_slug_uidx").on(t.slug),
         index("course_categories_is_active_idx").on(t.isActive),
+        index("course_categories_position_idx").on(t.position),
     ]
 );
 

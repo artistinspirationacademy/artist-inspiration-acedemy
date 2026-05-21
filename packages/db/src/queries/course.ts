@@ -11,10 +11,11 @@ import {
     FullCourseCategory,
     fullCourseCategorySchema,
     fullCourseSchema,
+    ReorderCourseCategory,
     UpdateCourse,
     UpdateCourseCategory,
 } from "@workspace/config";
-import { and, eq, ilike, inArray } from "drizzle-orm";
+import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
 import { courseCategories, courseDetails, courses } from "../schemas";
 
@@ -55,7 +56,7 @@ class CourseCategoryQuery {
         if (include === "courses") {
             const data = await db.query.courseCategories.findMany({
                 where,
-                orderBy: { name: "asc" },
+                orderBy: { position: "asc" },
                 with: { courses: true },
             });
             return fullCourseCategorySchema.array().parse(data);
@@ -63,7 +64,7 @@ class CourseCategoryQuery {
 
         const data = await db.query.courseCategories.findMany({
             where,
-            orderBy: { name: "asc" },
+            orderBy: { position: "asc" },
         });
         return courseCategorySchema.array().parse(data);
     }
@@ -89,7 +90,7 @@ class CourseCategoryQuery {
                     ...(isActive !== undefined ? [{ isActive }] : []),
                 ],
             },
-            orderBy: { name: "asc" },
+            orderBy: { position: "asc" },
             limit,
             offset: (page - 1) * limit,
             extras: {
@@ -136,10 +137,43 @@ class CourseCategoryQuery {
     }
 
     async create(values: CreateCourseCategory[]): Promise<CourseCategory[]> {
-        const data = await db
-            .insert(courseCategories)
-            .values(values)
-            .returning();
+        const data = await db.transaction(async (tx) => {
+            const rows = await tx
+                .select({
+                    max: sql<number>`coalesce(max(${courseCategories.position}), -1)`,
+                })
+                .from(courseCategories);
+
+            const startAt = (rows[0]?.max ?? -1) + 1;
+            const withPositions = values.map((value, index) => ({
+                ...value,
+                position: startAt + index,
+            }));
+
+            return tx
+                .insert(courseCategories)
+                .values(withPositions)
+                .returning();
+        });
+
+        return courseCategorySchema.array().parse(data);
+    }
+
+    async reorder({ values }: { values: ReorderCourseCategory }) {
+        if (values.length === 0) return [];
+
+        const data = await db.transaction(async (tx) => {
+            return Promise.all(
+                values.map(({ id, position }) =>
+                    tx
+                        .update(courseCategories)
+                        .set({ position, updatedAt: new Date() })
+                        .where(eq(courseCategories.id, id))
+                        .returning()
+                        .then((res) => res[0])
+                )
+            );
+        });
 
         return courseCategorySchema.array().parse(data);
     }

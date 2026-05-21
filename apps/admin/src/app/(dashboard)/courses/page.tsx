@@ -1,4 +1,5 @@
 import {
+    CourseCategoryReorderDialog,
     CourseCategorySheet,
     CourseTable,
 } from "@/components/dashboard/courses";
@@ -27,6 +28,7 @@ export default function Page() {
 
                 <div className="flex items-center justify-center gap-2 md:justify-end">
                     <CourseCategorySheet />
+                    <CourseCategoryReorderDialog />
 
                     <Button asChild>
                         <Link href={"/courses/create"}>

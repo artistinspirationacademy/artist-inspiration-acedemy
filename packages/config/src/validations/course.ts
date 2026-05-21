@@ -11,6 +11,9 @@ export const courseCategorySchema = z.object({
             /^[a-z0-9-]+$/,
             "Slug can only contain lowercase letters, numbers, and hyphens"
         ),
+    position: z
+        .int("Position is required")
+        .nonnegative("Position must be a non-negative integer"),
     isActive: z.boolean("Is active is required"),
     createdAt: generateDateSchema({ error: "Created at must be a valid date" }),
     updatedAt: generateDateSchema({ error: "Updated at must be a valid date" }),
@@ -143,9 +146,21 @@ export const courseDetailsSchema = z.discriminatedUnion("type", [
 
 export const createCourseCategorySchema = courseCategorySchema.omit({
     id: true,
+    position: true,
     createdAt: true,
     updatedAt: true,
 });
+
+export const reorderCourseCategorySchema = z
+    .array(
+        z.object({
+            id: generateIdSchema({ isUUID: true }),
+            position: z
+                .int("Position is required")
+                .nonnegative("Position must be a non-negative integer"),
+        })
+    )
+    .min(1, "At least one category is required");
 
 export const createCourseDetailsBaseSchema = z.object({
     courseId: courseSchema.shape.id,
@@ -329,6 +344,7 @@ export const fullCourseSchema = courseSchema.extend({
 export type CourseCategory = z.infer<typeof courseCategorySchema>;
 export type CreateCourseCategory = z.infer<typeof createCourseCategorySchema>;
 export type UpdateCourseCategory = z.infer<typeof updateCourseCategorySchema>;
+export type ReorderCourseCategory = z.infer<typeof reorderCourseCategorySchema>;
 export type FullCourseCategory = z.infer<typeof fullCourseCategorySchema>;
 
 export type CourseDetails = z.infer<typeof courseDetailsSchema>;
