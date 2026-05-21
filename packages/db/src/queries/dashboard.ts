@@ -3,7 +3,7 @@ import {
     DashboardStats,
     dashboardStatsSchema,
 } from "@workspace/config";
-import { desc, eq, gte, sql } from "drizzle-orm";
+import { count, desc, eq, gte, sql } from "drizzle-orm";
 import { db } from "../client";
 import {
     bookings,
@@ -43,17 +43,21 @@ class DashboardQuery {
 
         const [row] = await db
             .select({
-                total: sql<number>`count(*)::int`,
-                last7d: sql<number>`count(*) filter (where ${createdAtCol} >= ${sevenDaysAgo})::int`,
-                prev7d: sql<number>`count(*) filter (where ${createdAtCol} >= ${fourteenDaysAgo} and ${createdAtCol} < ${sevenDaysAgo})::int`,
+                total: count(),
+                last7d: count(
+                    sql`case when ${createdAtCol} >= ${sevenDaysAgo} then 1 end`
+                ),
+                prev7d: count(
+                    sql`case when ${createdAtCol} >= ${fourteenDaysAgo} and ${createdAtCol} < ${sevenDaysAgo} then 1 end`
+                ),
             })
             .from(table)
             .where(extraCondition);
 
         return {
-            total: row?.total ?? 0,
-            last7d: row?.last7d ?? 0,
-            prev7d: row?.prev7d ?? 0,
+            total: Number(row?.total ?? 0),
+            last7d: Number(row?.last7d ?? 0),
+            prev7d: Number(row?.prev7d ?? 0),
         };
     }
 
