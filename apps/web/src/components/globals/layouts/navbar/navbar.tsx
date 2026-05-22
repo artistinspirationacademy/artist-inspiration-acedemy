@@ -54,7 +54,7 @@ export function Navbar() {
                         height={44}
                         className="size-10 sm:size-11"
                     />
-                    <span className="hidden text-lg font-extrabold tracking-tight sm:inline sm:text-xl">
+                    <span className="hidden text-lg font-bold tracking-tight sm:inline sm:text-xl">
                         {siteConfig.name}
                     </span>
                 </Link>
