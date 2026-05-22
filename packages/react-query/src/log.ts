@@ -82,7 +82,7 @@ export function useLogs() {
             },
             mutationFn: async () => {
                 const res = await cFetch<ArchiveResult>(
-                    `/api/cron/archive-logs/manual`,
+                    `/api/logs/run-archive`,
                     { method: "POST" }
                 );
                 if (!res.ok) throw res.error;

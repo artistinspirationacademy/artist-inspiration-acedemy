@@ -3,7 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME } from "./config/const";
 import { signToken, verifyToken } from "./lib/jwt";
 
-const PUBLIC_PATHS = ["/auth/signin", "/api/auth/signin"];
+const PUBLIC_PATHS = [
+    "/auth/signin",
+    "/api/auth/signin",
+    "/api/cron/archive-logs",
+];
 
 export async function proxy(req: NextRequest): Promise<NextResponse> {
     const url = new URL(req.url);
