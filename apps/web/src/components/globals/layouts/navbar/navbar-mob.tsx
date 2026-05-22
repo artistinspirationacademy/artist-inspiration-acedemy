@@ -70,16 +70,16 @@ export function NavbarMob({ className, ...props }: GenericProps) {
                 )}
             >
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <span className="text-xs font-semibold tracking-[0.25em] uppercase opacity-70">
+                    <span className="text-sm font-bold tracking-[0.25em] uppercase opacity-70">
                         Menu
                     </span>
                     <button
                         type="button"
                         aria-label="Close menu"
-                        className="hover:bg-muted inline-flex size-9 items-center justify-center rounded-full transition-colors"
+                        className="hover:bg-muted inline-flex size-10 items-center justify-center rounded-full transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                     >
-                        <Icons.Close className="size-4" />
+                        <Icons.Close className="size-5" />
                     </button>
                 </div>
 
@@ -95,18 +95,18 @@ export function NavbarMob({ className, ...props }: GenericProps) {
                                     }
                                     onClick={() => setIsMenuOpen(false)}
                                     className={cn(
-                                        "flex items-center justify-between gap-3 rounded-xl px-3 py-3",
-                                        "text-base font-medium",
+                                        "flex items-center justify-between gap-3 rounded-xl px-3 py-3.5",
+                                        "text-lg font-semibold",
                                         "transition-colors hover:bg-white/5"
                                     )}
                                 >
                                     <span className="flex items-center gap-3">
-                                        <Icon className="text-muted-foreground size-5" />
+                                        <Icon className="text-muted-foreground size-6" />
                                         {item.name}
                                     </span>
                                     <Icons.ArrowRight
                                         weight="bold"
-                                        className="text-muted-foreground size-4"
+                                        className="text-muted-foreground size-5"
                                     />
                                 </Link>
                             </li>
@@ -118,15 +118,15 @@ export function NavbarMob({ className, ...props }: GenericProps) {
                     href="/booking"
                     onClick={() => setIsMenuOpen(false)}
                     className={cn(
-                        "group mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3",
-                        "bg-highlight text-highlight-foreground font-semibold",
+                        "group mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5",
+                        "bg-highlight text-highlight-foreground text-lg font-bold",
                         "transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30"
                     )}
                 >
                     Book Now
                     <Icons.ArrowRight
                         weight="bold"
-                        className="size-4 transition-transform group-hover:translate-x-0.5"
+                        className="size-5 transition-transform group-hover:translate-x-0.5"
                     />
                 </Link>
             </div>

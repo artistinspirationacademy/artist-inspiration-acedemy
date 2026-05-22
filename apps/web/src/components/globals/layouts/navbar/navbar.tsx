@@ -50,11 +50,11 @@ export function Navbar() {
                     <Image
                         src="/aia.png"
                         alt="AIA Logo"
-                        width={36}
-                        height={36}
-                        className="size-8 sm:size-9"
+                        width={44}
+                        height={44}
+                        className="size-10 sm:size-11"
                     />
-                    <span className="hidden text-base font-bold tracking-tight sm:inline sm:text-lg">
+                    <span className="hidden text-lg font-extrabold tracking-tight sm:inline sm:text-xl">
                         {siteConfig.name}
                     </span>
                 </Link>
@@ -72,7 +72,7 @@ export function Navbar() {
                                 }
                                 className={cn(
                                     "group relative inline-flex items-center px-4 py-2",
-                                    "text-sm font-medium text-white/90",
+                                    "text-base font-semibold text-white/90",
                                     "transition-colors duration-200 hover:text-white"
                                 )}
                             >
@@ -90,8 +90,8 @@ export function Navbar() {
                     <Link
                         href="/booking"
                         className={cn(
-                            "group hidden h-10 items-center gap-2 rounded-full px-5 sm:inline-flex",
-                            "bg-highlight text-highlight-foreground text-sm font-semibold",
+                            "group hidden h-11 items-center gap-2 rounded-full px-6 sm:inline-flex",
+                            "bg-highlight text-highlight-foreground text-base font-bold",
                             "transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30",
                             "focus-visible:ring-highlight/60 focus-visible:ring-2 focus-visible:outline-none"
                         )}
@@ -99,7 +99,7 @@ export function Navbar() {
                         Book Now
                         <Icons.ArrowRight
                             weight="bold"
-                            className="size-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
+                            className="size-4 transition-transform duration-300 group-hover:translate-x-0.5"
                         />
                     </Link>
 
@@ -108,12 +108,12 @@ export function Navbar() {
                         aria-label="Toggle menu"
                         aria-pressed={isMenuOpen}
                         className={cn(
-                            "inline-flex size-10 items-center justify-center rounded-full md:hidden",
+                            "inline-flex size-11 items-center justify-center rounded-full md:hidden",
                             "text-white transition-colors hover:bg-white/10"
                         )}
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >
-                        <Icons.List className="size-5" />
+                        <Icons.List className="size-6" />
                     </button>
                 </div>
             </nav>

@@ -65,21 +65,6 @@ class DashboardQuery {
         const now = new Date();
         const thirtyStart = startOfDayUTC(new Date(now.getTime() - 29 * DAY));
 
-        const time = async <T>(label: string, p: Promise<T>): Promise<T> => {
-            const t0 = Date.now();
-            try {
-                const r = await p;
-                console.log(`[dashboard] ${label} ok in ${Date.now() - t0}ms`);
-                return r;
-            } catch (err) {
-                console.error(
-                    `[dashboard] ${label} FAILED in ${Date.now() - t0}ms`,
-                    err
-                );
-                throw err;
-            }
-        };
-
         const [
             bookingsKpi,
             activeBookingsKpi,
@@ -95,81 +80,56 @@ class DashboardQuery {
             recentBookings,
             configuration,
         ] = await Promise.all([
-            time("kpi:bookings", this.kpi(bookings, bookings.createdAt)),
-            time(
-                "kpi:activeBookings",
-                this.kpi(
-                    bookings,
-                    bookings.createdAt,
-                    eq(bookings.isActive, true)
-                )
-            ),
-            time("kpi:courses", this.kpi(courses, courses.createdAt)),
-            time("kpi:teachers", this.kpi(teachers, teachers.createdAt)),
-            time(
-                "kpi:testimonials",
-                this.kpi(testimonials, testimonials.createdAt)
-            ),
-            time("kpi:media", this.kpi(media, media.createdAt)),
-            time("kpi:users", this.kpi(users, users.createdAt)),
-            time(
-                "trend",
-                db
-                    .select({
-                        day: sql<string>`to_char(date_trunc('day', ${bookings.createdAt}), 'YYYY-MM-DD')`,
-                        count: sql<number>`count(*)::int`,
-                    })
-                    .from(bookings)
-                    .where(gte(bookings.createdAt, thirtyStart))
-                    .groupBy(sql`date_trunc('day', ${bookings.createdAt})`)
-                    .orderBy(sql`date_trunc('day', ${bookings.createdAt})`)
-            ),
-            time(
-                "byCourse",
-                db
-                    .select({
-                        courseId: bookings.courseId,
-                        title: courses.title,
-                        count: sql<number>`count(*)::int`,
-                    })
-                    .from(bookings)
-                    .leftJoin(courses, eq(courses.id, bookings.courseId))
-                    .groupBy(bookings.courseId, courses.title)
-                    .orderBy(desc(sql<number>`count(*)`))
-                    .limit(5)
-            ),
-            time(
-                "byCountry",
-                db
-                    .select({
-                        country: bookings.country,
-                        count: sql<number>`count(*)::int`,
-                    })
-                    .from(bookings)
-                    .groupBy(bookings.country)
-                    .orderBy(desc(sql<number>`count(*)`))
-                    .limit(6)
-            ),
-            time(
-                "byExperience",
-                db
-                    .select({
-                        experienceLevel: bookings.experienceLevel,
-                        count: sql<number>`count(*)::int`,
-                    })
-                    .from(bookings)
-                    .groupBy(bookings.experienceLevel)
-                    .orderBy(desc(sql<number>`count(*)`))
-            ),
-            time(
-                "recentBookings",
-                bookingQueries.paginate({
-                    page: 1,
-                    limit: 10,
-                    include: "course",
+            this.kpi(bookings, bookings.createdAt),
+            this.kpi(bookings, bookings.createdAt, eq(bookings.isActive, true)),
+            this.kpi(courses, courses.createdAt),
+            this.kpi(teachers, teachers.createdAt),
+            this.kpi(testimonials, testimonials.createdAt),
+            this.kpi(media, media.createdAt),
+            this.kpi(users, users.createdAt),
+            db
+                .select({
+                    day: sql<string>`to_char(date_trunc('day', ${bookings.createdAt}), 'YYYY-MM-DD')`,
+                    count: sql<number>`count(*)::int`,
                 })
-            ),
-            time("configuration", configurationQueries.get()),
+                .from(bookings)
+                .where(gte(bookings.createdAt, thirtyStart))
+                .groupBy(sql`date_trunc('day', ${bookings.createdAt})`)
+                .orderBy(sql`date_trunc('day', ${bookings.createdAt})`),
+            db
+                .select({
+                    courseId: bookings.courseId,
+                    title: courses.title,
+                    count: sql<number>`count(*)::int`,
+                })
+                .from(bookings)
+                .leftJoin(courses, eq(courses.id, bookings.courseId))
+                .groupBy(bookings.courseId, courses.title)
+                .orderBy(desc(sql<number>`count(*)`))
+                .limit(5),
+            db
+                .select({
+                    country: bookings.country,
+                    count: sql<number>`count(*)::int`,
+                })
+                .from(bookings)
+                .groupBy(bookings.country)
+                .orderBy(desc(sql<number>`count(*)`))
+                .limit(6),
+            db
+                .select({
+                    experienceLevel: bookings.experienceLevel,
+                    count: sql<number>`count(*)::int`,
+                })
+                .from(bookings)
+                .groupBy(bookings.experienceLevel)
+                .orderBy(desc(sql<number>`count(*)`)),
+            bookingQueries.paginate({
+                page: 1,
+                limit: 10,
+                include: "course",
+            }),
+            configurationQueries.get(),
         ]);
 
         const trendMap = new Map(trendRows.map((r) => [r.day, r.count]));
