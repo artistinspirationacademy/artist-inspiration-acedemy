@@ -85,8 +85,9 @@ function ContactHeader() {
             </h1>
 
             <p className="max-w-2xl text-base text-balance text-white/80 sm:text-lg">
-                Whether you&rsquo;re curious about a course, want to collaborate,
-                or just have a question — we&rsquo;d love to hear from you.
+                Whether you&rsquo;re curious about a course, want to
+                collaborate, or just have a question — we&rsquo;d love to hear
+                from you.
             </p>
         </motion.div>
     );
@@ -189,10 +190,10 @@ function PrimaryMethods() {
                         </div>
                         <div className="space-y-1.5">
                             <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
-                                Book a call
+                                Book your demo
                             </p>
                             <p className="text-lg font-semibold text-white sm:text-xl">
-                                15-minute free intro
+                                30-minutes demo session
                             </p>
                             <p className="text-sm text-white/65">
                                 Talk to a mentor and pick the right track.
@@ -269,7 +270,9 @@ function SecondaryGrid() {
                     </p>
                     {socials.map(([name, href]) => {
                         const iconKey = socialIconMap[name];
-                        const Icon = iconKey ? Icons[iconKey] : Icons.ArrowRight;
+                        const Icon = iconKey
+                            ? Icons[iconKey]
+                            : Icons.ArrowRight;
                         return (
                             <Link
                                 key={name}
@@ -278,8 +281,8 @@ function SecondaryGrid() {
                                 rel="noreferrer noopener"
                                 aria-label={name}
                                 className={cn(
-                                    "border-white/15 inline-flex size-10 items-center justify-center rounded-full border bg-white/[0.04] backdrop-blur-md",
-                                    "text-white/80 hover:text-highlight hover:border-highlight/40 hover:bg-highlight/5",
+                                    "inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-md",
+                                    "hover:text-highlight hover:border-highlight/40 hover:bg-highlight/5 text-white/80",
                                     "transition-all duration-200"
                                 )}
                             >

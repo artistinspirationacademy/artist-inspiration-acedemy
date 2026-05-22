@@ -212,7 +212,7 @@ function BookingHeader() {
                         aria-hidden
                         className="bg-highlight/30 absolute inset-x-0 bottom-1 -z-10 h-3 rounded-sm sm:h-4"
                     />
-                    <span className="text-highlight">cohort</span>
+                    <span className="text-highlight">seat</span>
                 </span>
             </h1>
 
