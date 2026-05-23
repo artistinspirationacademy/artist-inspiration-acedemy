@@ -1,3 +1,5 @@
+import { getAbsoluteURL } from "./utils";
+
 export const siteConfig: SiteConfig = {
     name: "Artist Inspiration Academy",
     description:
@@ -6,7 +8,7 @@ export const siteConfig: SiteConfig = {
         "Artist Inspiration Academy is a comprehensive online course platform designed to empower artists with the knowledge and skills they need to succeed in the music industry. Our courses cover a wide range of topics, including music production, marketing strategies, and business essentials, all tailored to help artists thrive in their careers.",
     category: "Education",
     og: {
-        url: "/og-image.webp",
+        url: getAbsoluteURL("/og-image.webp"),
         width: 1200,
         height: 630,
     },
