@@ -3,11 +3,12 @@ import {
     DEFAULT_PAGINATION,
     FullTeacher,
     fullTeacherSchema,
+    ReorderTeacher,
     Teacher,
     teacherSchema,
     UpdateTeacher,
 } from "@workspace/config";
-import { and, eq, exists, ilike, inArray } from "drizzle-orm";
+import { and, eq, exists, ilike, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
 import { courseTeachers, teachers } from "../schemas";
 
@@ -84,7 +85,7 @@ class TeacherQuery {
         if (include === "courses") {
             const data = await db.query.teachers.findMany({
                 where,
-                orderBy: { createdAt: "desc" },
+                orderBy: { position: "asc" },
                 with: { courses: true },
             });
             return fullTeacherSchema.array().parse(data);
@@ -92,7 +93,7 @@ class TeacherQuery {
 
         const data = await db.query.teachers.findMany({
             where,
-            orderBy: { createdAt: "desc" },
+            orderBy: { position: "asc" },
         });
         return teacherSchema.array().parse(data);
     }
@@ -144,7 +145,7 @@ class TeacherQuery {
         if (include === "courses") {
             const data = await db.query.teachers.findMany({
                 where,
-                orderBy: { createdAt: "desc" },
+                orderBy: { position: "asc" },
                 limit,
                 offset: (page - 1) * limit,
                 extras,
@@ -162,7 +163,7 @@ class TeacherQuery {
 
         const data = await db.query.teachers.findMany({
             where,
-            orderBy: { createdAt: "desc" },
+            orderBy: { position: "asc" },
             limit,
             offset: (page - 1) * limit,
             extras,
@@ -208,14 +209,23 @@ class TeacherQuery {
         return db.transaction(async (tx) => {
             const results: Teacher[] = [];
 
+            const rows = await tx
+                .select({
+                    max: sql<number>`coalesce(max(${teachers.position}), -1)`,
+                })
+                .from(teachers);
+            let nextPosition = (rows[0]?.max ?? -1) + 1;
+
             for (const { courseIds, ...teacherData } of values) {
                 const inserted = await tx
                     .insert(teachers)
-                    .values(teacherData)
+                    .values({ ...teacherData, position: nextPosition })
                     .returning()
                     .then((res) => res[0]);
 
                 if (!inserted) continue;
+
+                nextPosition += 1;
 
                 if (courseIds.length) {
                     await tx.insert(courseTeachers).values(
@@ -306,6 +316,25 @@ class TeacherQuery {
 
             return teacherSchema.array().parse(updated);
         });
+    }
+
+    async reorder({ values }: { values: ReorderTeacher }): Promise<Teacher[]> {
+        if (values.length === 0) return [];
+
+        const data = await db.transaction(async (tx) => {
+            return Promise.all(
+                values.map(({ id, position }) =>
+                    tx
+                        .update(teachers)
+                        .set({ position, updatedAt: new Date() })
+                        .where(eq(teachers.id, id))
+                        .returning()
+                        .then((res) => res[0])
+                )
+            );
+        });
+
+        return teacherSchema.array().parse(data);
     }
 
     async delete({ ids }: { ids: string[] }) {

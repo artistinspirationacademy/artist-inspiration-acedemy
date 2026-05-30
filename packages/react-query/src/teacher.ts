@@ -3,6 +3,7 @@ import {
     cFetch,
     CreateTeacher,
     handleClientError,
+    ReorderTeacher,
     Teacher,
     UpdateTeacher,
 } from "@workspace/config";
@@ -218,6 +219,29 @@ export function useTeacher() {
         });
     };
 
+    const useReorder = () => {
+        return useMutation({
+            onMutate: () => {
+                const toastId = toast.loading("Saving teacher order...");
+                return { toastId };
+            },
+            mutationFn: async ({ values }: { values: ReorderTeacher }) => {
+                const res = await cFetch<Teacher[]>(`/api/teachers/reorder`, {
+                    method: "PATCH",
+                    body: JSON.stringify(values),
+                });
+                if (!res.ok) throw res.error;
+                return res.data;
+            },
+            onSuccess: (_, __, { toastId }) => {
+                queryClient.invalidateQueries({ queryKey: ["teacher"] });
+                toast.success("Teacher order saved!", { id: toastId });
+                router.refresh();
+            },
+            onError: handleClientError,
+        });
+    };
+
     const useDelete = () => {
         return useMutation({
             onMutate: () => {
@@ -254,6 +278,7 @@ export function useTeacher() {
         useCreate,
         useUpdate,
         useBulkUpdate,
+        useReorder,
         useDelete,
     };
 }

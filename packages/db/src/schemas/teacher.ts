@@ -12,10 +12,14 @@ export const teachers = pgTable(
         videoKey: t.text("video_key"),
         rating: t.real("rating").notNull(),
         experience: t.real("experience").notNull(),
+        position: t.integer("position").notNull().default(0),
         isActive: t.boolean("is_active").notNull().default(true),
         ...timestamps(t),
     }),
-    (t) => [index("teachers_is_active_idx").on(t.isActive)]
+    (t) => [
+        index("teachers_is_active_idx").on(t.isActive),
+        index("teachers_position_idx").on(t.position),
+    ]
 );
 
 export const courseTeachers = pgTable(

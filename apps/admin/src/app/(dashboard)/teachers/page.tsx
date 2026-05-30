@@ -1,4 +1,7 @@
-import { TeacherTable } from "@/components/dashboard/teachers";
+import {
+    TeacherReorderDialog,
+    TeacherTable,
+} from "@/components/dashboard/teachers";
 import { DashShell } from "@/components/globals/layouts";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@workspace/config";
@@ -23,6 +26,8 @@ export default function Page() {
                 </div>
 
                 <div className="flex items-center justify-center gap-2 md:justify-end">
+                    <TeacherReorderDialog />
+
                     <Button asChild>
                         <Link href={"/teachers/create"}>
                             <Icons.Plus />

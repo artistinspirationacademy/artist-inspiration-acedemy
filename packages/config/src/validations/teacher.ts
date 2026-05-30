@@ -25,6 +25,9 @@ export const teacherSchema = z.object({
     experience: z
         .number("Experience is required")
         .positive("Experience must be greater than 0"),
+    position: z
+        .int("Position is required")
+        .nonnegative("Position must be a non-negative integer"),
     isActive: z.boolean("Is active is required"),
     createdAt: generateDateSchema({ error: "Created at must be a valid date" }),
     updatedAt: generateDateSchema({ error: "Updated at must be a valid date" }),
@@ -33,6 +36,7 @@ export const teacherSchema = z.object({
 export const createTeacherSchema = teacherSchema
     .omit({
         id: true,
+        position: true,
         createdAt: true,
         updatedAt: true,
     })
@@ -53,7 +57,19 @@ export const fullTeacherSchema = teacherSchema.extend({
     courses: z.array(courseSchema).default([]),
 });
 
+export const reorderTeacherSchema = z
+    .array(
+        z.object({
+            id: generateIdSchema({ isUUID: true }),
+            position: z
+                .int("Position is required")
+                .nonnegative("Position must be a non-negative integer"),
+        })
+    )
+    .min(1, "At least one teacher is required");
+
 export type Teacher = z.infer<typeof teacherSchema>;
 export type CreateTeacher = z.infer<typeof createTeacherSchema>;
 export type UpdateTeacher = z.infer<typeof updateTeacherSchema>;
 export type FullTeacher = z.infer<typeof fullTeacherSchema>;
+export type ReorderTeacher = z.infer<typeof reorderTeacherSchema>;
