@@ -1,5 +1,5 @@
 import { cache } from "@workspace/cache";
-import { Booking, siteConfig } from "@workspace/config";
+import { Booking, shouldSkipEmailDelivery, siteConfig } from "@workspace/config";
 import { format } from "date-fns";
 import { getResend } from "../client";
 import {
@@ -37,6 +37,20 @@ export async function sendBookingEmails(
     contexts: BookingEmailContext[]
 ): Promise<void> {
     if (!contexts.length) return;
+
+    if (shouldSkipEmailDelivery()) {
+        console.info(
+            `[email] skipped ${contexts.length} booking email(s) outside production`
+        );
+        await cache.logs.add({
+            type: "booking",
+            message: "Booking emails skipped outside production",
+            metadata: {
+                bookingIds: contexts.map((ctx) => ctx.booking.id),
+            },
+        });
+        return;
+    }
 
     const items: BatchEmailItem[] = [];
 

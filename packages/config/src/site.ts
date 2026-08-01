@@ -76,6 +76,33 @@ export const siteConfig: SiteConfig = {
             ],
         },
         {
+            title: "Academy",
+            url: "#",
+            icon: "Teacher",
+            items: [
+                {
+                    title: "Master Table",
+                    url: "/master",
+                },
+                {
+                    title: "Students",
+                    url: "/students",
+                },
+                {
+                    title: "Attendance",
+                    url: "/attendance",
+                },
+                {
+                    title: "Platforms",
+                    url: "/platforms",
+                },
+                {
+                    title: "Packages",
+                    url: "/packages",
+                },
+            ],
+        },
+        {
             title: "Management",
             url: "#",
             icon: "Layout",
@@ -123,6 +150,38 @@ export const siteConfig: SiteConfig = {
                     title: "Configuration",
                     url: "/configuration",
                 },
+                {
+                    title: "Profile",
+                    url: "/profile",
+                },
+            ],
+        },
+    ],
+    facultySidebar: [
+        {
+            title: "General",
+            url: "#",
+            icon: "House",
+            items: [
+                {
+                    title: "Dashboard",
+                    url: "/",
+                },
+                {
+                    title: "Attendance",
+                    url: "/attendance",
+                },
+                {
+                    title: "Students",
+                    url: "/students",
+                },
+            ],
+        },
+        {
+            title: "Settings",
+            url: "#",
+            icon: "Gear",
+            items: [
                 {
                     title: "Profile",
                     url: "/profile",

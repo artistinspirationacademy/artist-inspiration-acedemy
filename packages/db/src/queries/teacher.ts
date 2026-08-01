@@ -6,10 +6,13 @@ import {
     ReorderTeacher,
     Teacher,
     teacherSchema,
+    TeacherWithAccount,
+    teacherWithAccountSchema,
     UpdateTeacher,
 } from "@workspace/config";
 import { and, eq, exists, ilike, inArray, sql } from "drizzle-orm";
 import { db } from "../client";
+import { toSafeFacultyUser } from "./faculty";
 import { courseTeachers, teachers } from "../schemas";
 
 function teacherFilters(params: {
@@ -105,6 +108,17 @@ class TeacherQuery {
         courseId?: string;
         isActive?: boolean;
         include: "courses";
+        withAccount: true;
+    }): Promise<{ data: TeacherWithAccount[]; count: number; pages: number }>;
+
+    async paginate(params: {
+        limit?: number;
+        page?: number;
+        search?: string;
+        courseId?: string;
+        isActive?: boolean;
+        include: "courses";
+        withAccount?: never;
     }): Promise<{ data: FullTeacher[]; count: number; pages: number }>;
 
     async paginate(params?: {
@@ -114,6 +128,7 @@ class TeacherQuery {
         courseId?: string;
         isActive?: boolean;
         include?: never;
+        withAccount?: never;
     }): Promise<{ data: Teacher[]; count: number; pages: number }>;
 
     async paginate({
@@ -123,6 +138,7 @@ class TeacherQuery {
         courseId,
         isActive,
         include,
+        withAccount,
     }: {
         limit?: number;
         page?: number;
@@ -130,6 +146,7 @@ class TeacherQuery {
         courseId?: string;
         isActive?: boolean;
         include?: "courses";
+        withAccount?: boolean;
     } = {}) {
         limit = limit < 0 ? DEFAULT_PAGINATION.GENERAL.LIMIT : limit;
         page = page < 0 ? DEFAULT_PAGINATION.GENERAL.PAGE : page;
@@ -141,6 +158,32 @@ class TeacherQuery {
                 .$count(teachers, countWhereClause({ courseId, isActive, search }))
                 .as("teacher_count"),
         };
+
+        if (include === "courses" && withAccount) {
+            const data = await db.query.teachers.findMany({
+                where,
+                orderBy: { position: "asc" },
+                limit,
+                offset: (page - 1) * limit,
+                extras,
+                with: { courses: true, account: true },
+            });
+
+            const count = +(data?.[0]?.count || 0);
+            const pages = Math.ceil(count / limit);
+            return {
+                data: teacherWithAccountSchema.array().parse(
+                    data.map((row) => ({
+                        ...row,
+                        account: row.account
+                            ? toSafeFacultyUser(row.account)
+                            : null,
+                    }))
+                ),
+                count,
+                pages,
+            };
+        }
 
         if (include === "courses") {
             const data = await db.query.teachers.findMany({
@@ -177,20 +220,43 @@ class TeacherQuery {
     async get(params: {
         id: string;
         include: "courses";
+        withAccount: true;
+    }): Promise<TeacherWithAccount | null>;
+
+    async get(params: {
+        id: string;
+        include: "courses";
+        withAccount?: never;
     }): Promise<FullTeacher | null>;
 
     async get(params: {
         id: string;
         include?: never;
+        withAccount?: never;
     }): Promise<Teacher | null>;
 
     async get({
         id,
         include,
+        withAccount,
     }: {
         id: string;
         include?: "courses";
-    }): Promise<Teacher | FullTeacher | null> {
+        withAccount?: boolean;
+    }): Promise<Teacher | FullTeacher | TeacherWithAccount | null> {
+        if (include === "courses" && withAccount) {
+            const data = await db.query.teachers.findFirst({
+                where: { id },
+                with: { courses: true, account: true },
+            });
+            if (!data) return null;
+
+            return teacherWithAccountSchema.parse({
+                ...data,
+                account: data.account ? toSafeFacultyUser(data.account) : null,
+            });
+        }
+
         if (include === "courses") {
             const data = await db.query.teachers.findFirst({
                 where: { id },

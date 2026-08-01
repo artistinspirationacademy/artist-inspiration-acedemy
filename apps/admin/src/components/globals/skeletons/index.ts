@@ -1,4 +1,5 @@
 export * from "./about-form-skeleton";
+export * from "./attendance-sheet-skeleton";
 export * from "./banner-form-skeleton";
 export * from "./configuration-form-skeleton";
 export * from "./course-form-skeleton";
@@ -7,5 +8,6 @@ export * from "./data-table-skeleton";
 export * from "./feature-form-skeleton";
 export * from "./log-list-skeleton";
 export * from "./profile-skeleton";
+export * from "./student-form-skeleton";
 export * from "./teacher-form-skeleton";
 export * from "./testimonial-form-skeleton";

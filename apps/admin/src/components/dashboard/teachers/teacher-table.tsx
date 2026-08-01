@@ -1,6 +1,7 @@
 "use client";
 "use no memo";
 
+import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -20,9 +21,10 @@ import {
 } from "@tanstack/react-table";
 import {
     DEFAULT_PAGINATION,
-    FullTeacher,
+    FacultyAccountStatus,
     generateUploadThingURL,
     Icons,
+    TeacherWithAccount,
     truncateText,
 } from "@workspace/config";
 import { useTeacher } from "@workspace/rq";
@@ -35,12 +37,20 @@ import {
     useQueryState,
 } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
-import { DataTableSkeleton } from "@/components/globals/skeletons";
 import { ActiveFilter, CourseFilter } from "./filters";
 import { TeacherAction } from "./teacher-action";
 
-export type TableTeacher = FullTeacher & {
+export type TableTeacher = TeacherWithAccount & {
     imageUrl: string;
+};
+
+const ACCOUNT_BADGE: Record<
+    FacultyAccountStatus,
+    { label: string; variant: "default" | "secondary" | "outline" }
+> = {
+    none: { label: "No account", variant: "outline" },
+    active: { label: "Active", variant: "default" },
+    disabled: { label: "Disabled", variant: "outline" },
 };
 
 const columns = (
@@ -168,6 +178,25 @@ const columns = (
             ),
     },
     {
+        id: "account",
+        header: "Account",
+        cell: ({ row }) => {
+            const account = row.original.account;
+            const badge = ACCOUNT_BADGE[account?.status ?? "none"];
+
+            return (
+                <Badge
+                    variant={badge.variant}
+                    className="whitespace-nowrap"
+                    title={account?.email}
+                >
+                    {badge.label}
+                </Badge>
+            );
+        },
+        enableSorting: false,
+    },
+    {
         accessorKey: "createdAt",
         header: "Created At",
         cell: ({ row }) =>
@@ -206,19 +235,26 @@ const exportFields: FieldMapping<TableTeacher>[] = [
     { source: "rating", target: "Rating", include: true, order: 4 },
     { source: "experience", target: "Experience", include: true, order: 5 },
     { source: "isActive", target: "Is Active", include: true, order: 6 },
-    { source: "imageUrl", target: "Image URL", include: true, order: 7 },
+    {
+        source: "account",
+        target: "Account Email",
+        include: true,
+        order: 7,
+        formatter: (data) => data.account?.email ?? "",
+    },
+    { source: "imageUrl", target: "Image URL", include: true, order: 8 },
     {
         source: "createdAt",
         target: "Created At",
         include: true,
-        order: 8,
+        order: 9,
         formatter: (data) => format(new Date(data.createdAt), "yyyy-MM-dd"),
     },
     {
         source: "updatedAt",
         target: "Modified At",
         include: true,
-        order: 9,
+        order: 10,
         formatter: (data) => format(new Date(data.updatedAt), "yyyy-MM-dd"),
     },
 ];
@@ -251,13 +287,18 @@ export function TeacherTable() {
         data: dataRaw,
         isPending,
         refetch,
-    } = usePaginate<{ data: FullTeacher[]; count: number; pages: number }>({
+    } = usePaginate<{
+        data: TeacherWithAccount[];
+        count: number;
+        pages: number;
+    }>({
         limit,
         page,
         search,
         courseId: courseId ?? undefined,
         isActive: isActive ?? undefined,
         include: "courses",
+        withAccount: true,
     });
 
     const { mutateAsync: deleteAsync, isPending: isDeleting } = useDelete();

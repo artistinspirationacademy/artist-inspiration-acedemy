@@ -9,10 +9,13 @@
 
 # Artist Inspiration Academy
 
-Running a course platform means juggling teachers, course catalogs, student bookings, and media — all while keeping the public site polished. Artist Inspiration Academy brings it together in a monorepo: a public-facing website where prospective students browse courses and submit bookings, and a full-featured admin panel where staff manage every aspect of the platform.
+Running a course platform means juggling teachers, course catalogs, student bookings, and media — all while keeping the public site polished. Artist Inspiration Academy brings it together in a monorepo: a public-facing website where prospective students browse courses and submit bookings, an admin panel where staff manage every aspect of the platform, and a faculty portal where teachers keep their own attendance sheets.
 
 - **Course catalog** — Organize courses into categories with rich, composable detail sections: text blocks, accordions, images, and grid layouts.
 - **Teacher profiles** — Showcase instructors with ratings, experience, bio, and optional profile video. Assign one or more teachers per course.
+- **Faculty accounts** — Give any teacher access to the faculty portal from the admin panel. They receive a set-password link by email and sign in with their registered address.
+- **Enrolled students** — Reference records (never logins) tied to a teacher and a course, with a monthly fee, classes per month, and an optional course length.
+- **Monthly attendance sheets** — The spreadsheet the academy has always used, now backed by the database: one sheet per teacher per month, present/absent/rescheduled per day, live totals, and CSV export.
 - **Student bookings** — Capture full student context at inquiry time: course, preferred teacher, experience level, country, and contact details.
 - **Admin dashboard** — At-a-glance metrics for courses, bookings, and content activity, backed by charts and recent-event feeds.
 - **Media library** — Centralized asset management for images, videos, audio, and documents, stored and served via UploadThing.
@@ -43,10 +46,11 @@ Running a course platform means juggling teachers, course catalogs, student book
 
 ### Architecture
 
-The repository is a Turborepo monorepo with two deployable Next.js applications and a set of shared packages:
+The repository is a Turborepo monorepo with three deployable Next.js applications and a set of shared packages:
 
 - **`apps/web`** (port 3000) — Public website. Serves the course catalog, teacher directory, about page, contact form, and the student booking form.
-- **`apps/admin`** (port 3001) — Admin panel. Protected by JWT auth. Manages courses, teachers, bookings, media, banners, testimonials, features, about sections, notifications, logs, and site configuration.
+- **`apps/admin`** (port 3001) — Admin panel. Protected by JWT auth. Manages courses, teachers, students, attendance, bookings, media, banners, testimonials, features, about sections, notifications, logs, and site configuration.
+- **`apps/faculty`** (port 3002) — Faculty portal. Protected by its own JWT auth. Each teacher sees only their own students and monthly attendance sheets.
 
 Shared code lives in `packages/`:
 
@@ -59,6 +63,17 @@ Shared code lives in `packages/`:
 ### Authentication
 
 Admin authentication is entirely in-house — no third-party provider. Admins sign in with email and password; the server hashes passwords with bcryptjs and issues a JWT (signed with `jose`) stored in an HttpOnly cookie. All admin routes verify the token server-side. Redis-backed rate limiting is applied per endpoint to mitigate brute-force attempts.
+
+Faculty authentication is a separate stack over the same primitives: accounts live in `faculty_users` (one per teacher), the cookie name and `JWT_SECRET` differ from the admin app's, and every faculty route resolves the teacher from the signed-in account rather than from the request — a teacher can never read or write another teacher's sheet. Accounts are created by an admin, start without a password, and are activated through a single-use, hashed, expiring link (72 h for invites, 1 h for resets).
+
+### Attendance Model
+
+The month sheet is two tables:
+
+- **`attendance_months`** — one row per enrollment per month: that month's fee, classes, optional length, needs-rescheduling flag, notes, and lock state. Rows are created on first read of a month and seeded from the previous month, so nobody has to "generate" a sheet.
+- **`attendance_days`** — one row per marked day, unique on (month row, date). Every write is an upsert on that pair, so an admin and a teacher editing the same student cannot overwrite each other, and each cell records who set it.
+
+Totals are always computed from the day rows, never stored. Contract defaults (fee, classes per month, length, start month) live on `student_enrollments` and are admin-owned; the monthly snapshot is teacher-editable, so correcting this month never rewrites history.
 
 ### Course Model
 
@@ -95,10 +110,19 @@ The cron endpoint requires a `Bearer` token matching `CRON_SECRET` for authoriza
 
 ### Email
 
-Emails are sent via the Resend API using React Email templates. Two templates are shipped:
+Emails are sent via the Resend API using React Email templates.
+
+**Outside production, nothing is actually mailed.** `shouldSkipEmailDelivery()` suppresses every send whenever `NODE_ENV !== "production"`, logs the message to the server console, and records it in the activity log. For faculty invites and password resets the API returns the link it would have mailed, and the UI shows it in a toast with a **Copy link** button — so the whole flow is testable without an inbox. Two escapes:
+
+- `EMAIL_FORCE_SEND=true` — send for real while developing, e.g. to check a template renders.
+- `DEV_FACULTY_PASSWORD=...` (admin app) — new faculty accounts get this password immediately, so signing in needs no set-password step at all. Hard-ignored when `NODE_ENV=production`.
+
+Four templates are shipped:
 
 - **Booking confirmation** — Sent to the student with their course and teacher details.
 - **Admin new-booking alert** — Sent to the configured `ADMIN_EMAIL` address when a booking arrives.
+- **Faculty invite** — Sent when an admin creates a teacher's account, with a link to set their password.
+- **Faculty password reset** — Sent from the faculty portal's forgot-password flow, or on demand by an admin.
 
 ## Getting Started
 
@@ -147,6 +171,10 @@ REDIS_URL=redis://localhost:6379
 
 UPLOADTHING_TOKEN=your-uploadthing-token
 
+RESEND_API_KEY=re_...
+EMAIL_FROM=no-reply@yourdomain.com
+FACULTY_URL=http://localhost:3002
+
 JWT_SECRET=your-secret-key-at-least-32-characters
 CRON_SECRET=your-cron-auth-token-at-least-16-characters
 
@@ -154,6 +182,29 @@ NEXT_PUBLIC_UPLOADTHING_BUCKET_ID=your-bucket-id
 
 # Optional
 NEXT_PUBLIC_DEPLOYMENT_URL=https://youradmin.com
+
+# Optional, development only — see "Email" below
+DEV_FACULTY_PASSWORD=Faculty@123
+EMAIL_FORCE_SEND=true
+```
+
+**`apps/faculty/.env`**
+
+```env
+# Required
+DATABASE_URL=postgresql://user:password@host:5432/dbname
+REDIS_URL=redis://localhost:6379
+
+RESEND_API_KEY=re_...
+EMAIL_FROM=no-reply@yourdomain.com
+
+# Must differ from the admin app's secret
+JWT_SECRET=another-secret-key-at-least-32-characters
+
+NEXT_PUBLIC_UPLOADTHING_BUCKET_ID=your-bucket-id
+
+# Optional
+NEXT_PUBLIC_DEPLOYMENT_URL=https://faculty.yourdomain.com
 ```
 
 ### Database
@@ -174,6 +225,7 @@ bun run dev
 
 - Public site: [http://localhost:3000](http://localhost:3000)
 - Admin panel: [http://localhost:3001](http://localhost:3001)
+- Faculty portal: [http://localhost:3002](http://localhost:3002)
 
 ### Email Preview
 

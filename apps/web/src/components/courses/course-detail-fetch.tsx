@@ -2,6 +2,7 @@
 
 import { useCourse, useTeachers } from "@/lib/rq";
 import { cn, Icons, Teacher } from "@workspace/config";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { CourseDetail } from "./course-detail";
@@ -80,7 +81,7 @@ function NotFoundState() {
                     is no longer available.
                 </p>
 
-                <a
+                <Link
                     href="/courses"
                     className={cn(
                         "group mt-3 inline-flex h-12 items-center gap-2 rounded-full px-7",
@@ -93,7 +94,7 @@ function NotFoundState() {
                         weight="bold"
                         className="size-4 transition-transform duration-300 group-hover:translate-x-0.5"
                     />
-                </a>
+                </Link>
             </div>
         </section>
     );

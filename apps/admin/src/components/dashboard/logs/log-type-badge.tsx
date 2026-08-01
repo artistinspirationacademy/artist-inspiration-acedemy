@@ -19,6 +19,11 @@ const TYPE_TO_VARIANT: Record<
     configuration: "outline",
     cron: "outline",
     system: "outline",
+    faculty: "default",
+    student: "secondary",
+    attendance: "default",
+    platform: "secondary",
+    package: "secondary",
 };
 
 export function LogTypeBadge({ type }: { type: LogType }) {

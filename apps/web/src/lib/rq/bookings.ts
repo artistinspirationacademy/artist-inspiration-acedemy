@@ -15,7 +15,7 @@ export function useBooking() {
                 return { toastId };
             },
             mutationFn: async (values: CreateBooking[]) => {
-                const res = await cFetch<Booking[]>(`/api/bookings`, {
+                const res = await cFetch<Booking[]>("/api/bookings", {
                     method: "POST",
                     body: JSON.stringify(values),
                 });

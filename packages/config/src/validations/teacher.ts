@@ -1,7 +1,12 @@
 import z from "zod";
 import { convertEmptyStringToNull } from "../utils";
 import { courseSchema } from "./course";
-import { generateDateSchema, generateIdSchema } from "./general";
+import {
+    emailSchema,
+    generateDateSchema,
+    generateIdSchema,
+    passwordSchema,
+} from "./general";
 
 export const teacherSchema = z.object({
     id: generateIdSchema({ isUUID: true }),
@@ -51,6 +56,23 @@ export const createTeacherSchema = teacherSchema
             .min(1, "At least one course is required"),
     });
 
+export const createTeacherWithAccountSchema = createTeacherSchema
+    .extend({
+        facultyEmail: z.preprocess(
+            convertEmptyStringToNull,
+            emailSchema.nullable()
+        ),
+        facultyPassword: z.preprocess(
+            convertEmptyStringToNull,
+            passwordSchema.nullable()
+        ),
+    })
+    .refine((data) => !!data.facultyEmail === !!data.facultyPassword, {
+        path: ["facultyPassword"],
+        message:
+            "The faculty account needs both an email and a password — fill in both or neither",
+    });
+
 export const updateTeacherSchema = createTeacherSchema.partial();
 
 export const fullTeacherSchema = teacherSchema.extend({
@@ -70,6 +92,9 @@ export const reorderTeacherSchema = z
 
 export type Teacher = z.infer<typeof teacherSchema>;
 export type CreateTeacher = z.infer<typeof createTeacherSchema>;
+export type CreateTeacherWithAccount = z.infer<
+    typeof createTeacherWithAccountSchema
+>;
 export type UpdateTeacher = z.infer<typeof updateTeacherSchema>;
 export type FullTeacher = z.infer<typeof fullTeacherSchema>;
 export type ReorderTeacher = z.infer<typeof reorderTeacherSchema>;

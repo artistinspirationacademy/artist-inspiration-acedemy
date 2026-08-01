@@ -17,7 +17,11 @@ export async function GET(_: NextRequest, { params }: Context) {
     try {
         const { id } = await params;
 
-        const data = await queries.teacher.get({ id, include: "courses" });
+        const data = await queries.teacher.get({
+            id,
+            include: "courses",
+            withAccount: true,
+        });
         if (!data)
             throw new AppError(MESSAGES.ERRORS.GENERAL.NOT_FOUND, "NOT_FOUND");
 

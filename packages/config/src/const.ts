@@ -121,6 +121,11 @@ export const LOG_TYPES = [
     "configuration",
     "cron",
     "system",
+    "faculty",
+    "student",
+    "attendance",
+    "platform",
+    "package",
 ] as const;
 
 export const LOG_LEVELS = ["info", "warn", "error"] as const;
@@ -134,4 +139,37 @@ export const DEFAULT_NOTIFICATION_POLL_MS = 60_000;
 export const DEFAULT_LOG_RETENTION = {
     REDIS_DAYS: 7,
     ARCHIVE_DAYS: 365,
+} as const;
+
+export const ATTENDANCE_STATUSES = [
+    "present",
+    "absent",
+    "rescheduled",
+] as const;
+
+export const ATTENDANCE_STATUS_LABELS: Record<
+    (typeof ATTENDANCE_STATUSES)[number],
+    { short: string; label: string }
+> = {
+    present: { short: "P", label: "Present" },
+    absent: { short: "A", label: "Absent" },
+    rescheduled: { short: "R", label: "Rescheduled" },
+} as const;
+
+export const ATTENDANCE_EDITOR_ROLES = ["admin", "faculty"] as const;
+
+export const FACULTY_ACCOUNT_STATUSES = ["none", "active", "disabled"] as const;
+
+export const STUDENT_ID_PREFIX = "AIA" as const;
+
+/**
+ * Billing convention: a month is 4 teaching weeks, so an enrollment's
+ * `classes_per_week` seeds `monthly_classes` as `classesPerWeek * 4` when no
+ * previous month exists to carry forward.
+ */
+export const WEEKS_PER_MONTH = 4 as const;
+
+export const CURRENCY = {
+    CODE: "INR",
+    LOCALE: "en-IN",
 } as const;

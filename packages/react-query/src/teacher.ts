@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     cFetch,
-    CreateTeacher,
+    CreateTeacherWithAccount,
     handleClientError,
     ReorderTeacher,
     Teacher,
@@ -58,6 +58,7 @@ export function useTeacher() {
         courseId,
         isActive,
         include,
+        withAccount,
         initialData,
         enabled,
     }: {
@@ -67,6 +68,7 @@ export function useTeacher() {
         courseId?: string;
         isActive?: boolean;
         include?: "courses";
+        withAccount?: boolean;
         initialData?: T;
         enabled?: boolean;
     }) => {
@@ -80,6 +82,7 @@ export function useTeacher() {
                 courseId,
                 isActive,
                 include,
+                withAccount,
             ],
             queryFn: async () => {
                 const searchParams = new URLSearchParams();
@@ -90,6 +93,7 @@ export function useTeacher() {
                 if (isActive !== undefined)
                     searchParams.append("isActive", String(isActive));
                 if (include) searchParams.append("include", include);
+                if (withAccount) searchParams.append("withAccount", "true");
                 searchParams.append("isPaginated", "true");
 
                 const res = await cFetch<T>(
@@ -135,7 +139,7 @@ export function useTeacher() {
                 const toastId = toast.loading("Creating teacher(s)...");
                 return { toastId };
             },
-            mutationFn: async (values: CreateTeacher[]) => {
+            mutationFn: async (values: CreateTeacherWithAccount[]) => {
                 const res = await cFetch<Teacher[]>(`/api/teachers`, {
                     method: "POST",
                     body: JSON.stringify(values),

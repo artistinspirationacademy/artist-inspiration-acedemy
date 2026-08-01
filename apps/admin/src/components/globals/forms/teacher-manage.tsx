@@ -1,6 +1,7 @@
 "use client";
 "use no memo";
 
+import { TeacherFormSkeleton } from "@/components/globals/skeletons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,20 +36,20 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import { TeacherFormSkeleton } from "@/components/globals/skeletons";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     cn,
     Course,
-    CreateTeacher,
-    createTeacherSchema,
+    CreateTeacherWithAccount,
+    createTeacherWithAccountSchema,
     FullCourseCategory,
-    FullTeacher,
+    generatePassword,
     generateUploadThingURL,
     Icons,
     Media,
-    UpdateTeacher,
+    TeacherWithAccount,
+    updateTeacherSchema,
 } from "@workspace/config";
 import { useCourseCategory, useTeacher } from "@workspace/rq";
 import Image from "next/image";
@@ -57,14 +58,14 @@ import { useMemo, useState } from "react";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 
 interface PageProps {
-    data?: FullTeacher;
+    data?: TeacherWithAccount;
 }
 
 export function TeacherFetch({ type }: { type: "create" | "edit" }) {
     const { id } = useParams<{ id?: string }>();
 
     const { useGet } = useTeacher();
-    const { data, isPending } = useGet<FullTeacher>({
+    const { data, isPending } = useGet<TeacherWithAccount>({
         id: type === "edit" && typeof id === "string" ? id : "",
         enabled: type === "edit" && typeof id === "string",
     });
@@ -94,10 +95,10 @@ export function TeacherManageForm({ data }: PageProps) {
     const { data: categories = [], isPending: isCoursesPending } =
         useCourseCategoryScan<FullCourseCategory[]>({ include: "courses" });
 
-    const form = useForm<CreateTeacher>({
+    const form = useForm<CreateTeacherWithAccount>({
         resolver: zodResolver(
-            createTeacherSchema
-        ) as unknown as Resolver<CreateTeacher>,
+            createTeacherWithAccountSchema
+        ) as unknown as Resolver<CreateTeacherWithAccount>,
         defaultValues: {
             courseIds: data?.courses?.map((c) => c.id) ?? [],
             name: data?.name ?? "",
@@ -107,6 +108,8 @@ export function TeacherManageForm({ data }: PageProps) {
             rating: data?.rating ?? 5,
             experience: data?.experience ?? 1,
             isActive: data?.isActive ?? false,
+            facultyEmail: null,
+            facultyPassword: null,
         },
     });
 
@@ -144,11 +147,11 @@ export function TeacherManageForm({ data }: PageProps) {
         form.setValue("videoKey", null, { shouldDirty: true });
     };
 
-    const handleSubmit = async (values: CreateTeacher) => {
+    const handleSubmit = async (values: CreateTeacherWithAccount) => {
         if (isEdit && data) {
             await updateTeacher({
                 id: data.id,
-                values: values as UpdateTeacher,
+                values: updateTeacherSchema.parse(values),
             });
         } else {
             await createTeacher([values]);
@@ -379,6 +382,161 @@ export function TeacherManageForm({ data }: PageProps) {
                                         </FormItem>
                                     )}
                                 />
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Faculty Account</CardTitle>
+                                <p className="text-muted-foreground text-xs">
+                                    Access to the faculty portal, where the
+                                    teacher manages their own attendance sheets.
+                                </p>
+                            </CardHeader>
+
+                            <CardContent>
+                                {isEdit ? (
+                                    <div className="space-y-2 rounded-md border p-3">
+                                        {data?.account ? (
+                                            <>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <span className="text-sm font-medium">
+                                                        {data.account.email}
+                                                    </span>
+                                                    <Badge
+                                                        variant={
+                                                            data.account
+                                                                .status ===
+                                                            "active"
+                                                                ? "default"
+                                                                : "secondary"
+                                                        }
+                                                    >
+                                                        {data.account.status}
+                                                    </Badge>
+                                                </div>
+                                                <p className="text-muted-foreground text-xs">
+                                                    Manage the account from the
+                                                    actions menu on the teachers
+                                                    list.
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <p className="text-muted-foreground text-xs">
+                                                No account yet. Create one from
+                                                the actions menu on the teachers
+                                                list.
+                                            </p>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="facultyEmail"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Email</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="email"
+                                                            placeholder="teacher@example.com"
+                                                            value={
+                                                                field.value ??
+                                                                ""
+                                                            }
+                                                            onChange={
+                                                                field.onChange
+                                                            }
+                                                            onBlur={
+                                                                field.onBlur
+                                                            }
+                                                            name={field.name}
+                                                            disabled={
+                                                                isSubmitting
+                                                            }
+                                                            autoComplete="off"
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        <FormField
+                                            control={form.control}
+                                            name="facultyPassword"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>
+                                                        Password
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <div className="flex gap-2">
+                                                            <Input
+                                                                type="text"
+                                                                placeholder="Type or generate one"
+                                                                className="font-mono"
+                                                                value={
+                                                                    field.value ??
+                                                                    ""
+                                                                }
+                                                                onChange={
+                                                                    field.onChange
+                                                                }
+                                                                onBlur={
+                                                                    field.onBlur
+                                                                }
+                                                                name={
+                                                                    field.name
+                                                                }
+                                                                disabled={
+                                                                    isSubmitting
+                                                                }
+                                                                autoComplete="off"
+                                                                spellCheck={
+                                                                    false
+                                                                }
+                                                            />
+                                                            <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                size="icon"
+                                                                title="Generate a password"
+                                                                disabled={
+                                                                    isSubmitting
+                                                                }
+                                                                onClick={() =>
+                                                                    form.setValue(
+                                                                        "facultyPassword",
+                                                                        generatePassword(),
+                                                                        {
+                                                                            shouldValidate: true,
+                                                                        }
+                                                                    )
+                                                                }
+                                                            >
+                                                                <Icons.ArrowsClockwise className="size-4" />
+                                                                <span className="sr-only">
+                                                                    Generate a
+                                                                    password
+                                                                </span>
+                                                            </Button>
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormDescription>
+                                                        Optional. Fill in both
+                                                        fields to create the
+                                                        account now — the
+                                                        credentials are emailed
+                                                        to the teacher.
+                                                    </FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 

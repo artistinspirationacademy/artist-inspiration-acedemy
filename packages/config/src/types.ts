@@ -49,15 +49,18 @@ declare global {
             isExternal?: boolean;
             isDisabled?: boolean;
         }[];
-        sidebar: {
+        sidebar: SidebarGroup[];
+        facultySidebar: SidebarGroup[];
+    };
+
+    type SidebarGroup = {
+        title: string;
+        url: string;
+        icon: keyof typeof Icons;
+        items: {
             title: string;
             url: string;
-            icon: keyof typeof Icons;
-            items: {
-                title: string;
-                url: string;
-                isDisabled?: boolean;
-            }[];
+            isDisabled?: boolean;
         }[];
     };
 

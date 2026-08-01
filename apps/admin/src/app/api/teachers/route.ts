@@ -1,8 +1,10 @@
+import { createFacultyAccount } from "@/lib/faculty";
 import { cache } from "@workspace/cache";
 import {
     AppError,
     bulkIdsSchema,
     createTeacherSchema,
+    createTeacherWithAccountSchema,
     CResponse,
     deleteDataSchema,
     handleError,
@@ -21,6 +23,10 @@ const teacherPaginationQuerySchema = paginationQuerySchema.extend({
         return val === "true";
     }, z.boolean().optional()),
     include: z.enum(["courses"]).optional(),
+    withAccount: z.preprocess((val) => {
+        if (val === undefined || val === null || val === "") return undefined;
+        return val === "true";
+    }, z.boolean().optional()),
 });
 
 export async function GET(req: NextRequest) {
@@ -36,6 +42,7 @@ export async function GET(req: NextRequest) {
             courseId,
             isActive,
             include,
+            withAccount,
         } = teacherPaginationQuerySchema.parse(
             Object.fromEntries(searchParams.entries())
         );
@@ -56,6 +63,19 @@ export async function GET(req: NextRequest) {
                       });
             return CResponse({ data });
         } else {
+            if (include === "courses" && withAccount) {
+                const data = await queries.teacher.paginate({
+                    limit,
+                    page,
+                    search,
+                    courseId,
+                    isActive,
+                    include: "courses",
+                    withAccount: true,
+                });
+                return CResponse({ data });
+            }
+
             const data =
                 include === "courses"
                     ? await queries.teacher.paginate({
@@ -113,15 +133,36 @@ export async function PATCH(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const parsed = createTeacherSchema.array().parse(body);
+        const parsed = createTeacherWithAccountSchema.array().parse(body);
 
-        const data = await queries.teacher.create(parsed);
+        const data = await queries.teacher.create(
+            createTeacherSchema.array().parse(parsed)
+        );
         await cache.teacher.drop();
         await cache.logs.add({
             type: "teacher",
             message: "Teachers created",
             metadata: { count: data.length },
         });
+
+        for (const [index, teacher] of data.entries()) {
+            const facultyEmail = parsed[index]?.facultyEmail;
+            const facultyPassword = parsed[index]?.facultyPassword;
+            if (!facultyEmail || !facultyPassword) continue;
+
+            await createFacultyAccount({
+                teacherId: teacher.id,
+                teacherName: teacher.name,
+                email: facultyEmail,
+                password: facultyPassword,
+            });
+            await cache.logs.add({
+                type: "faculty",
+                message: "Faculty account created",
+                metadata: { teacherId: teacher.id, email: facultyEmail },
+            });
+        }
+
         return CResponse({ message: "CREATED", data });
     } catch (err) {
         return handleError(err);

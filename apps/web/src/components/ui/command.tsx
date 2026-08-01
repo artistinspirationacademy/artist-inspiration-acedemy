@@ -8,7 +8,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
-import { CheckIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { cn } from "@workspace/config";
 import { Command as CommandPrimitive } from "cmdk";
 import * as React from "react";
@@ -181,11 +181,11 @@ function CommandShortcut({
 export {
     Command,
     CommandDialog,
-    CommandInput,
-    CommandList,
     CommandEmpty,
     CommandGroup,
+    CommandInput,
     CommandItem,
-    CommandShortcut,
+    CommandList,
     CommandSeparator,
+    CommandShortcut,
 };

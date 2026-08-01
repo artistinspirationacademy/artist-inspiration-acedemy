@@ -1,18 +1,30 @@
 import { clsx, type ClassValue } from "clsx";
 import { NextResponse } from "next/server";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 import { ZodError } from "zod";
-import { ResponseData, ResponseMessages } from "./validations";
-import { toast } from "sonner";
 import {
+    CURRENCY,
     MAX_MEDIA_FILE_SIZE,
     MEDIA_FILE_ACCEPT,
     MEDIA_FILE_ACCEPT_LABELS,
     MESSAGES,
+    STUDENT_ID_PREFIX,
 } from "./const";
+import { ResponseData, ResponseMessages } from "./validations";
 
 export function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Outside production, emails are suppressed so local work never spends a real
+ * send. Callers surface the link they would have mailed instead. Set
+ * `EMAIL_FORCE_SEND=true` to exercise real delivery in development.
+ */
+export function shouldSkipEmailDelivery() {
+    if (process.env.EMAIL_FORCE_SEND === "true") return false;
+    return process.env.NODE_ENV !== "production";
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -384,6 +396,150 @@ export function formatPriceTag(price: number, keepDeciamls = false) {
     }).format(price);
 }
 
+export function formatFeeTag(fee: number, keepDecimals = false) {
+    return new Intl.NumberFormat(CURRENCY.LOCALE, {
+        style: "currency",
+        currency: CURRENCY.CODE,
+        minimumFractionDigits: keepDecimals ? 2 : 0,
+        maximumFractionDigits: keepDecimals ? 2 : 0,
+    }).format(fee);
+}
+
+export function formatStudentNo(serialNo: number) {
+    return `${STUDENT_ID_PREFIX}-${String(serialNo).padStart(4, "0")}`;
+}
+
+export function displayStudentId(student: {
+    code?: string | null;
+    serialNo: number;
+}) {
+    return student.code || formatStudentNo(student.serialNo);
+}
+
+export function monthKey(date: Date = new Date()) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function isMonthKey(value: string) {
+    return /^\d{4}-(0[1-9]|1[0-2])$/.test(value);
+}
+
+export function parseMonthKey(key: string) {
+    const [year, month] = key.split("-").map(Number);
+    if (!year || !month) throw new Error(`Invalid month key: '${key}'`);
+    return { year, month };
+}
+
+export function dateKey(date: Date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+export function monthStart(key: string) {
+    return `${key}-01`;
+}
+
+export function monthKeyOf(date: string) {
+    return date.slice(0, 7);
+}
+
+export function monthDayCount(key: string) {
+    const { year, month } = parseMonthKey(key);
+    return new Date(year, month, 0).getDate();
+}
+
+export function monthDates(key: string) {
+    const { year, month } = parseMonthKey(key);
+
+    return Array.from({ length: monthDayCount(key) }, (_, i) => {
+        const date = new Date(year, month - 1, i + 1);
+        return {
+            day: i + 1,
+            date: dateKey(date),
+            weekday: date.toLocaleDateString("en-US", { weekday: "short" }),
+            isWeekend: date.getDay() === 0 || date.getDay() === 6,
+        };
+    });
+}
+
+export function shiftMonthKey(key: string, delta: number) {
+    const { year, month } = parseMonthKey(key);
+    return monthKey(new Date(year, month - 1 + delta, 1));
+}
+
+/**
+ * An enrollment is billed from `startMonth` for `totalMonths` months. A null
+ * `totalMonths` means it runs indefinitely.
+ */
+export function isMonthInEnrollmentWindow({
+    month,
+    startMonth,
+    totalMonths,
+}: {
+    month: string;
+    startMonth: string;
+    totalMonths: number | null;
+}) {
+    const startKey = monthKeyOf(startMonth);
+    if (month < startKey) return false;
+    if (!totalMonths) return true;
+
+    return month <= shiftMonthKey(startKey, totalMonths - 1);
+}
+
+/**
+ * 1-based position of `month` inside an enrollment's plan — the "3" in
+ * "3 of 6". Null when the month falls outside the enrollment window.
+ */
+export function enrollmentMonthOrdinal({
+    month,
+    startMonth,
+    totalMonths,
+}: {
+    month: string;
+    startMonth: string;
+    totalMonths: number | null;
+}) {
+    const startKey = monthKeyOf(startMonth);
+    if (month < startKey) return null;
+
+    const start = parseMonthKey(startKey);
+    const current = parseMonthKey(month);
+    const ordinal =
+        (current.year - start.year) * 12 + (current.month - start.month) + 1;
+
+    if (totalMonths && ordinal > totalMonths) return null;
+    return ordinal;
+}
+
+/**
+ * Human-readable span for an enrollment, e.g. "Jul 2026 → Sep 2026" or
+ * "From Jul 2026 · ongoing" when no length is set.
+ */
+export function formatEnrollmentWindow({
+    startMonth,
+    totalMonths,
+}: {
+    startMonth: string;
+    totalMonths: number | null;
+}) {
+    const startKey = monthKeyOf(startMonth);
+    if (!isMonthKey(startKey)) return null;
+
+    const start = formatMonthKey(startKey);
+    if (!totalMonths) return `From ${start} · ongoing`;
+    if (totalMonths === 1) return `${start} only`;
+
+    return `${start} → ${formatMonthKey(shiftMonthKey(startKey, totalMonths - 1))}`;
+}
+
+export function formatMonthKey(key: string) {
+    const { year, month } = parseMonthKey(key);
+    return new Date(year, month - 1, 1).toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+    });
+}
+
 export function truncateText(text: string, length: number) {
     return text.length > length ? text.slice(0, length) + "..." : text;
 }
@@ -410,6 +566,41 @@ export function generateUploadThingURL(fileKey: string) {
         throw new Error("'NEXT_PUBLIC_UPLOADTHING_BUCKET_ID' is not defined");
 
     return `https://${bucketId}.ufs.sh/f/${fileKey}`;
+}
+
+/**
+ * Random password for admin-provisioned faculty accounts. Always satisfies
+ * `passwordSchema` (one of each class is guaranteed) and draws from
+ * `crypto.getRandomValues`, so it is safe to use client-side in the dialogs.
+ */
+export function generatePassword(length = 14) {
+    const CLASSES = [
+        "ABCDEFGHJKLMNPQRSTUVWXYZ",
+        "abcdefghijkmnpqrstuvwxyz",
+        "23456789",
+        "!@#$%&*?",
+    ];
+    const pool = CLASSES.join("");
+
+    const pick = (chars: string) => {
+        const buffer = new Uint32Array(1);
+        crypto.getRandomValues(buffer);
+        return chars[buffer[0]! % chars.length]!;
+    };
+
+    const chars = CLASSES.map(pick);
+    while (chars.length < Math.max(length, CLASSES.length))
+        chars.push(pick(pool));
+
+    // Fisher–Yates so the guaranteed classes aren't always up front
+    for (let i = chars.length - 1; i > 0; i--) {
+        const buffer = new Uint32Array(1);
+        crypto.getRandomValues(buffer);
+        const j = buffer[0]! % (i + 1);
+        [chars[i], chars[j]] = [chars[j]!, chars[i]!];
+    }
+
+    return chars.join("");
 }
 
 export function generateCustomCacheKey(

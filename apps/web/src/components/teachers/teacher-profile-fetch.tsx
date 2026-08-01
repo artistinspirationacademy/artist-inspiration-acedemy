@@ -2,6 +2,7 @@
 
 import { useTeacher } from "@/lib/rq";
 import { cn, Icons } from "@workspace/config";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { TeacherProfile } from "./teacher-profile";
@@ -75,7 +76,7 @@ function NotFoundState() {
                     moved on.
                 </p>
 
-                <a
+                <Link
                     href="/teachers"
                     className={cn(
                         "group mt-3 inline-flex h-12 items-center gap-2 rounded-full px-7",
@@ -88,7 +89,7 @@ function NotFoundState() {
                         weight="bold"
                         className="size-4 transition-transform duration-300 group-hover:translate-x-0.5"
                     />
-                </a>
+                </Link>
             </div>
         </section>
     );
