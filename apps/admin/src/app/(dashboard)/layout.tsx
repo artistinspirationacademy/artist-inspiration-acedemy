@@ -1,3 +1,4 @@
+import { BirthdayBanner } from "@/components/birthday";
 import { ThemeButton } from "@/components/globals/buttons";
 import { Sidebar, SidebarInset } from "@/components/globals/layouts";
 import { NotificationPopover } from "@/components/globals/layouts/notification-popover";
@@ -23,7 +24,7 @@ export default function Layout({ children }: RootLayoutProps) {
         <SidebarProvider>
             <Sidebar />
 
-            <ShadSidebarInset className="min-w-0 max-w-full">
+            <ShadSidebarInset className="max-w-full min-w-0">
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                     <div className="flex w-full items-center justify-between gap-2 px-4">
                         <div className="flex items-center gap-2">
@@ -46,6 +47,8 @@ export default function Layout({ children }: RootLayoutProps) {
                         </div>
                     </div>
                 </header>
+
+                <BirthdayBanner />
 
                 {children}
             </ShadSidebarInset>
